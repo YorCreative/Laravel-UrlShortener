@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "brick/math",
-            "version": "0.10.1",
+            "version": "0.10.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/brick/math.git",
-                "reference": "de846578401f4e58f911b3afeb62ced56365ed87"
+                "reference": "459f2781e1a08d52ee56b0b1444086e038561e3f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/brick/math/zipball/de846578401f4e58f911b3afeb62ced56365ed87",
-                "reference": "de846578401f4e58f911b3afeb62ced56365ed87",
+                "url": "https://api.github.com/repos/brick/math/zipball/459f2781e1a08d52ee56b0b1444086e038561e3f",
+                "reference": "459f2781e1a08d52ee56b0b1444086e038561e3f",
                 "shasum": ""
             },
             "require": {
@@ -52,7 +52,7 @@
             ],
             "support": {
                 "issues": "https://github.com/brick/math/issues",
-                "source": "https://github.com/brick/math/tree/0.10.1"
+                "source": "https://github.com/brick/math/tree/0.10.2"
             },
             "funding": [
                 {
@@ -60,7 +60,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-08-01T22:54:31+00:00"
+            "time": "2022-08-10T22:54:19+00:00"
         },
         {
             "name": "composer/ca-bundle",
@@ -707,12 +707,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "92b306639eb2449b9e99a5b1da954142e24113f7"
+                "reference": "1814e8066a6ba658ad42a662de9d3263b9637f9c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/92b306639eb2449b9e99a5b1da954142e24113f7",
-                "reference": "92b306639eb2449b9e99a5b1da954142e24113f7",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/1814e8066a6ba658ad42a662de9d3263b9637f9c",
+                "reference": "1814e8066a6ba658ad42a662de9d3263b9637f9c",
                 "shasum": ""
             },
             "require": {
@@ -880,7 +880,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2022-08-09T19:47:15+00:00"
+            "time": "2022-08-12T17:16:29+00:00"
         },
         {
             "name": "laravel/serializable-closure",
@@ -2204,12 +2204,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ramsey/uuid.git",
-                "reference": "b4dff559abe91401289757f479f6f840b8846da7"
+                "reference": "20831103160fd5dac2090df8b1997977ed782e42"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ramsey/uuid/zipball/b4dff559abe91401289757f479f6f840b8846da7",
-                "reference": "b4dff559abe91401289757f479f6f840b8846da7",
+                "url": "https://api.github.com/repos/ramsey/uuid/zipball/20831103160fd5dac2090df8b1997977ed782e42",
+                "reference": "20831103160fd5dac2090df8b1997977ed782e42",
                 "shasum": ""
             },
             "require": {
@@ -2290,7 +2290,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-08-09T15:04:36+00:00"
+            "time": "2022-08-13T01:18:40+00:00"
         },
         {
             "name": "stevebauman/location",
@@ -2966,12 +2966,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-kernel.git",
-                "reference": "b2c55f0c1801f7628664dbd131b2948b9a9c6258"
+                "reference": "92bd3bcb12e948350ca99c55dfa1c54af2023e20"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-kernel/zipball/b2c55f0c1801f7628664dbd131b2948b9a9c6258",
-                "reference": "b2c55f0c1801f7628664dbd131b2948b9a9c6258",
+                "url": "https://api.github.com/repos/symfony/http-kernel/zipball/92bd3bcb12e948350ca99c55dfa1c54af2023e20",
+                "reference": "92bd3bcb12e948350ca99c55dfa1c54af2023e20",
                 "shasum": ""
             },
             "require": {
@@ -3068,7 +3068,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-07-29T10:26:48+00:00"
+            "time": "2022-08-12T13:09:17+00:00"
         },
         {
             "name": "symfony/mailer",
@@ -4132,12 +4132,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/string.git",
-                "reference": "102fd1bc064b62a9ea1b5f90101f0cdd462229de"
+                "reference": "29cd3b038e732b662a90ca3037e6f3932f89085a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/string/zipball/102fd1bc064b62a9ea1b5f90101f0cdd462229de",
-                "reference": "102fd1bc064b62a9ea1b5f90101f0cdd462229de",
+                "url": "https://api.github.com/repos/symfony/string/zipball/29cd3b038e732b662a90ca3037e6f3932f89085a",
+                "reference": "29cd3b038e732b662a90ca3037e6f3932f89085a",
                 "shasum": ""
             },
             "require": {
@@ -4209,7 +4209,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-08-04T19:19:24+00:00"
+            "time": "2022-08-12T18:06:02+00:00"
         },
         {
             "name": "symfony/translation",
@@ -6150,12 +6150,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "c963204f63560a8b4e5913b8c39ed1fb8f60f8d2"
+                "reference": "83627ed9682037aa34a0d38a3307071393c85c1e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/c963204f63560a8b4e5913b8c39ed1fb8f60f8d2",
-                "reference": "c963204f63560a8b4e5913b8c39ed1fb8f60f8d2",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/83627ed9682037aa34a0d38a3307071393c85c1e",
+                "reference": "83627ed9682037aa34a0d38a3307071393c85c1e",
                 "shasum": ""
             },
             "require": {
@@ -6244,7 +6244,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-08-05T06:10:58+00:00"
+            "time": "2022-08-13T08:08:46+00:00"
         },
         {
             "name": "pimple/pimple",
@@ -7615,16 +7615,16 @@
         },
         {
             "name": "spatie/ray",
-            "version": "1.35.0",
+            "version": "1.36.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/ray.git",
-                "reference": "7196737c17718264aef9e446b773ee490c1563dd"
+                "reference": "4a4def8cda4806218341b8204c98375aa8c34323"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/ray/zipball/7196737c17718264aef9e446b773ee490c1563dd",
-                "reference": "7196737c17718264aef9e446b773ee490c1563dd",
+                "url": "https://api.github.com/repos/spatie/ray/zipball/4a4def8cda4806218341b8204c98375aa8c34323",
+                "reference": "4a4def8cda4806218341b8204c98375aa8c34323",
                 "shasum": ""
             },
             "require": {
@@ -7674,7 +7674,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/ray/issues",
-                "source": "https://github.com/spatie/ray/tree/1.35.0"
+                "source": "https://github.com/spatie/ray/tree/1.36.0"
             },
             "funding": [
                 {
@@ -7686,7 +7686,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2022-08-09T14:35:12+00:00"
+            "time": "2022-08-11T14:04:18+00:00"
         },
         {
             "name": "symfony/polyfill-iconv",
