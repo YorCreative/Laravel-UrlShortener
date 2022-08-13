@@ -3,9 +3,6 @@
 namespace YorCreative\UrlShortener\Services;
 
 use Exception;
-use Illuminate\Encryption\Encrypter;
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use YorCreative\UrlShortener\Builders\UrlBuilder\UrlBuilder;
 use YorCreative\UrlShortener\Exceptions\UrlRepositoryException;
 use YorCreative\UrlShortener\Exceptions\UrlServiceException;
@@ -16,6 +13,28 @@ use YorCreative\UrlShortener\Traits\ShortUrlHelper;
 class UrlService
 {
     use ShortUrlHelper;
+
+    /**
+     * @param  string  $hash
+     * @return ShortUrl|null
+     *
+     * @throws UrlRepositoryException
+     */
+    public static function findByHash(string $hash): ?ShortUrl
+    {
+        return UrlRepository::findByHash($hash);
+    }
+
+    /**
+     * @param  string  $plain_text
+     * @return ShortUrl|null
+     *
+     * @throws UrlRepositoryException
+     */
+    public static function findByPlainText(string $plain_text): ?ShortUrl
+    {
+        return UrlRepository::findByPlainText($plain_text);
+    }
 
     /**
      * @param  string  $identifier
@@ -42,57 +61,9 @@ class UrlService
             return null;
         }
 
-        return UrlService::getEncrypter()->decryptString($shortUrl->password) == $password
+        return UtilityService::getEncrypter()->decryptString($shortUrl->password) == $password
             ? $shortUrl
             : null;
-    }
-
-    /**
-     * @return Encrypter
-     *
-     * @throws UrlServiceException
-     */
-    public static function getEncrypter(): Encrypter
-    {
-        try {
-            return new Encrypter(
-                UrlService::databaseEncryptionKey(),
-                'AES-256-CBC');
-        } catch (Exception $exception) {
-            throw new UrlServiceException($exception->getMessage());
-        }
-    }
-
-    /**
-     * @return string|null
-     */
-    protected static function databaseEncryptionKey(): ?string
-    {
-        $key = config('urlshortener.protection.cipher_key');
-        $key = is_null($key)
-            ? 'base64:44mfXzhGl4IiILZ8sRfzkOZ4b26m9ygXmTRYjOE9Ylk='
-            : $key;
-
-        return base64_decode(Str::after($key, 'base64:'));
-    }
-
-    /**
-     * @return int
-     */
-    public static function getRedirectCode(): int
-    {
-        return config('urlshortener.redirect.code') ?? 307;
-    }
-
-    /**
-     * @param  Request  $request
-     * @return array
-     */
-    public static function getRedirectHeaders(Request $request): array
-    {
-        return UrlRepository::constructRedirectHeaders([
-            'X-Forwarded-For' => $request->ip(),
-        ]);
     }
 
     /**

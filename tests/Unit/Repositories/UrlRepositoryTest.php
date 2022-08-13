@@ -1,5 +1,7 @@
 <?php
 
+namespace YorCreative\UrlShortener\Tests\Unit\Repositories;
+
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use YorCreative\UrlShortener\Models\ShortUrlOwnership;
@@ -9,29 +11,6 @@ use YorCreative\UrlShortener\Tests\TestCase;
 class UrlRepositoryTest extends TestCase
 {
     use DatabaseTransactions;
-
-    /**
-     * @test
-     * @group UrlRepository
-     */
-    public function it_can_construct_redirect_headers()
-    {
-        $this->assertEquals([
-            'Referer' => 'localhost:1337',
-        ], UrlRepository::constructRedirectHeaders());
-    }
-
-    /**
-     * @test
-     * @group UrlRepository
-     */
-    public function it_can_construct_redirect_headers_with_dynamic_headers()
-    {
-        $this->assertEquals([
-            'Referer' => 'localhost:1337',
-            'test' => 'something',
-        ], UrlRepository::constructRedirectHeaders(['test' => 'something']));
-    }
 
     /**
      * @test
@@ -128,14 +107,5 @@ class UrlRepositoryTest extends TestCase
         $this->assertFalse(UrlRepository::identifierExists($this->identifier.'333'));
 
         $this->assertTrue(UrlRepository::identifierExists($this->identifier));
-    }
-
-    /**
-     * @test
-     * @group UrlRepository
-     */
-    public function it_can_find_short_url_by_identifier()
-    {
-        $this->assertEquals($this->shortUrl, UrlRepository::findByIdentifier($this->identifier));
     }
 }

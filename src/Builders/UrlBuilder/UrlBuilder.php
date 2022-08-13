@@ -15,7 +15,7 @@ use YorCreative\UrlShortener\Builders\UrlBuilder\Options\WithOwnership;
 use YorCreative\UrlShortener\Builders\UrlBuilder\Options\WithPassword;
 use YorCreative\UrlShortener\Exceptions\UrlBuilderException;
 use YorCreative\UrlShortener\Exceptions\UrlServiceException;
-use YorCreative\UrlShortener\Services\UrlService;
+use YorCreative\UrlShortener\Services\UtilityService;
 use YorCreative\UrlShortener\Traits\ShortUrlHelper;
 
 class UrlBuilder implements UrlBuilderInterface
@@ -92,7 +92,7 @@ class UrlBuilder implements UrlBuilderInterface
         } catch (Exception $exception) {
             throw new UrlBuilderException('The password provided for the ShortUrl does not meet requirements.');
         }
-        $this->shortUrlCollection->put('password', UrlService::getEncrypter()->encryptString($password));
+        $this->shortUrlCollection->put('password', UtilityService::getEncrypter()->encryptString($password));
 
         $this->options->add(
             new WithPassword()

@@ -57,6 +57,30 @@ $url = UrlService::shorten('something-extremely-long.com/even/longer?ref=with&so
 // http(s)://host/prefix/identifier;
 ```
 
+Finding Existing Short Urls
+
+```php
+
+/**
+ * Find a Short URL by its identifier 
+ */
+$shortUrl = UrlService::findByIdentifier('identifier');
+
+/**
+ * Find a Short URL by its hashed signature
+ */
+$shortUrl = UrlService::findByHash(md5('long_url'));
+
+/**
+ * Find a Short URL by its plain text long url string 
+ */
+$shortUrl = UrlService::findByPlainText('long_url');
+
+/**
+ * Will return an instance of Models/ShortUrl or throw UrlRepository('Unable to locate Short URL')
+ */
+```
+
 Getting Click Information
 
 ```php

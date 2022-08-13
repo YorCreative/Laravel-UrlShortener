@@ -1,5 +1,7 @@
 <?php
 
+namespace YorCreative\UrlShortener\Tests\Unit\Repositories;
+
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use YorCreative\UrlShortener\Repositories\ClickRepository;
 use YorCreative\UrlShortener\Services\ClickService;

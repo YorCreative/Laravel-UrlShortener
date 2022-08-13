@@ -10,20 +10,6 @@ use YorCreative\UrlShortener\Models\ShortUrlOwnership;
 class UrlRepository
 {
     /**
-     * @param  array  $dynamic_headers
-     * @return array
-     */
-    public static function constructRedirectHeaders(array $dynamic_headers = []): array
-    {
-        return array_merge(
-            config('urlshortener.redirect.headers') ?? [
-                'Referer' => 'localhost:1337',
-            ],
-            $dynamic_headers
-        );
-    }
-
-    /**
      * @param  array  $ownership
      * @return mixed
      *
@@ -56,6 +42,23 @@ class UrlRepository
         try {
             return ShortUrl::where(
                 'hashed', $hash
+            )->firstOrFail();
+        } catch (Exception $exception) {
+            throw new UrlRepositoryException($exception->getMessage());
+        }
+    }
+
+    /**
+     * @param  string  $plain_text
+     * @return mixed
+     *
+     * @throws UrlRepositoryException
+     */
+    public static function findByPlainText(string $plain_text): ShortUrl
+    {
+        try {
+            return ShortUrl::where(
+                'plain_text', $plain_text
             )->firstOrFail();
         } catch (Exception $exception) {
             throw new UrlRepositoryException($exception->getMessage());

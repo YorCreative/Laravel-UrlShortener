@@ -3,8 +3,7 @@
 namespace YorCreative\UrlShortener\Tests\Unit\Services;
 
 use Carbon\Carbon;
-use Illuminate\Encryption\Encrypter;
-use Illuminate\Http\Request;
+use Exception;
 use YorCreative\UrlShortener\Builders\UrlBuilder\UrlBuilder;
 use YorCreative\UrlShortener\Exceptions\UrlBuilderException;
 use YorCreative\UrlShortener\Exceptions\UrlRepositoryException;
@@ -16,6 +15,30 @@ use YorCreative\UrlShortener\Tests\TestCase;
 
 class UrlServiceTest extends TestCase
 {
+    /**
+     * @test
+     * @group UrlService
+     */
+    public function it_can_can_find_short_url_by_the_hash()
+    {
+        $shortUrl = UrlService::findByHash($this->hashed);
+
+        $this->assertTrue($this->identifier == $shortUrl->identifier);
+        $this->assertTrue($this->plain_text == $shortUrl->plain_text);
+    }
+
+    /**
+     * @test
+     * @group UrlService
+     */
+    public function it_can_can_find_short_url_by_the_plain_text()
+    {
+        $shortUrl = UrlService::findByPlainText($this->plain_text);
+
+        $this->assertTrue($this->hashed == $shortUrl->hashed);
+        $this->assertTrue($this->identifier == $shortUrl->identifier);
+    }
+
     /**
      * @test
      * @group UrlService
@@ -32,19 +55,9 @@ class UrlServiceTest extends TestCase
      * @test
      * @group UrlService
      *
-     * @throws UrlServiceException
-     */
-    public function it_can_successfully_get_an_instance_of_the_encrypter()
-    {
-        $this->assertInstanceOf(Encrypter::class, UrlService::getEncrypter());
-    }
-
-    /**
-     * @test
-     * @group UrlService
-     *
      * @throws UrlBuilderException
      * @throws UrlRepositoryException
+     * @throws UrlServiceException
      */
     public function it_can_successfully_attempt_to_verify_password()
     {
@@ -85,39 +98,6 @@ class UrlServiceTest extends TestCase
     /**
      * @test
      * @group UrlService
-     */
-    public function it_can_get_the_redirect_code()
-    {
-        $this->assertEquals(
-            307,
-            UrlService::getRedirectCode()
-        );
-    }
-
-    /**
-     * @test
-     * @group UrlService
-     */
-    public function it_can_get_redirect_headers()
-    {
-        $request = Request::create('something-short.com/not-really');
-        $this->changeRequestIp(
-            $request,
-            '1.3.3.7'
-        );
-
-        $this->assertEquals(
-            [
-                'Referer' => 'localhost:1337',
-                'X-Forwarded-For' => '1.3.3.7',
-            ],
-            UrlService::getRedirectHeaders($request)
-        );
-    }
-
-    /**
-     * @test
-     * @group UrlService
      *
      * @throws UrlRepositoryException
      */
@@ -148,7 +128,7 @@ class UrlServiceTest extends TestCase
      * @test
      * @group UrlService
      *
-     * @throws UrlRepositoryException
+     * @throws Exception
      */
     public function it_can_set_an_activation_time_successfully()
     {

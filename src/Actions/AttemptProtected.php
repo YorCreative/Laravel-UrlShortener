@@ -7,6 +7,7 @@ use Illuminate\Routing\Controller;
 use YorCreative\UrlShortener\Exceptions\UrlRepositoryException;
 use YorCreative\UrlShortener\Services\ClickService;
 use YorCreative\UrlShortener\Services\UrlService;
+use YorCreative\UrlShortener\Services\UtilityService;
 
 class AttemptProtected extends Controller
 {
@@ -51,8 +52,8 @@ class AttemptProtected extends Controller
 
         return redirect()->away(
             $shortUrl->plain_text,
-            UrlService::getRedirectCode(),
-            UrlService::getRedirectHeaders($request)
+            UtilityService::getRedirectCode(),
+            UtilityService::getRedirectHeaders($request)
         );
     }
 }

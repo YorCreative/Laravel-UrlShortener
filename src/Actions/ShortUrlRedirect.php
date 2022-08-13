@@ -5,10 +5,12 @@ namespace YorCreative\UrlShortener\Actions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use YorCreative\UrlShortener\Exceptions\ClickServiceException;
 use YorCreative\UrlShortener\Exceptions\UrlRepositoryException;
 use YorCreative\UrlShortener\Models\ShortUrl;
 use YorCreative\UrlShortener\Services\ClickService;
 use YorCreative\UrlShortener\Services\UrlService;
+use YorCreative\UrlShortener\Services\UtilityService;
 
 class ShortUrlRedirect extends Controller
 {
@@ -18,6 +20,7 @@ class ShortUrlRedirect extends Controller
 
     /**
      * @throws UrlRepositoryException
+     * @throws ClickServiceException
      */
     public function __invoke(Request $request, string $identifier)
     {
@@ -81,13 +84,13 @@ class ShortUrlRedirect extends Controller
 
         return redirect()->away(
             $this->shortUrl->plain_text,
-            UrlService::getRedirectCode(),
-            UrlService::getRedirectHeaders($request)
+            UtilityService::getRedirectCode(),
+            UtilityService::getRedirectHeaders($request)
         );
     }
 
     /**
-     * @throws UrlRepositoryException
+     * @throws ClickServiceException
      */
     private function isShortUrlActivated()
     {
@@ -112,7 +115,7 @@ class ShortUrlRedirect extends Controller
     }
 
     /**
-     * @throws UrlRepositoryException
+     * @throws ClickServiceException
      */
     private function isShortUrlExpired()
     {
@@ -134,7 +137,7 @@ class ShortUrlRedirect extends Controller
     }
 
     /**
-     * @throws UrlRepositoryException
+     * @throws ClickServiceException
      */
     private function canShortUrlBeOpened()
     {
