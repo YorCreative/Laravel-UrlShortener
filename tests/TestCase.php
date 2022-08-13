@@ -30,7 +30,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
         // additional setup
         $files = new Collection(File::files(dirname(__DIR__).'/src/Utility/Migrations'));
-        $files = $files->merge(File::files(dirname(__DIR__).'/tests/migrations'));
+        $files = $files->merge(File::files(dirname(__DIR__).'/tests/Migrations'));
 
         $files->each(function ($file) {
             $file = pathinfo($file);
