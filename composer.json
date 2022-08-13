@@ -1,0 +1,41 @@
+{
+    "name": "yorcreative/laravel-urlshortener",
+    "description": "A laravel url shortener package that provides internal url redirects with passwords, url expirations, open limits before expiration and click tracking out of the box.",
+    "type": "library",
+    "keywords": [
+        "laravel",
+        "framework",
+        "url",
+        "shortener",
+        "url shortener",
+        "laravel url shortener",
+        "laravel url"
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^8.1",
+        "ext-pdo_sqlite": "*",
+        "illuminate/contracts": "^9.0",
+        "stevebauman/location": "*"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.0",
+        "orchestra/testbench": "^7.0",
+        "phpunit/phpunit": "^9.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "YorCreative\\UrlShortener\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "YorCreative\\UrlShortener\\": "src/",
+            "YorCreative\\UrlShortener\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "lint": "vendor/bin/pint"
+    }
+}

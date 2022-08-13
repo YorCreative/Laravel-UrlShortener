@@ -1,0 +1,6 @@
+/docker/dbdata
+/vendor
+.env
+.phpunit.result.cache
+/.idea
+/.vscode
