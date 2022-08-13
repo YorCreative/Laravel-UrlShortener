@@ -15,7 +15,7 @@
     "require": {
         "php": "^8.0",
         "ext-pdo_sqlite": "*",
-        "illuminate/contracts": "^9.0",
+        "illuminate/contracts": "^8.0|^9.0",
         "stevebauman/location": "*"
     },
     "require-dev": {
