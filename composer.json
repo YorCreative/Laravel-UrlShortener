@@ -37,5 +37,12 @@
     "scripts": {
         "test": "vendor/bin/phpunit",
         "lint": "vendor/bin/pint"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "YorCreative\\UrlShortener\\UrlShortenerServiceProvider"
+            ]
+        }
     }
 }
