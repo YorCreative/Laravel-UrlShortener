@@ -10,6 +10,15 @@
 
 <h3 align="center">Laravel URL Shortener</h3>
 
+<div align="center">
+<a href="https://github.com/YorCreative/Laravel-UrlShortener/blob/main/LICENSE.md"><img alt="GitHub license" src="https://img.shields.io/github/license/YorCreative/Laravel-UrlShortener"></a>
+<a href="https://github.com/YorCreative/Laravel-UrlShortener/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/YorCreative/Laravel-UrlShortener"></a>
+<a href="https://github.com/YorCreative/Laravel-UrlShortener/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/YorCreative/Laravel-UrlShortener"></a>
+<a href="https://github.com/YorCreative/Laravel-UrlShortener/network"><img alt="GitHub forks" src="https://img.shields.io/github/forks/YorCreative/Laravel-UrlShortener"></a>
+<img alt="Packagist Downloads" src="https://img.shields.io/packagist/dt/YorCreative/Laravel-UrlShortener?color=green">
+<a href="https://github.com/YorCreative/Laravel-UrlShortener/actions/workflows/phpunit.yml"><img alt="PHPUnit" src="https://github.com/YorCreative/Laravel-UrlShortener/actions/workflows/phpunit.yml/badge.svg"></a>
+</div>
+
 A Laravel URL Shortener package that provides URL redirects with optional protected url passwords, url expirations, open
 limits before expiration, ability to set feature activation dates and click tracking out of the box for your Laravel
 applications.
