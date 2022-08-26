@@ -19,6 +19,7 @@
         "stevebauman/location": "*"
     },
     "require-dev": {
+        "vlucas/phpdotenv": "5.4.x-dev",
         "laravel/pint": "^1.0",
         "orchestra/testbench": "^7.0",
         "phpunit/phpunit": "^9.5"
