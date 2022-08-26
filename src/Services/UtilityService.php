@@ -31,12 +31,7 @@ class UtilityService
      */
     protected static function databaseEncryptionKey(): ?string
     {
-        $key = config('urlshortener.protection.cipher_key');
-        $key = is_null($key)
-            ? 'base64:44mfXzhGl4IiILZ8sRfzkOZ4b26m9ygXmTRYjOE9Ylk='
-            : $key;
-
-        return base64_decode(Str::after($key, 'base64:'));
+        return base64_decode(Str::after(env('APP_KEY'), 'base64:'));
     }
 
     /**

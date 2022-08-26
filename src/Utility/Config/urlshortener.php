@@ -24,7 +24,6 @@ return [
             'min' => 6,
             'max' => 32,
         ],
-        'cipher_key' => getenv('APP_KEY', 'base64:44mfXzhGl4IiILZ8sRfzkOZ4b26m9ygXmTRYjOE9Ylk='),
     ],
     'redirect' => [
         'code' => 307,
