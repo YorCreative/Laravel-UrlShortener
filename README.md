@@ -19,8 +19,8 @@
 <a href="https://github.com/YorCreative/Laravel-UrlShortener/actions/workflows/phpunit.yml"><img alt="PHPUnit" src="https://github.com/YorCreative/Laravel-UrlShortener/actions/workflows/phpunit.yml/badge.svg"></a>
 </div>
 
-A Laravel URL Shortener package that provides URL redirects with optional protected url passwords, url expirations, open
-limits before expiration, ability to set feature activation dates and click tracking out of the box for your Laravel
+A Laravel URL Shortener package that provides URL redirects with optionally protected URL password, URL expiration, open
+limits before expiration, ability to set feature activation dates, and click tracking out of the box for your Laravel
 applications.
 
 ## Installation
@@ -108,7 +108,7 @@ dd($clicks);
                 'plain_text' => ...,
                 'limit' => ...,
                 'created_at' => ...,
-                'updated_at' =>> ...
+                'updated_at' => ...
             ],
             'location' => [
                 'id' => ...,
