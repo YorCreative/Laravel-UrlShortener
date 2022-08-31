@@ -2,6 +2,7 @@
     "name": "yorcreative/laravel-urlshortener",
     "description": "A laravel url shortener package that provides internal url redirects with passwords, url expirations, open limits before expiration and click tracking out of the box.",
     "type": "library",
+    "license": "MIT",
     "keywords": [
         "laravel",
         "framework",
