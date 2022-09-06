@@ -62,6 +62,12 @@ $url = UrlService::shorten('something-extremely-long.com/even/longer?ref=with&so
         ->withOpenLimit(2)
         ->withOwnership(Model::find(1))
         ->withPassword('password')
+        ->withTracing([
+            'utm_id' => 't123',
+            'utm_campaign' => 'campaign_name',
+            'utm_source' => 'linkedin',
+            'utm_medium' => 'social',      
+        ])
         ->build();
 // http(s)://host/prefix/identifier;
 ```
@@ -107,6 +113,15 @@ dd($clicks);
                 'hashed' => ...,
                 'plain_text' => ...,
                 'limit' => ...,
+                'tracing' => [
+                    'id' => ...,
+                    'utm_id' => ...,
+                    'utm_source' => ...,
+                    'utm_medium' => ...,
+                    'utm_campaign' => ...,
+                    'utm_content' => ...,
+                    'utm_term' => ...,
+                ]
                 'created_at' => ...,
                 'updated_at' => ...
             ],
@@ -134,15 +149,6 @@ dd($clicks);
                 'name' => ...,
                 'alias' => ...,
             ],
-            'tracing' => [
-                'id' => ...,
-                'utm_id' => ...,
-                'utm_source' => ...,
-                'utm_medium' => ...,
-                'utm_campaign' => ...,
-                'utm_content' => ...,
-                'utm_term' => ...,
-]
         ]  
     ],
     'total' => 1
@@ -257,6 +263,19 @@ $clicks = ClickService::get([
     'offset' => 1500
 ]);
 ```
+
+## UTM Support
+
+When creating a Short URL, the following UTM parameters are available to attach to the Short URL for advanced tracking of your Short Urls.
+
+- utm_id
+- utm_campaign
+- utm_source
+- utm_medium
+- utm_content
+- utm_term
+
+UTM information is hidden in the Short URL identifier and clicks are filterable by UTM parameters.
 
 ## Testing
 
