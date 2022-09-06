@@ -3,7 +3,7 @@
 namespace YorCreative\UrlShortener\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use YorCreative\UrlShortener\Traits\PublishableHasFactory;
 
 class ShortUrlTracing extends Model
@@ -29,6 +29,7 @@ class ShortUrlTracing extends Model
      * @var string[]
      */
     protected $fillable = [
+        'short_url_id',
         'utm_id',
         'utm_source',
         'utm_medium',
@@ -44,10 +45,10 @@ class ShortUrlTracing extends Model
     ];
 
     /**
-     * @return HasMany
+     * @return BelongsTo
      */
-    public function clicks(): HasMany
+    public function shortUrl(): BelongsTo
     {
-        return $this->hasMany(ShortUrlClick::class, 'tracing_id', 'id');
+        return $this->belongsTo(ShortUrl::class, 'short_url_id', 'id');
     }
 }

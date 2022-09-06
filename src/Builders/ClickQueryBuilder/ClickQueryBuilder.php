@@ -15,10 +15,10 @@ class ClickQueryBuilder extends Builder
      */
     public function whereInTracingTerm(array $utm_terms): ClickQueryBuilder
     {
-        return $this->whereIn('tracing_id', function ($query) use ($utm_terms) {
+        return $this->whereIn('short_url_id', function ($query) use ($utm_terms) {
             $query->from('short_url_tracings');
             $query->whereIn('utm_term', $utm_terms);
-            $query->select('id');
+            $query->select('short_url_id');
         });
     }
 
@@ -28,10 +28,10 @@ class ClickQueryBuilder extends Builder
      */
     public function whereInTracingSource(array $utm_sources): ClickQueryBuilder
     {
-        return $this->whereIn('tracing_id', function ($query) use ($utm_sources) {
+        return $this->whereIn('short_url_id', function ($query) use ($utm_sources) {
             $query->from('short_url_tracings');
             $query->whereIn('utm_source', $utm_sources);
-            $query->select('id');
+            $query->select('short_url_id');
         });
     }
 
@@ -41,10 +41,10 @@ class ClickQueryBuilder extends Builder
      */
     public function whereInTracingMedium(array $utm_mediums): ClickQueryBuilder
     {
-        return $this->whereIn('tracing_id', function ($query) use ($utm_mediums) {
+        return $this->whereIn('short_url_id', function ($query) use ($utm_mediums) {
             $query->from('short_url_tracings');
             $query->whereIn('utm_medium', $utm_mediums);
-            $query->select('id');
+            $query->select('short_url_id');
         });
     }
 
@@ -54,10 +54,10 @@ class ClickQueryBuilder extends Builder
      */
     public function whereInTracingId(array $utm_ids): ClickQueryBuilder
     {
-        return $this->whereIn('tracing_id', function ($query) use ($utm_ids) {
+        return $this->whereIn('short_url_id', function ($query) use ($utm_ids) {
             $query->from('short_url_tracings');
             $query->whereIn('utm_id', $utm_ids);
-            $query->select('id');
+            $query->select('short_url_id');
         });
     }
 
@@ -67,10 +67,10 @@ class ClickQueryBuilder extends Builder
      */
     public function whereInTracingContent(array $utm_contents): ClickQueryBuilder
     {
-        return $this->whereIn('tracing_id', function ($query) use ($utm_contents) {
+        return $this->whereIn('short_url_id', function ($query) use ($utm_contents) {
             $query->from('short_url_tracings');
             $query->whereIn('utm_content', $utm_contents);
-            $query->select('id');
+            $query->select('short_url_id');
         });
     }
 
@@ -80,10 +80,10 @@ class ClickQueryBuilder extends Builder
      */
     public function whereInTracingCampaign(array $utm_campaigns): ClickQueryBuilder
     {
-        return $this->whereIn('tracing_id', function ($query) use ($utm_campaigns) {
+        return $this->whereIn('short_url_id', function ($query) use ($utm_campaigns) {
             $query->from('short_url_tracings');
             $query->whereIn('utm_campaign', $utm_campaigns);
-            $query->select('id');
+            $query->select('short_url_id');
         });
     }
 

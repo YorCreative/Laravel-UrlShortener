@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use YorCreative\UrlShortener\Models\ShortUrl;
+use YorCreative\UrlShortener\Repositories\TracingRepository;
 use YorCreative\UrlShortener\Services\UrlService;
 
 class TestCase extends \Orchestra\Testbench\TestCase
@@ -42,7 +43,15 @@ class TestCase extends \Orchestra\Testbench\TestCase
         $this->plain_text = $this->getPlainText();
         $this->hashed = md5($this->plain_text);
 
-        $this->url = UrlService::shorten($this->plain_text)->build();
+        $this->url = UrlService::shorten($this->plain_text)->withTracing([
+            TracingRepository::$ID => 'testing',
+            TracingRepository::$CAMPAIGN => 'testing',
+            TracingRepository::$SOURCE => 'testing',
+            TracingRepository::$MEDIUM => 'testing',
+            TracingRepository::$CONTENT => 'testing',
+            TracingRepository::$TERM => 'testing',
+        ])->build();
+
         $this->identifier = str_replace($this->base, '', $this->url);
 
         $this->shortUrl = UrlService::findByIdentifier($this->identifier);

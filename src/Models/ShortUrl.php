@@ -47,6 +47,14 @@ class ShortUrl extends Model
     ];
 
     /**
+     * @return HasOne
+     */
+    public function tracing(): HasOne
+    {
+        return $this->hasOne(ShortUrlTracing::class, 'short_url_id', 'id');
+    }
+
+    /**
      * @return bool
      */
     public function hasPassword(): bool

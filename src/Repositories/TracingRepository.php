@@ -40,19 +40,15 @@ class TracingRepository
     public static string $TERM = 'utm_term';
 
     /**
-     * @param  Request  $request
-     * @return int|null
+     * @param  array  $trace
+     * @return void
      *
      * @throws TracingRepositoryException
      */
-    public static function create(Request $request): ?int
+    public static function create(array $trace): void
     {
-        if (! self::hasTracing($request)) {
-            return null;
-        }
-
         try {
-            return ShortUrlTracing::create($request->only(self::getAllowedParameters()))->id;
+            ShortUrlTracing::create($trace);
         } catch (Exception $exception) {
             throw new TracingRepositoryException($exception->getMessage());
         }

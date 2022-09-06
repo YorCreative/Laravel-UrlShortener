@@ -6,6 +6,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\Request;
 use ReflectionClass;
 use ReflectionException;
+use YorCreative\UrlShortener\Models\ShortUrl;
 use YorCreative\UrlShortener\Repositories\TracingRepository;
 use YorCreative\UrlShortener\Tests\TestCase;
 
@@ -84,6 +85,7 @@ class TracingRepositoryTest extends TestCase
     public function it_can_create_a_trace_record()
     {
         $utm_query = [
+            'short_url_id' => ShortUrl::factory()->create()->id,
             TracingRepository::$ID => '1234',
             TracingRepository::$CAMPAIGN => 'buffer',
             TracingRepository::$SOURCE => 'linkedin',
@@ -93,7 +95,7 @@ class TracingRepositoryTest extends TestCase
             TracingRepository::$CONTENT => 'xyz',
         ];
 
-        TracingRepository::create($this->buildRequestForTest($utm_query));
+        TracingRepository::create($utm_query);
 
         $this->assertDatabaseHas('short_url_tracings', $utm_query);
     }

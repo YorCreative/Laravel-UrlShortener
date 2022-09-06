@@ -3,7 +3,6 @@
 namespace YorCreative\UrlShortener\Services;
 
 use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Throwable;
 use YorCreative\UrlShortener\Builders\ClickQueryBuilder\ClickQueryBuilder;
@@ -12,7 +11,6 @@ use YorCreative\UrlShortener\Exceptions\FilterClicksStrategyException;
 use YorCreative\UrlShortener\Models\ShortUrlClick;
 use YorCreative\UrlShortener\Repositories\ClickRepository;
 use YorCreative\UrlShortener\Repositories\LocationRepository;
-use YorCreative\UrlShortener\Repositories\TracingRepository;
 use YorCreative\UrlShortener\Repositories\UrlRepository;
 use YorCreative\UrlShortener\Strategies\FilterClicks\FilterClicksStrategy;
 use YorCreative\UrlShortener\Strategies\FilterClicks\Filters\BatchFilter;
@@ -63,24 +61,24 @@ class ClickService
     public static int $FAILURE_ACTIVATION = 6;
 
     /**
-     * @param  Request  $request
+     * @param  string  $identifier
+     * @param  string  $request_ip
      * @param  int  $outcome_id
      * @param  bool  $test
      *
      * @throws ClickServiceException
      */
-    public static function track(Request $request, int $outcome_id, bool $test = false): void
+    public static function track(string $identifier, string $request_ip, int $outcome_id, bool $test = false): void
     {
         try {
             ClickRepository::createClick(
-                UrlRepository::findByIdentifier($request->get('identifier'))->id,
+                UrlRepository::findByIdentifier($identifier)->id,
                 LocationRepository::findOrCreateLocationRecord(
                     ! $test
-                        ? LocationRepository::getLocationFrom($request->ip())
-                        : LocationRepository::locationUnknown($request->ip())
+                        ? LocationRepository::getLocationFrom($request_ip)
+                        : LocationRepository::locationUnknown($request_ip)
                 )->id,
-                $outcome_id,
-                TracingRepository::create($request)
+                $outcome_id
             );
         } catch (Exception $exception) {
             throw new ClickServiceException($exception->getMessage());

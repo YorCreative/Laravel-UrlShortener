@@ -14,8 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('short_url_tracings', function (Blueprint $table) {
-            $table->id();
-
+            $table->id('short_url_id');
             $table->string('utm_id')->nullable()->index();
             $table->string('utm_source')->nullable()->index();
             $table->string('utm_medium')->nullable()->index();

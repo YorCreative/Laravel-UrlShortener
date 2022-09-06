@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use YorCreative\UrlShortener\Models\ShortUrl;
 use YorCreative\UrlShortener\Models\ShortUrlClick;
 use YorCreative\UrlShortener\Models\ShortUrlLocation;
-use YorCreative\UrlShortener\Models\ShortUrlTracing;
 use YorCreative\UrlShortener\Services\ClickService;
 
 /**
@@ -27,7 +26,6 @@ class ShortUrlClickFactory extends Factory
             'short_url_id' => ShortUrl::factory(),
             'location_id' => ShortUrlLocation::factory(),
             'outcome_id' => ClickService::$SUCCESS_ROUTED,
-            'tracing_id' => ShortUrlTracing::factory(),
         ];
     }
 }

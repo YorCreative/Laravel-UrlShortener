@@ -3,6 +3,7 @@
 namespace YorCreative\UrlShortener\Tests\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use YorCreative\UrlShortener\Models\ShortUrl;
 use YorCreative\UrlShortener\Models\ShortUrlTracing;
 
 /**
@@ -20,6 +21,7 @@ class ShortUrlTracingFactory extends Factory
     public function definition()
     {
         return [
+            'short_url_id' => ShortUrl::factory(),
             'utm_id' => $this->faker->uuid,
             'utm_source' => 'linkedin',
             'utm_medium' => 'social',

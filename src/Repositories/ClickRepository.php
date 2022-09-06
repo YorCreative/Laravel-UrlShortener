@@ -33,18 +33,16 @@ class ClickRepository
      * @param  int  $short_url_id
      * @param  int  $location_id
      * @param  int  $outcome_id
-     * @param  int|null  $tracing_id
      *
      * @throws UrlRepositoryException
      */
-    public static function createClick(int $short_url_id, int $location_id, int $outcome_id, ?int $tracing_id): void
+    public static function createClick(int $short_url_id, int $location_id, int $outcome_id): void
     {
         try {
             ShortUrlClick::create([
                 'short_url_id' => $short_url_id,
                 'location_id' => $location_id,
                 'outcome_id' => $outcome_id,
-                'tracing_id' => $tracing_id,
             ]);
         } catch (Exception $exception) {
             throw new UrlRepositoryException($exception->getMessage());
@@ -83,6 +81,6 @@ class ClickRepository
      */
     public static function defaultWithRelations(): array
     {
-        return ['location', 'outcome', 'shortUrl', 'tracing'];
+        return ['location', 'outcome', 'shortUrl.tracing'];
     }
 }

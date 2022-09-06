@@ -6,7 +6,6 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Throwable;
 use YorCreative\UrlShortener\Exceptions\UrlRepositoryException;
 use YorCreative\UrlShortener\Models\ShortUrlClick;
-use YorCreative\UrlShortener\Models\ShortUrlTracing;
 use YorCreative\UrlShortener\Services\ClickService;
 use YorCreative\UrlShortener\Services\UrlService;
 use YorCreative\UrlShortener\Tests\TestCase;
@@ -48,7 +47,7 @@ class ShortUrlClickTest extends TestCase
         $this->assertArrayHasKey('location', $filteredClicks['results'][0]);
         $this->assertArrayHasKey('outcome', $filteredClicks['results'][0]);
         $this->assertArrayHasKey('short_url', $filteredClicks['results'][0]);
-        $this->assertArrayHasKey('tracing', $filteredClicks['results'][0]);
+        $this->assertArrayHasKey('tracing', $filteredClicks['results'][0]['short_url']);
 
         $this->assertTrue(ClickService::$SUCCESS_ROUTED == $filteredClicks['results'][0]['outcome']['id']);
 
@@ -58,7 +57,6 @@ class ShortUrlClickTest extends TestCase
                 'short_url_id' => $filteredClicks['results'][0]['short_url']['id'],
                 'location_id' => $filteredClicks['results'][0]['location']['id'],
                 'outcome_id' => ClickService::$SUCCESS_ROUTED,
-                'tracing_id' => $filteredClicks['results'][0]['tracing']['id'],
             ]
         );
     }
@@ -72,22 +70,10 @@ class ShortUrlClickTest extends TestCase
      */
     public function it_can_successfully_routed_clicks_while_filtering_for_utm_source()
     {
-        // 3 successful routed from linkedin
-        ShortUrlClick::factory()->count(3)->create([
+        // 3 successful routed
+        ShortUrlClick::factory()->count(5)->create([
             'short_url_id' => UrlService::findByIdentifier($this->identifier)->id,
             'outcome_id' => ClickService::$SUCCESS_ROUTED,
-            'tracing_id' => ShortUrlTracing::factory()->create([
-                'utm_source' => 'linkedin',
-            ]),
-        ]);
-
-        // 2 successful routed from something
-        ShortUrlClick::factory()->count(3)->create([
-            'short_url_id' => UrlService::findByIdentifier($this->identifier)->id,
-            'outcome_id' => ClickService::$SUCCESS_ROUTED,
-            'tracing_id' => ShortUrlTracing::factory()->create([
-                'utm_source' => 'something',
-            ]),
         ]);
 
         // 5 successful protected
@@ -102,16 +88,16 @@ class ShortUrlClickTest extends TestCase
                 ClickService::$SUCCESS_ROUTED,
             ],
             'utm_source' => [
-                'linkedin',
+                'testing',
             ],
         ])->toArray();
 
-        $this->assertCount(3, $filteredClicks['results']);
+        $this->assertCount(5, $filteredClicks['results']);
 
         $this->assertArrayHasKey('location', $filteredClicks['results'][0]);
         $this->assertArrayHasKey('outcome', $filteredClicks['results'][0]);
         $this->assertArrayHasKey('short_url', $filteredClicks['results'][0]);
-        $this->assertArrayHasKey('tracing', $filteredClicks['results'][0]);
+        $this->assertArrayHasKey('tracing', $filteredClicks['results'][0]['short_url']);
 
         $this->assertTrue(ClickService::$SUCCESS_ROUTED == $filteredClicks['results'][0]['outcome']['id']);
 
@@ -121,7 +107,6 @@ class ShortUrlClickTest extends TestCase
                 'short_url_id' => $filteredClicks['results'][0]['short_url']['id'],
                 'location_id' => $filteredClicks['results'][0]['location']['id'],
                 'outcome_id' => ClickService::$SUCCESS_ROUTED,
-                'tracing_id' => $filteredClicks['results'][0]['tracing']['id'],
             ]
         );
     }
