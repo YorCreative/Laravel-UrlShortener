@@ -133,7 +133,16 @@ dd($clicks);
                 'id' => ...,
                 'name' => ...,
                 'alias' => ...,
-            ]
+            ],
+            'tracing' => [
+                'id' => ...,
+                'utm_id' => ...,
+                'utm_source' => ...,
+                'utm_medium' => ...,
+                'utm_campaign' => ...,
+                'utm_content' => ...,
+                'utm_term' => ...,
+]
         ]  
     ],
     'total' => 1
@@ -185,6 +194,35 @@ $clicks = ClickService::get([
          'xyz',
          'yxz'
     ]
+]);
+```
+
+Filtered Clicks by UTM parameter(s). These Can be filtered together or individually.
+```php
+$clicks = ClickService::get([
+    'utm_id' => [
+         'xyz',
+         'yxz'
+    ],
+    'utm_source' => [
+         'linkedin',
+         'facebook'
+    ],
+    'utm_medium' => [
+         'social'
+    ],
+    'utm_campaign' => [
+         'sponsored',
+         'affiliate'
+    ],
+    'utm_content' => [
+         'xyz',
+         'yxz'
+    ],
+    'utm_term' => [
+         'marketing+software',
+         'short+url'
+    ],
 ]);
 ```
 
