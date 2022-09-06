@@ -20,11 +20,10 @@ class ClickServiceTest extends TestCase
      */
     public function it_can_can_track_a_click()
     {
-        $ip = '0.0.0.0';
+        $ip = '127.0.0.1';
 
         ClickService::track(
-            $this->identifier,
-            $ip,
+            $this->buildClickRequest(),
             ClickService::$SUCCESS_ROUTED,
             true
         );
@@ -55,11 +54,8 @@ class ClickServiceTest extends TestCase
      */
     public function it_can_get_basic_scoped_clicks_for_short_url()
     {
-        $ip = '0.0.0.0';
-
         ClickService::track(
-            $this->identifier,
-            $ip,
+            $this->buildClickRequest(),
             ClickService::$SUCCESS_ROUTED,
             true
         );
@@ -80,6 +76,7 @@ class ClickServiceTest extends TestCase
         $this->assertArrayHasKey('id', $click);
         $this->assertArrayHasKey('location', $click);
         $this->assertArrayHasKey('outcome', $click);
+        $this->assertArrayHasKey('tracing', $click);
         $this->assertArrayHasKey('created_at', $click);
         $this->assertArrayHasKey('short_url', $click);
     }

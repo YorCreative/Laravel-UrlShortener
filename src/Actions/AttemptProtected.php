@@ -2,9 +2,12 @@
 
 namespace YorCreative\UrlShortener\Actions;
 
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use YorCreative\UrlShortener\Exceptions\ClickServiceException;
 use YorCreative\UrlShortener\Exceptions\UrlRepositoryException;
+use YorCreative\UrlShortener\Exceptions\UrlServiceException;
 use YorCreative\UrlShortener\Services\ClickService;
 use YorCreative\UrlShortener\Services\UrlService;
 use YorCreative\UrlShortener\Services\UtilityService;
@@ -12,7 +15,12 @@ use YorCreative\UrlShortener\Services\UtilityService;
 class AttemptProtected extends Controller
 {
     /**
+     * @param  Request  $request
+     * @return RedirectResponse
+     *
      * @throws UrlRepositoryException
+     * @throws ClickServiceException
+     * @throws UrlServiceException
      */
     public function __invoke(Request $request)
     {
@@ -32,8 +40,7 @@ class AttemptProtected extends Controller
              * Record the click and abort.
              */
             ClickService::track(
-                $request->input('identifier'),
-                $request->ip(),
+                $request,
                 ClickService::$FAILURE_PROTECTED
             );
 
@@ -45,8 +52,7 @@ class AttemptProtected extends Controller
          * Record the click and route yor short url.
          */
         ClickService::track(
-            $request->input('identifier'),
-            $request->ip(),
+            $request,
             ClickService::$SUCCESS_ROUTED
         );
 

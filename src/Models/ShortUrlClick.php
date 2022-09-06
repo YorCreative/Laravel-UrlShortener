@@ -35,6 +35,7 @@ class ShortUrlClick extends Model
         'short_url_id',
         'location_id',
         'outcome_id',
+        'tracing_id',
     ];
 
     protected $hidden = [
@@ -43,6 +44,7 @@ class ShortUrlClick extends Model
         'short_url_id',
         'location_id',
         'outcome_id',
+        'tracing_id',
     ];
 
     /**
@@ -67,6 +69,14 @@ class ShortUrlClick extends Model
     public function outcome(): HasOne
     {
         return $this->hasOne(ShortUrlOutcome::class, 'id', 'outcome_id');
+    }
+
+    /**
+     * @return HasOne
+     */
+    public function tracing(): HasOne
+    {
+        return $this->hasOne(ShortUrlTracing::class, 'id', 'tracing_id');
     }
 
     /**

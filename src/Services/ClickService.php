@@ -3,6 +3,7 @@
 namespace YorCreative\UrlShortener\Services;
 
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Throwable;
 use YorCreative\UrlShortener\Builders\ClickQueryBuilder\ClickQueryBuilder;
@@ -11,6 +12,7 @@ use YorCreative\UrlShortener\Exceptions\FilterClicksStrategyException;
 use YorCreative\UrlShortener\Models\ShortUrlClick;
 use YorCreative\UrlShortener\Repositories\ClickRepository;
 use YorCreative\UrlShortener\Repositories\LocationRepository;
+use YorCreative\UrlShortener\Repositories\TracingRepository;
 use YorCreative\UrlShortener\Repositories\UrlRepository;
 use YorCreative\UrlShortener\Strategies\FilterClicks\FilterClicksStrategy;
 use YorCreative\UrlShortener\Strategies\FilterClicks\Filters\BatchFilter;
@@ -18,6 +20,12 @@ use YorCreative\UrlShortener\Strategies\FilterClicks\Filters\IdentifierFilter;
 use YorCreative\UrlShortener\Strategies\FilterClicks\Filters\OutcomeFilter;
 use YorCreative\UrlShortener\Strategies\FilterClicks\Filters\OwnershipFilter;
 use YorCreative\UrlShortener\Strategies\FilterClicks\Filters\StatusFilter;
+use YorCreative\UrlShortener\Strategies\FilterClicks\Filters\TracingCampaignFilter;
+use YorCreative\UrlShortener\Strategies\FilterClicks\Filters\TracingContentFilter;
+use YorCreative\UrlShortener\Strategies\FilterClicks\Filters\TracingIdFilter;
+use YorCreative\UrlShortener\Strategies\FilterClicks\Filters\TracingMediumFilter;
+use YorCreative\UrlShortener\Strategies\FilterClicks\Filters\TracingSourceFilter;
+use YorCreative\UrlShortener\Strategies\FilterClicks\Filters\TracingTermFilter;
 use YorCreative\UrlShortener\Traits\ShortUrlHelper;
 
 class ClickService
@@ -55,24 +63,24 @@ class ClickService
     public static int $FAILURE_ACTIVATION = 6;
 
     /**
-     * @param  string  $identifier
-     * @param  string  $request_ip
+     * @param  Request  $request
      * @param  int  $outcome_id
      * @param  bool  $test
      *
      * @throws ClickServiceException
      */
-    public static function track(string $identifier, string $request_ip, int $outcome_id, bool $test = false): void
+    public static function track(Request $request, int $outcome_id, bool $test = false): void
     {
         try {
             ClickRepository::createClick(
-                UrlRepository::findByIdentifier($identifier)->id,
+                UrlRepository::findByIdentifier($request->get('identifier'))->id,
                 LocationRepository::findOrCreateLocationRecord(
                     ! $test
-                        ? LocationRepository::getLocationFrom($request_ip)
-                        : LocationRepository::locationUnknown($request_ip)
+                        ? LocationRepository::getLocationFrom($request->ip())
+                        : LocationRepository::locationUnknown($request->ip())
                 )->id,
-                $outcome_id
+                $outcome_id,
+                TracingRepository::create($request)
             );
         } catch (Exception $exception) {
             throw new ClickServiceException($exception->getMessage());
@@ -137,6 +145,12 @@ class ClickService
             new IdentifierFilter(),
             new StatusFilter(),
             new OwnershipFilter(),
+            new TracingIdFilter(),
+            new TracingCampaignFilter(),
+            new TracingSourceFilter(),
+            new TracingMediumFilter(),
+            new TracingContentFilter(),
+            new TracingTermFilter(),
         ]);
     }
 }

@@ -55,6 +55,19 @@ class TestCase extends \Orchestra\Testbench\TestCase
     }
 
     /**
+     * @param  array  $query
+     * @return Request
+     */
+    public function buildClickRequest(array $query = []): Request
+    {
+        $query = array_merge($query, [
+            'identifier' => $this->identifier,
+        ]);
+
+        return Request::create('xyz.com/xyz', 'GET', $query);
+    }
+
+    /**
      * @return string
      */
     public function getPlainText(): string

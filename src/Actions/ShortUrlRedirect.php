@@ -14,7 +14,7 @@ use YorCreative\UrlShortener\Services\UtilityService;
 
 class ShortUrlRedirect extends Controller
 {
-    protected string $identifier;
+    protected Request $request;
 
     protected ?ShortUrl $shortUrl;
 
@@ -24,11 +24,13 @@ class ShortUrlRedirect extends Controller
      */
     public function __invoke(Request $request, string $identifier)
     {
-        $this->identifier = $identifier;
+        $request->add(['identifier' => $identifier]);
+        $this->request = $request;
+
         /**
          * Get Short URL Identifier & Validate
          */
-        if (! $this->shortUrl = UrlService::findByIdentifier($this->identifier)) {
+        if (! $this->shortUrl = UrlService::findByIdentifier($this->request->get('identifier'))) {
             /**
              * ShortUrl Identifier does not exists
              */
@@ -62,13 +64,12 @@ class ShortUrlRedirect extends Controller
              * Record the click and render the protected view.
              */
             ClickService::track(
-                $this->identifier,
-                request()->ip(),
+                $this->request,
                 ClickService::$SUCCESS_PROTECTED
             );
 
             return view('yorcreative.urlshortener.protected', [
-                'identifier' => $this->identifier,
+                'identifier' => $this->request->get('identifier'),
             ]);
         }
 
@@ -77,8 +78,7 @@ class ShortUrlRedirect extends Controller
          * Record the click and route away.
          */
         ClickService::track(
-            $identifier,
-            $request->ip(),
+            $this->request,
             ClickService::$SUCCESS_ROUTED
         );
 
@@ -105,8 +105,7 @@ class ShortUrlRedirect extends Controller
              * Record the click and abort.
              */
             ClickService::track(
-                $this->identifier,
-                request()->ip(),
+                $this->request,
                 ClickService::$FAILURE_ACTIVATION
             );
 
@@ -127,8 +126,7 @@ class ShortUrlRedirect extends Controller
              * Record the click and abort.
              */
             ClickService::track(
-                $this->identifier,
-                request()->ip(),
+                $this->request,
                 ClickService::$FAILURE_EXPIRATION
             );
 
@@ -152,8 +150,7 @@ class ShortUrlRedirect extends Controller
              * Record the click and abort.
              */
             ClickService::track(
-                $this->identifier,
-                request()->ip(),
+                $this->request,
                 ClickService::$FAILURE_LIMIT
             );
 

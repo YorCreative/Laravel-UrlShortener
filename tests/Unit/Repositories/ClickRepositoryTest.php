@@ -18,14 +18,13 @@ class ClickRepositoryTest extends TestCase
     public function it_can_find_a_click_by_its_id()
     {
         ClickService::track(
-            $this->identifier,
-            '0.0.0.0',
+            $this->buildClickRequest(),
             ClickService::$SUCCESS_ROUTED,
             true
         );
 
         $this->assertEquals(
-            '0.0.0.0',
+            '127.0.0.1',
             ClickRepository::findById(1)->toArray()['location']['ip']
         );
     }
@@ -39,7 +38,8 @@ class ClickRepositoryTest extends TestCase
         ClickRepository::createClick(
             $this->shortUrl->id,
             1,
-            ClickService::$FAILURE_ACTIVATION
+            ClickService::$FAILURE_ACTIVATION,
+            1
         );
 
         $this->assertDatabaseHas(
@@ -48,6 +48,7 @@ class ClickRepositoryTest extends TestCase
                 'short_url_id' => $this->shortUrl->id,
                 'location_id' => 1,
                 'outcome_id' => ClickService::$FAILURE_ACTIVATION,
+                'tracing_id' => 1,
             ]
         );
     }
@@ -59,7 +60,7 @@ class ClickRepositoryTest extends TestCase
     public function it_can_get_correct_with_default_relations()
     {
         $this->assertEquals([
-            'location', 'outcome', 'shortUrl',
+            'location', 'outcome', 'shortUrl', 'tracing',
         ], ClickRepository::defaultWithRelations());
     }
 }
