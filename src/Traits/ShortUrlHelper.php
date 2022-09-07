@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Throwable;
 use YorCreative\UrlShortener\Exceptions\UrlServiceException;
-use YorCreative\UrlShortener\Repositories\TracingRepository;
 use YorCreative\UrlShortener\Repositories\UrlRepository;
 
 trait ShortUrlHelper
@@ -41,14 +40,42 @@ trait ShortUrlHelper
             'identifiers.*' => [
                 'string',
             ],
-            'tracing' => ['array'],
-            'tracing.*' => ['string', 'max:155', function ($attribute, $value, $fail) {
-                if (! in_array($attribute, TracingRepository::getAllowedParameters())) {
-                    return $fail('UTM field '.$attribute.' provided is not valid');
-                }
-
-                return true;
-            }],
+            'utm_id' => [
+                'array',
+            ],
+            'utm_id.*' => [
+                'string',
+            ],
+            'utm_campaign' => [
+                'array',
+            ],
+            'utm_campaign.*' => [
+                'string',
+            ],
+            'utm_source' => [
+                'array',
+            ],
+            'utm_source.*' => [
+                'string',
+            ],
+            'utm_medium' => [
+                'array',
+            ],
+            'utm_medium.*' => [
+                'string',
+            ],
+            'utm_context' => [
+                'array',
+            ],
+            'utm_context.*' => [
+                'string',
+            ],
+            'utm_term' => [
+                'array',
+            ],
+            'utm_term.*' => [
+                'string',
+            ],
         ], [
             'outcome.*.in' => 'Invalid outcome id provided.',
         ]);
