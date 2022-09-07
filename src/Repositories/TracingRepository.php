@@ -85,4 +85,27 @@ class TracingRepository
     {
         return self::allowedParameters();
     }
+
+    /**
+     * @param array $utm_input_array
+     * @return array
+     */
+    public static function sanitizeUtmArray(array $utm_input_array): array
+    {
+        $allowed_utm_parameters = array_intersect(
+            array_keys($utm_input_array),
+            TracingRepository::getAllowedParameters()
+        );
+
+        $sanitized_utm_combination = [];
+
+        foreach ($allowed_utm_parameters as $parameter) {
+            $sanitized_utm_combination = array_merge(
+                $sanitized_utm_combination,
+                [$parameter => $utm_input_array[$parameter]]
+            );
+        }
+
+        return $sanitized_utm_combination;
+    }
 }

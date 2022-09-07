@@ -3,9 +3,11 @@
 namespace YorCreative\UrlShortener\Repositories;
 
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
 use YorCreative\UrlShortener\Exceptions\UrlRepositoryException;
 use YorCreative\UrlShortener\Models\ShortUrl;
 use YorCreative\UrlShortener\Models\ShortUrlOwnership;
+use YorCreative\UrlShortener\Services\UrlService;
 
 class UrlRepository
 {
@@ -42,7 +44,7 @@ class UrlRepository
         try {
             return ShortUrl::where(
                 'hashed', $hash
-            )->firstOrFail();
+            )->with(self::defaultWithRelationship())->firstOrFail();
         } catch (Exception $exception) {
             throw new UrlRepositoryException($exception->getMessage());
         }
@@ -59,7 +61,7 @@ class UrlRepository
         try {
             return ShortUrl::where(
                 'plain_text', $plain_text
-            )->firstOrFail();
+            )->with(self::defaultWithRelationship())->firstOrFail();
         } catch (Exception $exception) {
             throw new UrlRepositoryException($exception->getMessage());
         }
@@ -115,7 +117,7 @@ class UrlRepository
     }
 
     /**
-     * @param  string  $shortUrl
+     * @param string $identifier
      * @return ShortUrl
      *
      * @throws UrlRepositoryException
@@ -125,9 +127,40 @@ class UrlRepository
         try {
             return ShortUrl::where(
                 'identifier', $identifier
-            )->firstOrFail();
+            )->with(self::defaultWithRelationship())->firstOrFail();
         } catch (Exception $exception) {
-            throw new UrlRepositoryException('Unable to find short url identifier: '.$identifier);
+            throw new UrlRepositoryException('Unable to find short url identifier: ' . $identifier);
         }
+    }
+
+    /**
+     * @param array $utm_combination
+     * @return Collection
+     * @throws UrlRepositoryException
+     */
+    public static function findByUtmCombination(array $utm_combination): Collection
+    {
+        try {
+            // filter out any utm parameters not allowed into the query.
+            $sanitized_utm_combination = TracingRepository::sanitizeUtmArray($utm_combination);
+
+            return ShortUrl::whereIn('id', function ($query) use ($sanitized_utm_combination) {
+                $query->from('short_url_tracings');
+                $query->where($sanitized_utm_combination);
+                $query->select('short_url_id');
+            })->with(self::defaultWithRelationship())->get();
+        } catch (Exception $exception) {
+            throw new UrlRepositoryException($exception->getMessage());
+        }
+    }
+
+    /**
+     * @return string[]
+     */
+    public static function defaultWithRelationship(): array
+    {
+        return [
+            'ownership', 'clicks.location', 'clicks.outcome', 'tracing',
+        ];
     }
 }

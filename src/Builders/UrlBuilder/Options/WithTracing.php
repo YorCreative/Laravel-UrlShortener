@@ -19,11 +19,8 @@ class WithTracing implements UrlBuilderOptionInterface
      */
     public function resolve(Collection &$shortUrlCollection): void
     {
-        $utm_parameters = $shortUrlCollection->get('utm_parameters');
-
-        $allowed_utm_parameters = array_intersect(
-            array_keys($utm_parameters),
-            TracingRepository::getAllowedParameters()
+        $sanitizedUtmParameters = TracingRepository::sanitizeUtmArray(
+            $shortUrlCollection->get('utm_parameters')
         );
 
         $trace = [
@@ -32,9 +29,7 @@ class WithTracing implements UrlBuilderOptionInterface
             )->id,
         ];
 
-        foreach ($allowed_utm_parameters as $parameter) {
-            $trace = array_merge($trace, [$parameter => $utm_parameters[$parameter]]);
-        }
+        $trace = array_merge($trace, $sanitizedUtmParameters);
 
         TracingRepository::create($trace);
     }

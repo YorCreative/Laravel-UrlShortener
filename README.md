@@ -75,25 +75,43 @@ $url = UrlService::shorten('something-extremely-long.com/even/longer?ref=with&so
 Finding Existing Short Urls
 
 ```php
-
 /**
  * Find a Short URL by its identifier 
  */
 $shortUrl = UrlService::findByIdentifier('identifier');
+// returns instance of ShortUrl Model.
+
 
 /**
  * Find a Short URL by its hashed signature
  */
 $shortUrl = UrlService::findByHash(md5('long_url'));
+// returns instance of ShortUrl Model.
+
 
 /**
  * Find a Short URL by its plain text long url string 
  */
 $shortUrl = UrlService::findByPlainText('long_url');
+// returns instance of ShortUrl Model. 
 
 /**
- * Will return an instance of Models/ShortUrl or throw UrlRepository('Unable to locate Short URL')
+ * Find shortUrls by UTM combinations.
+ * 
+ * Note* This method only accepts the following array fields:
+ *  - utm_id
+ *  - utm_campaign
+ *  - utm_source
+ *  - utm_medium
+ *  - utm_content
+ *  - utm_term
  */
+$shortUrlCollection = UrlService::findByUtmCombination([
+    'utm_campaign' => 'alpha',
+    'utm_source' => 'bravo',
+    'utm_medium' => 'testing'
+])
+// returns an instance of Eloquent Collection of ShortUrl Models.
 ```
 
 Getting Click Information
@@ -258,7 +276,13 @@ $clicks = ClickService::get([
     ],
     'status' => [
         'active'
-    ],       
+    ],    
+    'utm_campaign' => [
+        'awareness'
+    ],      
+    'utm_source' => [
+        'github'
+    ],
     'limit' => 500
     'offset' => 1500
 ]);
