@@ -41,6 +41,10 @@ Run migrations.
 php artisan migrate
 ```
 
+## Upgrade Guides
+
+[Upgrading to v2.x from v1.x](https://github.com/YorCreative/Laravel-UrlShortener/wiki/Upgrading-to-2.x-from-1.x)
+
 ## Usage
 
 Building Short Urls
