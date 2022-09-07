@@ -40,6 +40,42 @@ trait ShortUrlHelper
             'identifiers.*' => [
                 'string',
             ],
+            'utm_id' => [
+                'array',
+            ],
+            'utm_id.*' => [
+                'string',
+            ],
+            'utm_campaign' => [
+                'array',
+            ],
+            'utm_campaign.*' => [
+                'string',
+            ],
+            'utm_source' => [
+                'array',
+            ],
+            'utm_source.*' => [
+                'string',
+            ],
+            'utm_medium' => [
+                'array',
+            ],
+            'utm_medium.*' => [
+                'string',
+            ],
+            'utm_context' => [
+                'array',
+            ],
+            'utm_context.*' => [
+                'string',
+            ],
+            'utm_term' => [
+                'array',
+            ],
+            'utm_term.*' => [
+                'string',
+            ],
         ], [
             'outcome.*.in' => 'Invalid outcome id provided.',
         ]);

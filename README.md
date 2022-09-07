@@ -62,6 +62,12 @@ $url = UrlService::shorten('something-extremely-long.com/even/longer?ref=with&so
         ->withOpenLimit(2)
         ->withOwnership(Model::find(1))
         ->withPassword('password')
+        ->withTracing([
+            'utm_id' => 't123',
+            'utm_campaign' => 'campaign_name',
+            'utm_source' => 'linkedin',
+            'utm_medium' => 'social',      
+        ])
         ->build();
 // http(s)://host/prefix/identifier;
 ```
@@ -69,25 +75,43 @@ $url = UrlService::shorten('something-extremely-long.com/even/longer?ref=with&so
 Finding Existing Short Urls
 
 ```php
-
 /**
  * Find a Short URL by its identifier 
  */
 $shortUrl = UrlService::findByIdentifier('identifier');
+// returns instance of ShortUrl Model.
+
 
 /**
  * Find a Short URL by its hashed signature
  */
 $shortUrl = UrlService::findByHash(md5('long_url'));
+// returns instance of ShortUrl Model.
+
 
 /**
  * Find a Short URL by its plain text long url string 
  */
 $shortUrl = UrlService::findByPlainText('long_url');
+// returns instance of ShortUrl Model. 
 
 /**
- * Will return an instance of Models/ShortUrl or throw UrlRepository('Unable to locate Short URL')
+ * Find shortUrls by UTM combinations.
+ * 
+ * Note* This method only accepts the following array fields:
+ *  - utm_id
+ *  - utm_campaign
+ *  - utm_source
+ *  - utm_medium
+ *  - utm_content
+ *  - utm_term
  */
+$shortUrlCollection = UrlService::findByUtmCombination([
+    'utm_campaign' => 'alpha',
+    'utm_source' => 'bravo',
+    'utm_medium' => 'testing'
+])
+// returns an instance of Eloquent Collection of ShortUrl Models.
 ```
 
 Getting Click Information
@@ -107,6 +131,15 @@ dd($clicks);
                 'hashed' => ...,
                 'plain_text' => ...,
                 'limit' => ...,
+                'tracing' => [
+                    'id' => ...,
+                    'utm_id' => ...,
+                    'utm_source' => ...,
+                    'utm_medium' => ...,
+                    'utm_campaign' => ...,
+                    'utm_content' => ...,
+                    'utm_term' => ...,
+                ]
                 'created_at' => ...,
                 'updated_at' => ...
             ],
@@ -133,7 +166,7 @@ dd($clicks);
                 'id' => ...,
                 'name' => ...,
                 'alias' => ...,
-            ]
+            ],
         ]  
     ],
     'total' => 1
@@ -188,6 +221,35 @@ $clicks = ClickService::get([
 ]);
 ```
 
+Filtered Clicks by UTM parameter(s). These Can be filtered together or individually.
+```php
+$clicks = ClickService::get([
+    'utm_id' => [
+         'xyz',
+         'yxz'
+    ],
+    'utm_source' => [
+         'linkedin',
+         'facebook'
+    ],
+    'utm_medium' => [
+         'social'
+    ],
+    'utm_campaign' => [
+         'sponsored',
+         'affiliate'
+    ],
+    'utm_content' => [
+         'xyz',
+         'yxz'
+    ],
+    'utm_term' => [
+         'marketing+software',
+         'short+url'
+    ],
+]);
+```
+
 Iterate Through Results With Batches
 
 ```php
@@ -214,11 +276,30 @@ $clicks = ClickService::get([
     ],
     'status' => [
         'active'
-    ],       
+    ],    
+    'utm_campaign' => [
+        'awareness'
+    ],      
+    'utm_source' => [
+        'github'
+    ],
     'limit' => 500
     'offset' => 1500
 ]);
 ```
+
+## UTM Support
+
+When creating a Short URL, the following UTM parameters are available to attach to the Short URL for advanced tracking of your Short Urls.
+
+- utm_id
+- utm_campaign
+- utm_source
+- utm_medium
+- utm_content
+- utm_term
+
+UTM information is hidden in the Short URL identifier and clicks are filterable by UTM parameters.
 
 ## Testing
 

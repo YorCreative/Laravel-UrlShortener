@@ -82,5 +82,6 @@ class ClickServiceTest extends TestCase
         $this->assertArrayHasKey('outcome', $click);
         $this->assertArrayHasKey('created_at', $click);
         $this->assertArrayHasKey('short_url', $click);
+        $this->assertArrayHasKey('tracing', $click['short_url']);
     }
 }

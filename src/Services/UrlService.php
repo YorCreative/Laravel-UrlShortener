@@ -3,9 +3,10 @@
 namespace YorCreative\UrlShortener\Services;
 
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
 use YorCreative\UrlShortener\Builders\UrlBuilder\UrlBuilder;
 use YorCreative\UrlShortener\Exceptions\UrlRepositoryException;
-use YorCreative\UrlShortener\Exceptions\UrlServiceException;
+use YorCreative\UrlShortener\Exceptions\UtilityServiceException;
 use YorCreative\UrlShortener\Models\ShortUrl;
 use YorCreative\UrlShortener\Repositories\UrlRepository;
 use YorCreative\UrlShortener\Traits\ShortUrlHelper;
@@ -48,12 +49,23 @@ class UrlService
     }
 
     /**
+     * @param  array  $utm_combination
+     * @return Collection
+     *
+     * @throws UrlRepositoryException
+     */
+    public static function findByUtmCombination(array $utm_combination): Collection
+    {
+        return UrlRepository::findByUtmCombination($utm_combination);
+    }
+
+    /**
      * @param  string  $identifier
      * @param  string  $password
      * @return ShortUrl|null
      *
      * @throws UrlRepositoryException
-     * @throws UrlServiceException
+     * @throws UtilityServiceException
      */
     public static function attempt(string $identifier, string $password): ?ShortUrl
     {

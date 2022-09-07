@@ -4,6 +4,7 @@ namespace YorCreative\UrlShortener\Tests\Unit\Services;
 
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use YorCreative\UrlShortener\Builders\UrlBuilder\UrlBuilder;
 use YorCreative\UrlShortener\Exceptions\UrlBuilderException;
 use YorCreative\UrlShortener\Exceptions\UrlRepositoryException;
@@ -15,6 +16,59 @@ use YorCreative\UrlShortener\Tests\TestCase;
 
 class UrlServiceTest extends TestCase
 {
+    use DatabaseTransactions;
+
+    /**
+     * @test
+     * @group UrlService
+     *
+     * @throws UrlRepositoryException
+     */
+    public function it_can_find_a_short_url_by_utm_combination()
+    {
+        // extra url to filter through
+        UrlService::shorten('testing.com/something/so/long/i/need/a/short/url'.rand(999, 999999))
+            ->withTracing([
+                'utm_campaign' => 'alpha',
+                'utm_source' => 'alpha',
+                'utm_medium' => 'testing',
+            ])
+            ->build();
+
+        // url to find
+        $targetPlainText = 'testing.com/something/so/long/i/need/a/short/url'.rand(999, 999999);
+        $targetUtmCombination = [
+            'utm_campaign' => 'alpha',
+            'utm_source' => 'bravo',
+            'utm_medium' => 'testing',
+        ];
+
+        UrlService::shorten($targetPlainText)
+            ->withTracing($targetUtmCombination)
+            ->build();
+
+        // extra url to filter through
+        UrlService::shorten('testing.com/something/so/long/i/need/a/short/url'.rand(999, 999999))
+            ->withTracing([
+                'utm_campaign' => 'alpha',
+                'utm_source' => 'charlie',
+                'utm_medium' => 'testing',
+            ])
+            ->build();
+
+        $this->assertDatabaseHas('short_url_tracings', [
+            'utm_campaign' => 'alpha',
+            'utm_source' => 'bravo',
+            'utm_medium' => 'testing',
+        ]);
+
+        $shortUrls = UrlService::findByUtmCombination($targetUtmCombination);
+
+        $this->assertEquals($targetUtmCombination['utm_source'], $shortUrls->toArray()[0]['tracing']['utm_source']);
+        $this->assertEquals($targetUtmCombination['utm_campaign'], $shortUrls->toArray()[0]['tracing']['utm_campaign']);
+        $this->assertEquals($targetUtmCombination['utm_medium'], $shortUrls->toArray()[0]['tracing']['utm_medium']);
+    }
+
     /**
      * @test
      * @group UrlService

@@ -10,6 +10,84 @@ use YorCreative\UrlShortener\Repositories\ClickRepository;
 class ClickQueryBuilder extends Builder
 {
     /**
+     * @param  array  $utm_terms
+     * @return ClickQueryBuilder
+     */
+    public function whereInTracingTerm(array $utm_terms): ClickQueryBuilder
+    {
+        return $this->whereIn('short_url_id', function ($query) use ($utm_terms) {
+            $query->from('short_url_tracings');
+            $query->whereIn('utm_term', $utm_terms);
+            $query->select('short_url_id');
+        });
+    }
+
+    /**
+     * @param  array  $utm_sources
+     * @return ClickQueryBuilder
+     */
+    public function whereInTracingSource(array $utm_sources): ClickQueryBuilder
+    {
+        return $this->whereIn('short_url_id', function ($query) use ($utm_sources) {
+            $query->from('short_url_tracings');
+            $query->whereIn('utm_source', $utm_sources);
+            $query->select('short_url_id');
+        });
+    }
+
+    /**
+     * @param  array  $utm_mediums
+     * @return ClickQueryBuilder
+     */
+    public function whereInTracingMedium(array $utm_mediums): ClickQueryBuilder
+    {
+        return $this->whereIn('short_url_id', function ($query) use ($utm_mediums) {
+            $query->from('short_url_tracings');
+            $query->whereIn('utm_medium', $utm_mediums);
+            $query->select('short_url_id');
+        });
+    }
+
+    /**
+     * @param  array  $utm_ids
+     * @return ClickQueryBuilder
+     */
+    public function whereInTracingId(array $utm_ids): ClickQueryBuilder
+    {
+        return $this->whereIn('short_url_id', function ($query) use ($utm_ids) {
+            $query->from('short_url_tracings');
+            $query->whereIn('utm_id', $utm_ids);
+            $query->select('short_url_id');
+        });
+    }
+
+    /**
+     * @param  array  $utm_contents
+     * @return ClickQueryBuilder
+     */
+    public function whereInTracingContent(array $utm_contents): ClickQueryBuilder
+    {
+        return $this->whereIn('short_url_id', function ($query) use ($utm_contents) {
+            $query->from('short_url_tracings');
+            $query->whereIn('utm_content', $utm_contents);
+            $query->select('short_url_id');
+        });
+    }
+
+    /**
+     * @param  array  $utm_campaigns
+     * @return ClickQueryBuilder
+     */
+    public function whereInTracingCampaign(array $utm_campaigns): ClickQueryBuilder
+    {
+        return $this->whereIn('short_url_id', function ($query) use ($utm_campaigns) {
+            $query->from('short_url_tracings');
+            $query->whereIn('utm_campaign', $utm_campaigns);
+            $query->select('short_url_id');
+        });
+    }
+
+    /**
      * @param  array  $outcomes
      * @return ClickQueryBuilder
      */

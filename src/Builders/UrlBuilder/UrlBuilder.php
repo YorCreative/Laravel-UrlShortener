@@ -13,6 +13,7 @@ use YorCreative\UrlShortener\Builders\UrlBuilder\Options\WithExpiration;
 use YorCreative\UrlShortener\Builders\UrlBuilder\Options\WithOpenLimit;
 use YorCreative\UrlShortener\Builders\UrlBuilder\Options\WithOwnership;
 use YorCreative\UrlShortener\Builders\UrlBuilder\Options\WithPassword;
+use YorCreative\UrlShortener\Builders\UrlBuilder\Options\WithTracing;
 use YorCreative\UrlShortener\Exceptions\UrlBuilderException;
 use YorCreative\UrlShortener\Exceptions\UrlServiceException;
 use YorCreative\UrlShortener\Services\UtilityService;
@@ -156,6 +157,21 @@ class UrlBuilder implements UrlBuilderInterface
 
         $this->options->add(
             new WithOwnership()
+        );
+
+        return $this;
+    }
+
+    /**
+     * @param  array  $utm_parameters
+     * @return $this
+     */
+    public function withTracing(array $utm_parameters)
+    {
+        $this->shortUrlCollection->put('utm_parameters', $utm_parameters);
+
+        $this->options->add(
+            new WithTracing()
         );
 
         return $this;

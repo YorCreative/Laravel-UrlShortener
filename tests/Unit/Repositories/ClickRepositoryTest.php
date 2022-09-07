@@ -59,7 +59,7 @@ class ClickRepositoryTest extends TestCase
     public function it_can_get_correct_with_default_relations()
     {
         $this->assertEquals([
-            'location', 'outcome', 'shortUrl',
+            'location', 'outcome', 'shortUrl.tracing',
         ], ClickRepository::defaultWithRelations());
     }
 }

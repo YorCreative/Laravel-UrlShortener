@@ -18,6 +18,12 @@ use YorCreative\UrlShortener\Strategies\FilterClicks\Filters\IdentifierFilter;
 use YorCreative\UrlShortener\Strategies\FilterClicks\Filters\OutcomeFilter;
 use YorCreative\UrlShortener\Strategies\FilterClicks\Filters\OwnershipFilter;
 use YorCreative\UrlShortener\Strategies\FilterClicks\Filters\StatusFilter;
+use YorCreative\UrlShortener\Strategies\FilterClicks\Filters\TracingCampaignFilter;
+use YorCreative\UrlShortener\Strategies\FilterClicks\Filters\TracingContentFilter;
+use YorCreative\UrlShortener\Strategies\FilterClicks\Filters\TracingIdFilter;
+use YorCreative\UrlShortener\Strategies\FilterClicks\Filters\TracingMediumFilter;
+use YorCreative\UrlShortener\Strategies\FilterClicks\Filters\TracingSourceFilter;
+use YorCreative\UrlShortener\Strategies\FilterClicks\Filters\TracingTermFilter;
 use YorCreative\UrlShortener\Traits\ShortUrlHelper;
 
 class ClickService
@@ -137,6 +143,12 @@ class ClickService
             new IdentifierFilter(),
             new StatusFilter(),
             new OwnershipFilter(),
+            new TracingIdFilter(),
+            new TracingCampaignFilter(),
+            new TracingSourceFilter(),
+            new TracingMediumFilter(),
+            new TracingContentFilter(),
+            new TracingTermFilter(),
         ]);
     }
 }

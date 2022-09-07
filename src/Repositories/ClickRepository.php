@@ -3,9 +3,11 @@
 namespace YorCreative\UrlShortener\Repositories;
 
 use Exception;
+use Illuminate\Support\Facades\DB;
 use YorCreative\UrlShortener\Exceptions\ClickRepositoryException;
 use YorCreative\UrlShortener\Exceptions\UrlRepositoryException;
 use YorCreative\UrlShortener\Models\ShortUrlClick;
+use YorCreative\UrlShortener\Models\ShortUrlTracing;
 
 class ClickRepository
 {
@@ -48,10 +50,37 @@ class ClickRepository
     }
 
     /**
+     * @param  int  $short_url_id
+     * @param  array  $trace
+     *
+     * @throws UrlRepositoryException
+     */
+    public static function createTrace(int $short_url_id, array $trace)
+    {
+        DB::beginTransaction();
+
+        try {
+            $traceRecord = ShortUrlTracing::query()
+                ->create($trace);
+
+            ShortUrlClick::query()
+                ->where('short_url_id', $short_url_id)
+                ->update([
+                    'trace_id' => $traceRecord->id,
+                ]);
+
+            DB::commit();
+        } catch (Exception $exception) {
+            DB::rollBack();
+            throw new UrlRepositoryException($exception->getMessage());
+        }
+    }
+
+    /**
      * @return string[]
      */
     public static function defaultWithRelations(): array
     {
-        return ['location', 'outcome', 'shortUrl'];
+        return ['location', 'outcome', 'shortUrl.tracing'];
     }
 }
