@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Collection;
 use YorCreative\UrlShortener\Exceptions\UrlRepositoryException;
 use YorCreative\UrlShortener\Models\ShortUrl;
 use YorCreative\UrlShortener\Models\ShortUrlOwnership;
-use YorCreative\UrlShortener\Services\UrlService;
 
 class UrlRepository
 {
@@ -117,7 +116,7 @@ class UrlRepository
     }
 
     /**
-     * @param string $identifier
+     * @param  string  $identifier
      * @return ShortUrl
      *
      * @throws UrlRepositoryException
@@ -129,13 +128,14 @@ class UrlRepository
                 'identifier', $identifier
             )->with(self::defaultWithRelationship())->firstOrFail();
         } catch (Exception $exception) {
-            throw new UrlRepositoryException('Unable to find short url identifier: ' . $identifier);
+            throw new UrlRepositoryException('Unable to find short url identifier: '.$identifier);
         }
     }
 
     /**
-     * @param array $utm_combination
+     * @param  array  $utm_combination
      * @return Collection
+     *
      * @throws UrlRepositoryException
      */
     public static function findByUtmCombination(array $utm_combination): Collection

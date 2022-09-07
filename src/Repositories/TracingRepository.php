@@ -87,7 +87,7 @@ class TracingRepository
     }
 
     /**
-     * @param array $utm_input_array
+     * @param  array  $utm_input_array
      * @return array
      */
     public static function sanitizeUtmArray(array $utm_input_array): array

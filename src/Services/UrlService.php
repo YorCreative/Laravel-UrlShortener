@@ -6,7 +6,6 @@ use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use YorCreative\UrlShortener\Builders\UrlBuilder\UrlBuilder;
 use YorCreative\UrlShortener\Exceptions\UrlRepositoryException;
-use YorCreative\UrlShortener\Exceptions\UrlServiceException;
 use YorCreative\UrlShortener\Exceptions\UtilityServiceException;
 use YorCreative\UrlShortener\Models\ShortUrl;
 use YorCreative\UrlShortener\Repositories\UrlRepository;
@@ -39,7 +38,7 @@ class UrlService
     }
 
     /**
-     * @param string $identifier
+     * @param  string  $identifier
      * @return ShortUrl|null
      *
      * @throws UrlRepositoryException
@@ -50,8 +49,9 @@ class UrlService
     }
 
     /**
-     * @param array $utm_combination
+     * @param  array  $utm_combination
      * @return Collection
+     *
      * @throws UrlRepositoryException
      */
     public static function findByUtmCombination(array $utm_combination): Collection
@@ -60,8 +60,8 @@ class UrlService
     }
 
     /**
-     * @param string $identifier
-     * @param string $password
+     * @param  string  $identifier
+     * @param  string  $password
      * @return ShortUrl|null
      *
      * @throws UrlRepositoryException
