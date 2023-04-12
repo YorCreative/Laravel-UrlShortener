@@ -23,24 +23,12 @@ class UrlBuilder implements UrlBuilderInterface
 {
     use ShortUrlHelper;
 
-    /**
-     * @var UrlBuilder
-     */
     private static UrlBuilder $builder;
 
-    /**
-     * @var Collection
-     */
     public Collection $shortUrlCollection;
 
-    /**
-     * @var Collection
-     */
     protected Collection $options;
 
-    /**
-     * @var Collection
-     */
     protected Collection $availableOptions;
 
     /**
@@ -52,10 +40,6 @@ class UrlBuilder implements UrlBuilderInterface
         $this->shortUrlCollection = new Collection();
     }
 
-    /**
-     * @param  string  $plain_text
-     * @return UrlBuilder
-     */
     public static function shorten(string $plain_text): UrlBuilder
     {
         $b = self::$builder = new static;
@@ -68,7 +52,6 @@ class UrlBuilder implements UrlBuilderInterface
     }
 
     /**
-     * @param  string  $password
      * @return $this
      *
      * @throws UrlBuilderException
@@ -103,7 +86,6 @@ class UrlBuilder implements UrlBuilderInterface
     }
 
     /**
-     * @param  int  $timestamp
      * @return $this
      */
     public function withExpiration(int $timestamp): UrlBuilder
@@ -118,7 +100,6 @@ class UrlBuilder implements UrlBuilderInterface
     }
 
     /**
-     * @param  int  $timestamp
      * @return $this
      */
     public function withActivation(int $timestamp): UrlBuilder
@@ -133,7 +114,6 @@ class UrlBuilder implements UrlBuilderInterface
     }
 
     /**
-     * @param  int  $limit
      * @return $this
      */
     public function withOpenLimit(int $limit): UrlBuilder
@@ -147,10 +127,6 @@ class UrlBuilder implements UrlBuilderInterface
         return $this;
     }
 
-    /**
-     * @param  Model  $model
-     * @return UrlBuilder
-     */
     public function withOwnership(Model $model): UrlBuilder
     {
         $this->shortUrlCollection->put('owner_model', $model);
@@ -163,7 +139,6 @@ class UrlBuilder implements UrlBuilderInterface
     }
 
     /**
-     * @param  array  $utm_parameters
      * @return $this
      */
     public function withTracing(array $utm_parameters)
@@ -201,9 +176,6 @@ class UrlBuilder implements UrlBuilderInterface
         return $this->builtShortUrl($shortUrlCollection->get('identifier'));
     }
 
-    /**
-     * @return Collection
-     */
     public function getOptions(): Collection
     {
         return $this->options;

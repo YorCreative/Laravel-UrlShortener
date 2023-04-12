@@ -11,6 +11,7 @@ class ShortUrlHelperTest extends TestCase
 
     /**
      * @test
+     *
      * @group Traits
      */
     public function it_can_validate_ownership_is_array_of_models_filter()
@@ -28,6 +29,7 @@ class ShortUrlHelperTest extends TestCase
 
     /**
      * @test
+     *
      * @group Traits
      */
     public function it_can_validate_ownership_is_not_array_of_models_filter()
@@ -52,6 +54,7 @@ class ShortUrlHelperTest extends TestCase
 
     /**
      * @test
+     *
      * @group Traits
      */
     public function it_can_build_short_url()

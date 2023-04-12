@@ -8,9 +8,6 @@ use YorCreative\UrlShortener\Models\ShortUrlOwnership;
 
 trait Ownerable
 {
-    /**
-     * @return HasManyThrough
-     */
     public function getShortUrls(): HasManyThrough
     {
         return $this->hasManyThrough(

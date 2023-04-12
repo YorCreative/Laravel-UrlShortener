@@ -12,8 +12,6 @@ use YorCreative\UrlShortener\Repositories\UrlRepository;
 class WithTracing implements UrlBuilderOptionInterface
 {
     /**
-     * @param  Collection  $shortUrlCollection
-     *
      * @throws UrlRepositoryException
      * @throws TracingRepositoryException
      */

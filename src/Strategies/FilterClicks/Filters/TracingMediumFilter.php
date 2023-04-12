@@ -7,10 +7,6 @@ use YorCreative\UrlShortener\Repositories\TracingRepository;
 
 class TracingMediumFilter extends AbstractFilter
 {
-    /**
-     * @param  array  $filter
-     * @return bool
-     */
     public function canProcess(array $filter): bool
     {
         $this->filter = $filter;
@@ -19,17 +15,11 @@ class TracingMediumFilter extends AbstractFilter
             && is_array($filter[TracingRepository::$MEDIUM]);
     }
 
-    /**
-     * @return array
-     */
     public function getAvailableFilterOptions(): array
     {
         return [];
     }
 
-    /**
-     * @param  ClickQueryBuilder  $clickQueryBuilder
-     */
     public function handle(ClickQueryBuilder &$clickQueryBuilder): void
     {
         $clickQueryBuilder->whereInTracingMedium($this->filter[TracingRepository::$MEDIUM]);

@@ -44,9 +44,6 @@ class ShortUrlTracing extends Model
         'updated_at',
     ];
 
-    /**
-     * @return BelongsTo
-     */
     public function shortUrl(): BelongsTo
     {
         return $this->belongsTo(ShortUrl::class, 'short_url_id', 'id');

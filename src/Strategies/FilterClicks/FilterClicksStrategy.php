@@ -10,9 +10,6 @@ use YorCreative\UrlShortener\Strategies\FilterClicks\Filters\AbstractFilter;
 
 class FilterClicksStrategy
 {
-    /**
-     * @var Collection
-     */
     protected Collection $strategies;
 
     public function __construct()
@@ -32,9 +29,6 @@ class FilterClicksStrategy
         }
     }
 
-    /**
-     * @param  ClickQueryBuilder  $clickQueryBuilder
-     */
     public function handle(ClickQueryBuilder &$clickQueryBuilder): void
     {
         $this->getStrategies()->each(function ($strategy) use (&$clickQueryBuilder) {
@@ -42,9 +36,6 @@ class FilterClicksStrategy
         });
     }
 
-    /**
-     * @return Collection
-     */
     public function getStrategies(): Collection
     {
         return $this->strategies;

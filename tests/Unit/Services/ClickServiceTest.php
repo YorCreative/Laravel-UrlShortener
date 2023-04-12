@@ -16,6 +16,7 @@ class ClickServiceTest extends TestCase
 
     /**
      * @test
+     *
      * @group ClickService
      */
     public function it_can_can_track_a_click()
@@ -47,6 +48,7 @@ class ClickServiceTest extends TestCase
 
     /**
      * @test
+     *
      * @group ClickService
      *
      * @throws UrlRepositoryException

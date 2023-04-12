@@ -45,9 +45,6 @@ class ShortUrlLocation extends Model
         'timezone',
     ];
 
-    /**
-     * @return HasMany
-     */
     public function opens(): HasMany
     {
         return $this->hasMany(ShortUrlClick::class, 'location_id', 'id');

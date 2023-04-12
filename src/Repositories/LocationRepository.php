@@ -15,7 +15,6 @@ class LocationRepository
     }
 
     /**
-     * @param  array  $clickLocation
      * @return mixed
      *
      * @throws UrlRepositoryException
@@ -36,10 +35,6 @@ class LocationRepository
         }
     }
 
-    /**
-     * @param  string  $ip
-     * @return array
-     */
     public static function getLocationFrom(string $ip): array
     {
         $clickLocation = Location::get($ip);
@@ -56,10 +51,6 @@ class LocationRepository
         return $clickLocation->toArray();
     }
 
-    /**
-     * @param  string  $ip
-     * @return array
-     */
     public static function locationUnknown(string $ip): array
     {
         return [

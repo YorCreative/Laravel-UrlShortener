@@ -88,9 +88,6 @@ trait ShortUrlHelper
         return $filter;
     }
 
-    /**
-     * @return string
-     */
     private function generateUrlIdentifier(): string
     {
         $identifier = Str::random(
@@ -104,10 +101,6 @@ trait ShortUrlHelper
         return $identifier;
     }
 
-    /**
-     * @param $identifier
-     * @return string
-     */
     private function builtShortUrl($identifier): string
     {
         return str_replace(
@@ -117,9 +110,6 @@ trait ShortUrlHelper
         );
     }
 
-    /**
-     * @return string
-     */
     private function buildShortUrl(): string
     {
         $host = config('urlshortener.branding.host') ?? 'localhost.test';

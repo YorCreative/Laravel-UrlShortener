@@ -34,9 +34,6 @@ class ShortUrlOwnership extends Model
         'ownerable_type',
     ];
 
-    /**
-     * @return BelongsTo
-     */
     public function shortUrl(): BelongsTo
     {
         return $this->belongsTo(ShortUrl::class, 'short_url_id', 'id');
