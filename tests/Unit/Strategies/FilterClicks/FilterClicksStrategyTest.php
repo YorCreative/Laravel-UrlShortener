@@ -36,6 +36,7 @@ class FilterClicksStrategyTest extends TestCase
 
     /**
      * @test
+     *
      * @group FilterClickStrategy
      */
     public function it_can_add_filter_strategies()
@@ -51,6 +52,7 @@ class FilterClicksStrategyTest extends TestCase
 
     /**
      * @test
+     *
      * @group FilterClickStrategy
      */
     public function it_can_can_process_outcome_filter()
@@ -66,6 +68,7 @@ class FilterClicksStrategyTest extends TestCase
 
     /**
      * @test
+     *
      * @group FilterClickStrategy
      */
     public function it_can_can_process_batch_filter()
@@ -80,6 +83,7 @@ class FilterClicksStrategyTest extends TestCase
 
     /**
      * @test
+     *
      * @group FilterClickStrategy
      */
     public function it_can_can_process_identifier_filter()
@@ -95,6 +99,7 @@ class FilterClicksStrategyTest extends TestCase
 
     /**
      * @test
+     *
      * @group FilterClickStrategy
      */
     public function it_can_can_process_status_filter()
@@ -110,6 +115,7 @@ class FilterClicksStrategyTest extends TestCase
 
     /**
      * @test
+     *
      * @group FilterClickStrategy
      */
     public function it_can_can_process_ownership_filter()
@@ -125,6 +131,7 @@ class FilterClicksStrategyTest extends TestCase
 
     /**
      * @test
+     *
      * @group FilterClickStrategy
      */
     public function it_can_can_process_tracing_utm_id_filter()
@@ -141,6 +148,7 @@ class FilterClicksStrategyTest extends TestCase
 
     /**
      * @test
+     *
      * @group FilterClickStrategy
      */
     public function it_can_can_process_tracing_utm_campaign_filter()
@@ -157,6 +165,7 @@ class FilterClicksStrategyTest extends TestCase
 
     /**
      * @test
+     *
      * @group FilterClickStrategy
      */
     public function it_can_can_process_tracing_utm_source_filter()
@@ -173,6 +182,7 @@ class FilterClicksStrategyTest extends TestCase
 
     /**
      * @test
+     *
      * @group FilterClickStrategy
      */
     public function it_can_can_process_tracing_utm_medium_filter()
@@ -189,6 +199,7 @@ class FilterClicksStrategyTest extends TestCase
 
     /**
      * @test
+     *
      * @group FilterClickStrategy
      */
     public function it_can_can_process_tracing_utm_content_filter()
@@ -205,6 +216,7 @@ class FilterClicksStrategyTest extends TestCase
 
     /**
      * @test
+     *
      * @group FilterClickStrategy
      */
     public function it_can_can_process_tracing_utm_term_filter()

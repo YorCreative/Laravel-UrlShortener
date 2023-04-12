@@ -12,6 +12,7 @@ class ShortUrlBasicTest extends TestCase
 
     /**
      * @test
+     *
      * @group Feature
      */
     public function it_can_create_a_basic_short_url()

@@ -13,6 +13,7 @@ class ClickRepositoryTest extends TestCase
 
     /**
      * @test
+     *
      * @group ClickRepository
      */
     public function it_can_find_a_click_by_its_id()
@@ -32,6 +33,7 @@ class ClickRepositoryTest extends TestCase
 
     /**
      * @test
+     *
      * @group ClickRepository
      */
     public function it_can_create_a_click_in_db()
@@ -54,6 +56,7 @@ class ClickRepositoryTest extends TestCase
 
     /**
      * @test
+     *
      * @group ClickRepository
      */
     public function it_can_get_correct_with_default_relations()

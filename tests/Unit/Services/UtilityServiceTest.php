@@ -12,6 +12,7 @@ class UtilityServiceTest extends TestCase
 {
     /**
      * @test
+     *
      * @group UtilityService
      *
      * @throws UtilityServiceException
@@ -23,6 +24,7 @@ class UtilityServiceTest extends TestCase
 
     /**
      * @test
+     *
      * @group UtilityService
      */
     public function it_can_get_the_redirect_code()
@@ -35,6 +37,7 @@ class UtilityServiceTest extends TestCase
 
     /**
      * @test
+     *
      * @group UtilityService
      */
     public function it_can_get_redirect_headers()
@@ -57,6 +60,7 @@ class UtilityServiceTest extends TestCase
 
     /**
      * @test
+     *
      * @group UrlRepository
      */
     public function it_can_construct_redirect_headers_with_dynamic_headers()
@@ -69,6 +73,7 @@ class UtilityServiceTest extends TestCase
 
     /**
      * @test
+     *
      * @group UrlRepository
      */
     public function it_can_construct_redirect_headers()

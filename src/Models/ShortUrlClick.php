@@ -45,25 +45,16 @@ class ShortUrlClick extends Model
         'outcome_id',
     ];
 
-    /**
-     * @return HasOne
-     */
     public function shortUrl(): HasOne
     {
         return $this->hasOne(ShortUrl::class, 'id', 'short_url_id');
     }
 
-    /**
-     * @return HasOne
-     */
     public function location(): HasOne
     {
         return $this->hasOne(ShortUrlLocation::class, 'id', 'location_id');
     }
 
-    /**
-     * @return HasOne
-     */
     public function outcome(): HasOne
     {
         return $this->hasOne(ShortUrlOutcome::class, 'id', 'outcome_id');
@@ -71,7 +62,6 @@ class ShortUrlClick extends Model
 
     /**
      * @param  Builder  $query
-     * @return ClickQueryBuilder
      */
     public function newEloquentBuilder($query): ClickQueryBuilder
     {

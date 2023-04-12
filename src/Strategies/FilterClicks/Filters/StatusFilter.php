@@ -6,10 +6,6 @@ use YorCreative\UrlShortener\Builders\ClickQueryBuilder\ClickQueryBuilder;
 
 class StatusFilter extends AbstractFilter
 {
-    /**
-     * @param  array  $filter
-     * @return bool
-     */
     public function canProcess(array $filter): bool
     {
         $this->filter = $filter;
@@ -19,9 +15,6 @@ class StatusFilter extends AbstractFilter
             && $this->hasOptions($filter['status']);
     }
 
-    /**
-     * @return array
-     */
     public function getAvailableFilterOptions(): array
     {
         return [
@@ -31,9 +24,6 @@ class StatusFilter extends AbstractFilter
         ];
     }
 
-    /**
-     * @param  ClickQueryBuilder  $clickQueryBuilder
-     */
     public function handle(ClickQueryBuilder &$clickQueryBuilder): void
     {
         if (in_array('active', $this->filter['status'])) {

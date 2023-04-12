@@ -14,6 +14,7 @@ class UrlRepositoryTest extends TestCase
 
     /**
      * @test
+     *
      * @group UrlRepository
      */
     public function it_can_find_ownership_record()
@@ -31,6 +32,7 @@ class UrlRepositoryTest extends TestCase
 
     /**
      * @test
+     *
      * @group UrlRepository
      */
     public function it_can_create_ownership_record()
@@ -50,6 +52,7 @@ class UrlRepositoryTest extends TestCase
 
     /**
      * @test
+     *
      * @group UrlRepository
      */
     public function it_can_find_short_url_by_hash()
@@ -60,6 +63,7 @@ class UrlRepositoryTest extends TestCase
 
     /**
      * @test
+     *
      * @group UrlRepository
      */
     public function it_can_create_a_short_url()
@@ -83,6 +87,7 @@ class UrlRepositoryTest extends TestCase
 
     /**
      * @test
+     *
      * @group UrlRepository
      */
     public function it_can_update_a_short_url()
@@ -100,6 +105,7 @@ class UrlRepositoryTest extends TestCase
 
     /**
      * @test
+     *
      * @group UrlRepository
      */
     public function it_can_bool_that_identifier_exists()

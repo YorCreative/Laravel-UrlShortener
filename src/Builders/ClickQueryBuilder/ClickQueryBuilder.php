@@ -9,10 +9,6 @@ use YorCreative\UrlShortener\Repositories\ClickRepository;
 
 class ClickQueryBuilder extends Builder
 {
-    /**
-     * @param  array  $utm_terms
-     * @return ClickQueryBuilder
-     */
     public function whereInTracingTerm(array $utm_terms): ClickQueryBuilder
     {
         return $this->whereIn('short_url_id', function ($query) use ($utm_terms) {
@@ -22,10 +18,6 @@ class ClickQueryBuilder extends Builder
         });
     }
 
-    /**
-     * @param  array  $utm_sources
-     * @return ClickQueryBuilder
-     */
     public function whereInTracingSource(array $utm_sources): ClickQueryBuilder
     {
         return $this->whereIn('short_url_id', function ($query) use ($utm_sources) {
@@ -35,10 +27,6 @@ class ClickQueryBuilder extends Builder
         });
     }
 
-    /**
-     * @param  array  $utm_mediums
-     * @return ClickQueryBuilder
-     */
     public function whereInTracingMedium(array $utm_mediums): ClickQueryBuilder
     {
         return $this->whereIn('short_url_id', function ($query) use ($utm_mediums) {
@@ -48,10 +36,6 @@ class ClickQueryBuilder extends Builder
         });
     }
 
-    /**
-     * @param  array  $utm_ids
-     * @return ClickQueryBuilder
-     */
     public function whereInTracingId(array $utm_ids): ClickQueryBuilder
     {
         return $this->whereIn('short_url_id', function ($query) use ($utm_ids) {
@@ -61,10 +45,6 @@ class ClickQueryBuilder extends Builder
         });
     }
 
-    /**
-     * @param  array  $utm_contents
-     * @return ClickQueryBuilder
-     */
     public function whereInTracingContent(array $utm_contents): ClickQueryBuilder
     {
         return $this->whereIn('short_url_id', function ($query) use ($utm_contents) {
@@ -74,10 +54,6 @@ class ClickQueryBuilder extends Builder
         });
     }
 
-    /**
-     * @param  array  $utm_campaigns
-     * @return ClickQueryBuilder
-     */
     public function whereInTracingCampaign(array $utm_campaigns): ClickQueryBuilder
     {
         return $this->whereIn('short_url_id', function ($query) use ($utm_campaigns) {
@@ -87,10 +63,6 @@ class ClickQueryBuilder extends Builder
         });
     }
 
-    /**
-     * @param  array  $outcomes
-     * @return ClickQueryBuilder
-     */
     public function whereOutcome(array $outcomes): ClickQueryBuilder
     {
         return $this->whereIn('outcome_id', function ($query) use ($outcomes) {
@@ -100,19 +72,11 @@ class ClickQueryBuilder extends Builder
         });
     }
 
-    /**
-     * @return ClickQueryBuilder
-     */
     public function isNotExpired(): ClickQueryBuilder
     {
         return $this->expirationFilter('>', now()->timestamp);
     }
 
-    /**
-     * @param  string  $direction
-     * @param $current_timestamp
-     * @return ClickQueryBuilder
-     */
     protected function expirationFilter(string $direction, $current_timestamp): ClickQueryBuilder
     {
         return $this->whereIn('short_url_id', function ($query) use ($direction, $current_timestamp) {
@@ -122,9 +86,6 @@ class ClickQueryBuilder extends Builder
         });
     }
 
-    /**
-     * @return ClickQueryBuilder
-     */
     public function isExpiring(): ClickQueryBuilder
     {
         return $this->whereIn('short_url_id', function ($query) {
@@ -134,18 +95,11 @@ class ClickQueryBuilder extends Builder
         });
     }
 
-    /**
-     * @return ClickQueryBuilder
-     */
     public function isExpired(): ClickQueryBuilder
     {
         return $this->expirationFilter('<', now()->timestamp);
     }
 
-    /**
-     * @param  Model  $model
-     * @return ClickQueryBuilder
-     */
     public function whereOwnership(Model $model): ClickQueryBuilder
     {
         return $this->whereIn('short_url_id', function ($query) use ($model) {
@@ -155,10 +109,6 @@ class ClickQueryBuilder extends Builder
         });
     }
 
-    /**
-     * @param  array  $identifiers
-     * @return ClickQueryBuilder
-     */
     public function whereInIdentifiers(array $identifiers): ClickQueryBuilder
     {
         return $this->whereIn('short_url_id', function ($query) use ($identifiers) {
@@ -168,18 +118,11 @@ class ClickQueryBuilder extends Builder
         });
     }
 
-    /**
-     * @return Collection
-     */
     public function build(): Collection
     {
         return $this->withRelations()->get();
     }
 
-    /**
-     * @param  array  $relations
-     * @return ClickQueryBuilder
-     */
     public function withRelations(array $relations = []): ClickQueryBuilder
     {
         return $this->with(

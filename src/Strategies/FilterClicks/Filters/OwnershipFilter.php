@@ -8,10 +8,6 @@ use YorCreative\UrlShortener\Exceptions\FilterClicksStrategyException;
 
 class OwnershipFilter extends AbstractFilter
 {
-    /**
-     * @param  array  $filter
-     * @return bool
-     */
     public function canProcess(array $filter): bool
     {
         $this->filter = $filter;
@@ -19,17 +15,12 @@ class OwnershipFilter extends AbstractFilter
         return isset($filter['ownership']) && is_array($filter['ownership']);
     }
 
-    /**
-     * @return array
-     */
     public function getAvailableFilterOptions(): array
     {
         return [];
     }
 
     /**
-     * @param  ClickQueryBuilder  $clickQueryBuilder
-     *
      * @throws FilterClicksStrategyException
      */
     public function handle(ClickQueryBuilder &$clickQueryBuilder): void

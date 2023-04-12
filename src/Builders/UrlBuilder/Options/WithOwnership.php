@@ -10,8 +10,6 @@ use YorCreative\UrlShortener\Services\UrlService;
 class WithOwnership implements UrlBuilderOptionInterface
 {
     /**
-     * @param  Collection  $shortUrlCollection
-     *
      * @throws UrlRepositoryException
      */
     public function resolve(Collection &$shortUrlCollection): void
