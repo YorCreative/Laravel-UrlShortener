@@ -20,6 +20,7 @@ class UrlServiceTest extends TestCase
 
     /**
      * @test
+     *
      * @group UrlService
      *
      * @throws UrlRepositoryException
@@ -71,6 +72,7 @@ class UrlServiceTest extends TestCase
 
     /**
      * @test
+     *
      * @group UrlService
      */
     public function it_can_can_find_short_url_by_the_hash()
@@ -83,6 +85,7 @@ class UrlServiceTest extends TestCase
 
     /**
      * @test
+     *
      * @group UrlService
      */
     public function it_can_can_find_short_url_by_the_plain_text()
@@ -95,6 +98,7 @@ class UrlServiceTest extends TestCase
 
     /**
      * @test
+     *
      * @group UrlService
      */
     public function it_can_can_find_short_url_by_the_identifier()
@@ -107,6 +111,7 @@ class UrlServiceTest extends TestCase
 
     /**
      * @test
+     *
      * @group UrlService
      *
      * @throws UrlBuilderException
@@ -130,6 +135,7 @@ class UrlServiceTest extends TestCase
 
     /**
      * @test
+     *
      * @group UrlService
      *
      * @throws UrlBuilderException
@@ -151,6 +157,7 @@ class UrlServiceTest extends TestCase
 
     /**
      * @test
+     *
      * @group UrlService
      *
      * @throws UrlRepositoryException
@@ -180,6 +187,7 @@ class UrlServiceTest extends TestCase
 
     /**
      * @test
+     *
      * @group UrlService
      *
      * @throws Exception

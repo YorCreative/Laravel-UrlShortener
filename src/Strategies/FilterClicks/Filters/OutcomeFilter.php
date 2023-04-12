@@ -7,10 +7,6 @@ use YorCreative\UrlShortener\Services\ClickService;
 
 class OutcomeFilter extends AbstractFilter
 {
-    /**
-     * @param  array  $filter
-     * @return bool
-     */
     public function canProcess(array $filter): bool
     {
         $this->filter = $filter;
@@ -20,9 +16,6 @@ class OutcomeFilter extends AbstractFilter
             && $this->hasOptions($filter['outcome']);
     }
 
-    /**
-     * @return array
-     */
     public function getAvailableFilterOptions(): array
     {
         return [
@@ -34,9 +27,6 @@ class OutcomeFilter extends AbstractFilter
         ];
     }
 
-    /**
-     * @param  ClickQueryBuilder  $clickQueryBuilder
-     */
     public function handle(ClickQueryBuilder &$clickQueryBuilder): void
     {
         $clickQueryBuilder->whereOutcome(

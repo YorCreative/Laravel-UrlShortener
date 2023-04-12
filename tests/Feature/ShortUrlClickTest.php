@@ -16,6 +16,7 @@ class ShortUrlClickTest extends TestCase
 
     /**
      * @test
+     *
      * @group Feature
      *
      * @throws UrlRepositoryException
@@ -63,6 +64,7 @@ class ShortUrlClickTest extends TestCase
 
     /**
      * @test
+     *
      * @group Feature
      *
      * @throws UrlRepositoryException

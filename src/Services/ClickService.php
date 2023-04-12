@@ -30,42 +30,19 @@ class ClickService
 {
     use ShortUrlHelper;
 
-    /**
-     * @var int
-     */
     public static int $SUCCESS_ROUTED = 1;
 
-    /**
-     * @var int
-     */
     public static int $SUCCESS_PROTECTED = 2;
 
-    /**
-     * @var int
-     */
     public static int $FAILURE_PROTECTED = 3;
 
-    /**
-     * @var int
-     */
     public static int $FAILURE_LIMIT = 4;
 
-    /**
-     * @var int
-     */
     public static int $FAILURE_EXPIRATION = 5;
 
-    /**
-     * @var int
-     */
     public static int $FAILURE_ACTIVATION = 6;
 
     /**
-     * @param  string  $identifier
-     * @param  string  $request_ip
-     * @param  int  $outcome_id
-     * @param  bool  $test
-     *
      * @throws ClickServiceException
      */
     public static function track(string $identifier, string $request_ip, int $outcome_id, bool $test = false): void
@@ -86,9 +63,6 @@ class ClickService
     }
 
     /**
-     * @param  array  $filter
-     * @return Collection
-     *
      * @throws FilterClicksStrategyException
      * @throws Throwable
      */
@@ -100,9 +74,6 @@ class ClickService
     }
 
     /**
-     * @param  array  $filterQuery
-     * @return Collection
-     *
      * @throws FilterClicksStrategyException
      */
     protected static function handle(array $filterQuery = []): Collection
@@ -124,17 +95,11 @@ class ClickService
         ]);
     }
 
-    /**
-     * @return ClickQueryBuilder
-     */
     public static function getClickQueryBuilder(): ClickQueryBuilder
     {
         return ShortUrlClick::query();
     }
 
-    /**
-     * @return Collection
-     */
     protected static function getFilters(): Collection
     {
         return new Collection([

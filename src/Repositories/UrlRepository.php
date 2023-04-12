@@ -11,7 +11,6 @@ use YorCreative\UrlShortener\Models\ShortUrlOwnership;
 class UrlRepository
 {
     /**
-     * @param  array  $ownership
      * @return mixed
      *
      * @throws UrlRepositoryException
@@ -33,7 +32,6 @@ class UrlRepository
     }
 
     /**
-     * @param  string  $hash
      * @return mixed
      *
      * @throws UrlRepositoryException
@@ -50,7 +48,6 @@ class UrlRepository
     }
 
     /**
-     * @param  string  $plain_text
      * @return mixed
      *
      * @throws UrlRepositoryException
@@ -79,10 +76,6 @@ class UrlRepository
     }
 
     /**
-     * @param  string  $identifier
-     * @param  array  $updates
-     * @return ShortUrl
-     *
      * @throws UrlRepositoryException
      */
     public static function updateShortUrl(string $identifier, array $updates): ShortUrl
@@ -97,28 +90,17 @@ class UrlRepository
         }
     }
 
-    /**
-     * @param  string  $identifier
-     * @return bool
-     */
     public static function identifierExists(string $identifier): bool
     {
         return (new ShortUrl())->where('identifier', $identifier)->exists();
     }
 
-    /**
-     * @param  string  $hashed
-     * @return ShortUrl|null
-     */
     public static function hashExists(string $hashed): ?ShortUrl
     {
         return (new ShortUrl())->where('hashed', $hashed)->first();
     }
 
     /**
-     * @param  string  $identifier
-     * @return ShortUrl
-     *
      * @throws UrlRepositoryException
      */
     public static function findByIdentifier(string $identifier): ShortUrl
@@ -133,9 +115,6 @@ class UrlRepository
     }
 
     /**
-     * @param  array  $utm_combination
-     * @return Collection
-     *
      * @throws UrlRepositoryException
      */
     public static function findByUtmCombination(array $utm_combination): Collection

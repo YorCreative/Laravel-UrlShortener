@@ -16,9 +16,6 @@ class UrlService
     use ShortUrlHelper;
 
     /**
-     * @param  string  $hash
-     * @return ShortUrl|null
-     *
      * @throws UrlRepositoryException
      */
     public static function findByHash(string $hash): ?ShortUrl
@@ -27,9 +24,6 @@ class UrlService
     }
 
     /**
-     * @param  string  $plain_text
-     * @return ShortUrl|null
-     *
      * @throws UrlRepositoryException
      */
     public static function findByPlainText(string $plain_text): ?ShortUrl
@@ -38,9 +32,6 @@ class UrlService
     }
 
     /**
-     * @param  string  $identifier
-     * @return ShortUrl|null
-     *
      * @throws UrlRepositoryException
      */
     public static function findByIdentifier(string $identifier): ?ShortUrl
@@ -49,9 +40,6 @@ class UrlService
     }
 
     /**
-     * @param  array  $utm_combination
-     * @return Collection
-     *
      * @throws UrlRepositoryException
      */
     public static function findByUtmCombination(array $utm_combination): Collection
@@ -60,10 +48,6 @@ class UrlService
     }
 
     /**
-     * @param  string  $identifier
-     * @param  string  $password
-     * @return ShortUrl|null
-     *
      * @throws UrlRepositoryException
      * @throws UtilityServiceException
      */
@@ -79,10 +63,6 @@ class UrlService
     }
 
     /**
-     * @param $identifier
-     * @param $type
-     * @param $id
-     *
      * @throws UrlRepositoryException
      */
     public static function attachOwnership($identifier, $type, $id): void
@@ -98,10 +78,6 @@ class UrlService
         }
     }
 
-    /**
-     * @param  string  $plain_text
-     * @return UrlBuilder
-     */
     public static function shorten(string $plain_text): UrlBuilder
     {
         return UrlBuilder::shorten($plain_text);

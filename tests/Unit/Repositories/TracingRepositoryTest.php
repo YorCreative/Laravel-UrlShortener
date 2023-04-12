@@ -16,6 +16,7 @@ class TracingRepositoryTest extends TestCase
 
     /**
      * @test
+     *
      * @group TracingRepository
      *
      * @throws ReflectionException
@@ -47,10 +48,6 @@ class TracingRepositoryTest extends TestCase
         return $method->invoke((object) TracingRepository::class, []);
     }
 
-    /**
-     * @param  array  $query
-     * @return Request
-     */
     private function buildRequestForTest(array $query): Request
     {
         return new Request($query);
@@ -58,6 +55,7 @@ class TracingRepositoryTest extends TestCase
 
     /**
      * @test
+     *
      * @group TracingRepository
      *
      * @throws ReflectionException
@@ -80,6 +78,7 @@ class TracingRepositoryTest extends TestCase
 
     /**
      * @test
+     *
      * @group TracingRepository
      */
     public function it_can_create_a_trace_record()

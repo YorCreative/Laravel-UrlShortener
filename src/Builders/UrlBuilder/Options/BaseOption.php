@@ -14,8 +14,6 @@ class BaseOption implements UrlBuilderOptionInterface
     use ShortUrlHelper;
 
     /**
-     * @param  Collection  $shortUrlCollection
-     *
      * @throws UrlBuilderException
      * @throws UrlRepositoryException
      */

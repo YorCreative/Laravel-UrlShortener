@@ -6,10 +6,6 @@ use YorCreative\UrlShortener\Builders\ClickQueryBuilder\ClickQueryBuilder;
 
 class BatchFilter extends AbstractFilter
 {
-    /**
-     * @param  array  $filter
-     * @return bool
-     */
     public function canProcess(array $filter): bool
     {
         $this->filter = $filter;
@@ -26,17 +22,11 @@ class BatchFilter extends AbstractFilter
             );
     }
 
-    /**
-     * @return array
-     */
     public function getAvailableFilterOptions(): array
     {
         return [];
     }
 
-    /**
-     * @param  ClickQueryBuilder  $clickQueryBuilder
-     */
     public function handle(ClickQueryBuilder &$clickQueryBuilder): void
     {
         $clickQueryBuilder->offset(($this->filter['offset'] > 0) ? $this->filter['offset'] : 0);

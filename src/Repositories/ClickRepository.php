@@ -12,10 +12,6 @@ use YorCreative\UrlShortener\Models\ShortUrlTracing;
 class ClickRepository
 {
     /**
-     * @param  int  $id
-     * @param  array  $with
-     * @return ShortUrlClick
-     *
      * @throws ClickRepositoryException
      */
     public static function findById(int $id, array $with = []): ShortUrlClick
@@ -30,10 +26,6 @@ class ClickRepository
     }
 
     /**
-     * @param  int  $short_url_id
-     * @param  int  $location_id
-     * @param  int  $outcome_id
-     *
      * @throws UrlRepositoryException
      */
     public static function createClick(int $short_url_id, int $location_id, int $outcome_id): void
@@ -50,9 +42,6 @@ class ClickRepository
     }
 
     /**
-     * @param  int  $short_url_id
-     * @param  array  $trace
-     *
      * @throws UrlRepositoryException
      */
     public static function createTrace(int $short_url_id, array $trace)

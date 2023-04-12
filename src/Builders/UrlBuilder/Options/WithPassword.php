@@ -10,8 +10,6 @@ use YorCreative\UrlShortener\Repositories\UrlRepository;
 class WithPassword implements UrlBuilderOptionInterface
 {
     /**
-     * @param  Collection  $shortUrlCollection
-     *
      * @throws UrlRepositoryException
      */
     public function resolve(Collection &$shortUrlCollection): void

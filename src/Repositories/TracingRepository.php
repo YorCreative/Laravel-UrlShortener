@@ -9,40 +9,19 @@ use YorCreative\UrlShortener\Models\ShortUrlTracing;
 
 class TracingRepository
 {
-    /**
-     * @var string
-     */
     public static string $ID = 'utm_id';
 
-    /**
-     * @var string
-     */
     public static string $SOURCE = 'utm_source';
 
-    /**
-     * @var string
-     */
     public static string $MEDIUM = 'utm_medium';
 
-    /**
-     * @var string
-     */
     public static string $CAMPAIGN = 'utm_campaign';
 
-    /**
-     * @var string
-     */
     public static string $CONTENT = 'utm_content';
 
-    /**
-     * @var string
-     */
     public static string $TERM = 'utm_term';
 
     /**
-     * @param  array  $trace
-     * @return void
-     *
      * @throws TracingRepositoryException
      */
     public static function create(array $trace): void
@@ -54,18 +33,11 @@ class TracingRepository
         }
     }
 
-    /**
-     * @param  Request  $request
-     * @return bool
-     */
     public static function hasTracing(Request $request): bool
     {
         return ! empty($request->only(self::getAllowedParameters()));
     }
 
-    /**
-     * @return array
-     */
     protected static function allowedParameters(): array
     {
         return [
@@ -78,18 +50,11 @@ class TracingRepository
         ];
     }
 
-    /**
-     * @return array
-     */
     public static function getAllowedParameters(): array
     {
         return self::allowedParameters();
     }
 
-    /**
-     * @param  array  $utm_input_array
-     * @return array
-     */
     public static function sanitizeUtmArray(array $utm_input_array): array
     {
         $allowed_utm_parameters = array_intersect(

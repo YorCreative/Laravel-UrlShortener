@@ -63,10 +63,6 @@ class TestCase extends \Orchestra\Testbench\TestCase
         );
     }
 
-    /**
-     * @param  array  $query
-     * @return Request
-     */
     public function buildClickRequest(array $query = []): Request
     {
         $query = array_merge($query, [
@@ -76,18 +72,11 @@ class TestCase extends \Orchestra\Testbench\TestCase
         return Request::create('xyz.com/xyz', 'GET', $query);
     }
 
-    /**
-     * @return string
-     */
     public function getPlainText(): string
     {
         return 'http://something-really-really-long.com/even/longer/thanks?ref=please&no=more&x='.rand(0, 199999);
     }
 
-    /**
-     * @param  Request  $request
-     * @param $location_ip
-     */
     public function changeRequestIp(Request &$request, $location_ip)
     {
         $request->server->add(['REMOTE_ADDR' => $location_ip]);
