@@ -18,7 +18,7 @@ class AttemptProtected extends Controller
     {
         $request->validate([
             'password' => ['required', 'string', 'max:255'],
-            'identifier' => ['required', 'exists:yor_short_urls,identifier'],
+            'identifier' => ['required', 'exists:short_urls,identifier'],
         ], [
             'identifier.exists' => 'Unable to process the given request, please try again.',
         ]);
