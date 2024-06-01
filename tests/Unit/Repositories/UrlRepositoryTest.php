@@ -4,13 +4,15 @@ namespace YorCreative\UrlShortener\Tests\Unit\Repositories;
 
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use YorCreative\UrlShortener\Models\ShortUrl;
 use YorCreative\UrlShortener\Models\ShortUrlOwnership;
 use YorCreative\UrlShortener\Repositories\UrlRepository;
 use YorCreative\UrlShortener\Tests\TestCase;
+use YorCreative\UrlShortener\Traits\ShortUrlHelper;
 
 class UrlRepositoryTest extends TestCase
 {
-    use DatabaseTransactions;
+    use DatabaseTransactions, ShortUrlHelper;
 
     /**
      * @test
@@ -57,7 +59,7 @@ class UrlRepositoryTest extends TestCase
      */
     public function it_can_find_short_url_by_hash()
     {
-        $shortUrl = UrlRepository::findByHash($this->hashed);
+        $shortUrl = UrlRepository::findByHash($this->shortUrl->hashed);
         $this->assertTrue($shortUrl->id == $this->shortUrl->id);
     }
 
@@ -101,6 +103,19 @@ class UrlRepositoryTest extends TestCase
         $shortUrl = UrlRepository::findByIdentifier($this->identifier);
 
         $this->assertNotNull($shortUrl->activation);
+    }
+
+    public function test_accessor_removes_duplicate_query_tag()
+    {
+        $shortUrl = ShortUrl::factory()->create([
+            'plain_text' => $link = 'http://test.com'.$this->getDuplicateShortUrlQueryTag(),
+            'hashed' => md5($link),
+        ]);
+
+        $this->assertNotEquals($link, $shortUrl->plain_text);
+
+        $record = UrlRepository::findByIdentifier($shortUrl->identifier);
+        $this->assertNotEquals($link, $record);
     }
 
     /**

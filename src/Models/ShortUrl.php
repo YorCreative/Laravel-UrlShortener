@@ -2,15 +2,17 @@
 
 namespace YorCreative\UrlShortener\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use YorCreative\UrlShortener\Traits\PublishableHasFactory;
+use YorCreative\UrlShortener\Traits\ShortUrlHelper;
 
 class ShortUrl extends Model
 {
-    use PublishableHasFactory, SoftDeletes;
+    use PublishableHasFactory, ShortUrlHelper, SoftDeletes;
 
     /**
      * @var bool
@@ -33,11 +35,13 @@ class ShortUrl extends Model
     protected $fillable = [
         'plain_text',
         'hashed',
+        'domain',
         'identifier',
         'activation',
         'expiration',
         'password',
         'limit',
+        'branded',
     ];
 
     protected $hidden = [
@@ -48,7 +52,7 @@ class ShortUrl extends Model
 
     public function tracing(): HasOne
     {
-        return $this->hasOne(ShortUrlTracing::class, 'short_url_id', 'id');
+        return $this->hasOne(ShortUrlTracing::class, 'short_url_id');
     }
 
     public function hasPassword(): bool
@@ -79,5 +83,42 @@ class ShortUrl extends Model
     public function ownership(): HasOne
     {
         return $this->hasOne(ShortUrlOwnership::class);
+    }
+
+    public function plainText(): Attribute
+    {
+        return Attribute::make(
+            get: fn (string $value) => $this->removeDuplicateShortUrlQueryTag($value));
+    }
+
+    public function scopeSearch($query, $keyword)
+    {
+        $query->where('plain_text', 'LIKE', "%{$keyword}%")
+            ->orWhere('identifier', 'LIKE', "%{$keyword}%")
+            ->orWhere('domain', 'LIKE', "%{$keyword}%")
+            ->orWhere('activation', 'LIKE', "%{$keyword}%")
+            ->orWhere('expiration', 'LIKE', "%{$keyword}%");
+
+        return $query;
+    }
+
+    public function scopeHasTracing($query, $search)
+    {
+        $query->whereHas('tracing');
+
+        $query->whereIn('short_urls.id', function ($query) use ($search) {
+            $query->from('short_url_tracings');
+
+            $query->whereIn('short_url_id', function ($query) use ($search) {
+                $query->where('short_url_tracings.utm_source', 'like', '%'.$search.'%');
+                $query->orWhere('short_url_tracings.utm_medium', 'like', '%'.$search.'%');
+                $query->orWhere('short_url_tracings.utm_campaign', 'like', '%'.$search.'%');
+                $query->orWhere('short_url_tracings.utm_content', 'like', '%'.$search.'%');
+                $query->orWhere('short_url_tracings.utm_term', 'like', '%'.$search.'%');
+                $query->select('short_url_tracings.short_url_id');
+            });
+
+            $query->select('short_url_id');
+        });
     }
 }

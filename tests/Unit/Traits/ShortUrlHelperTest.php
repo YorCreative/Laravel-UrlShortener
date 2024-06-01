@@ -1,6 +1,5 @@
 <?php
 
-use YorCreative\UrlShortener\Exceptions\UrlServiceException;
 use YorCreative\UrlShortener\Tests\Models\DemoOwner;
 use YorCreative\UrlShortener\Tests\TestCase;
 use YorCreative\UrlShortener\Traits\ShortUrlHelper;
@@ -38,18 +37,12 @@ class ShortUrlHelperTest extends TestCase
 
         $filter = [
             'ownership' => [
-                $model->id,
+                'ownerable_id' => $model->id,
+                'ownerable_type' => $model->getMorphClass(),
             ],
         ];
 
-        try {
-            $this->filterClickValidation($filter);
-        } catch (UrlServiceException $exception) {
-            $this->assertEquals(
-                '{"ownership.0":["Ownership must be an instance of the owners model."]}',
-                $exception->getMessage()
-            );
-        }
+        $this->assertEquals($filter, $this->filterClickValidation($filter));
     }
 
     /**

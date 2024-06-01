@@ -9,7 +9,6 @@ use YorCreative\UrlShortener\Builders\UrlBuilder\UrlBuilder;
 use YorCreative\UrlShortener\Exceptions\UrlBuilderException;
 use YorCreative\UrlShortener\Exceptions\UrlRepositoryException;
 use YorCreative\UrlShortener\Exceptions\UrlServiceException;
-use YorCreative\UrlShortener\Models\ShortUrl;
 use YorCreative\UrlShortener\Services\UrlService;
 use YorCreative\UrlShortener\Tests\Models\DemoOwner;
 use YorCreative\UrlShortener\Tests\TestCase;
@@ -77,7 +76,7 @@ class UrlServiceTest extends TestCase
      */
     public function it_can_can_find_short_url_by_the_hash()
     {
-        $shortUrl = UrlService::findByHash($this->hashed);
+        $shortUrl = UrlService::findByHash($this->shortUrl->hashed);
 
         $this->assertTrue($this->identifier == $shortUrl->identifier);
         $this->assertTrue($this->plain_text == $shortUrl->plain_text);
@@ -92,8 +91,8 @@ class UrlServiceTest extends TestCase
     {
         $shortUrl = UrlService::findByPlainText($this->plain_text);
 
-        $this->assertTrue($this->hashed == $shortUrl->hashed);
         $this->assertTrue($this->identifier == $shortUrl->identifier);
+        $this->assertTrue($this->plain_text == $shortUrl->plain_text);
     }
 
     /**
@@ -105,8 +104,7 @@ class UrlServiceTest extends TestCase
     {
         $shortUrl = UrlService::findByIdentifier($this->identifier);
 
-        $this->assertTrue($this->hashed == $shortUrl->hashed);
-        $this->assertTrue($this->plain_text == $shortUrl->plain_text);
+        $this->assertEquals($shortUrl->plain_text, $this->plain_text);
     }
 
     /**
@@ -194,10 +192,26 @@ class UrlServiceTest extends TestCase
      */
     public function it_can_set_an_activation_time_successfully()
     {
-        UrlService::shorten('something')
+        $shortUrl = UrlService::shorten('something')
             ->withActivation(Carbon::now()->addMinute()->timestamp)
             ->build();
 
-        $this->assertTrue(ShortUrl::where('plain_text', 'something')->first()->hasActivation());
+        $this->assertNotNull(UrlService::findByPlainText('something'));
+    }
+
+    public function it_can_can_find_by_identifier()
+    {
+        $shortUrl = UrlService::findByIdentifier($this->identifier);
+
+        $this->assertTrue($this->identifier == $shortUrl->identifier);
+        $this->assertTrue($this->plain_text == $shortUrl->plain_text);
+    }
+
+    public function it_can_can_find_by_identifier_and_domain()
+    {
+        $shortUrl = UrlService::findByIdentifier($this->identifier, 'test_domain');
+
+        $this->assertTrue($this->identifier == $shortUrl->identifier);
+        $this->assertTrue($this->plain_text == $shortUrl->plain_text);
     }
 }

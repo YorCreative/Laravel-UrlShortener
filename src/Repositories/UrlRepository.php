@@ -32,6 +32,25 @@ class UrlRepository
     }
 
     /**
+     * @throws UrlRepositoryException
+     */
+    public static function findOwnershipUrls(string $owner_type, int $owner_id): Collection
+    {
+        try {
+            return ShortUrl::whereIn('id', function ($query) use ($owner_type, $owner_id) {
+                $query->from('short_url_ownerships');
+                $query->where([
+                    'ownerable_type' => $owner_type,
+                    'ownerable_id' => $owner_id,
+                ]);
+                $query->select('short_url_id');
+            })->get();
+        } catch (Exception $exception) {
+            throw new UrlRepositoryException($exception->getMessage());
+        }
+    }
+
+    /**
      * @return mixed
      *
      * @throws UrlRepositoryException
@@ -56,7 +75,7 @@ class UrlRepository
     {
         try {
             return ShortUrl::where(
-                'plain_text', $plain_text
+                'plain_text', 'like', $plain_text.'%'
             )->with(self::defaultWithRelationship())->firstOrFail();
         } catch (Exception $exception) {
             throw new UrlRepositoryException($exception->getMessage());
@@ -103,15 +122,19 @@ class UrlRepository
     /**
      * @throws UrlRepositoryException
      */
-    public static function findByIdentifier(string $identifier): ShortUrl
+    public static function findByIdentifier(string $identifier): ?ShortUrl
     {
-        try {
-            return ShortUrl::where(
-                'identifier', $identifier
-            )->with(self::defaultWithRelationship())->firstOrFail();
-        } catch (Exception $exception) {
-            throw new UrlRepositoryException('Unable to find short url identifier: '.$identifier);
-        }
+        return ShortUrl::where(
+            'identifier', $identifier
+        )->with(self::defaultWithRelationship())->first();
+    }
+
+    public static function findByDomainIdentifier(string $domain, string $identifier): ?ShortUrl
+    {
+        return ShortUrl::where('identifier', $identifier)
+            ->where('domain', $domain)
+            ->with(self::defaultWithRelationship())
+            ->first();
     }
 
     /**

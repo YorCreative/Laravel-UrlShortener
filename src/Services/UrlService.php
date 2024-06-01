@@ -34,9 +34,11 @@ class UrlService
     /**
      * @throws UrlRepositoryException
      */
-    public static function findByIdentifier(string $identifier): ?ShortUrl
+    public static function findByIdentifier(string $identifier, ?string $domain = null): ?ShortUrl
     {
-        return UrlRepository::findByIdentifier($identifier);
+        return $domain
+            ? UrlRepository::findByDomainIdentifier($domain, $identifier)
+            : UrlRepository::findByIdentifier($identifier);
     }
 
     /**
@@ -57,9 +59,14 @@ class UrlService
             return null;
         }
 
-        return UtilityService::getEncrypter()->decryptString($shortUrl->password) == $password
-            ? $shortUrl
-            : null;
+        // TODO: move this over to main
+        if ($shortUrl->hasPassword()) {
+            return UtilityService::getEncrypter()->decryptString($shortUrl->password) == $password
+                ? $shortUrl
+                : null;
+        }
+
+        return null;
     }
 
     /**
@@ -81,5 +88,13 @@ class UrlService
     public static function shorten(string $plain_text): UrlBuilder
     {
         return UrlBuilder::shorten($plain_text);
+    }
+
+    /**
+     * @throws UrlRepositoryException
+     */
+    public static function getAllByOwner(string $ownerable_type, string $ownerable_id): Collection
+    {
+        return UrlRepository::findOwnershipUrls($ownerable_type, $ownerable_id);
     }
 }

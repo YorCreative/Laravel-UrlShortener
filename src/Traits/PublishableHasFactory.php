@@ -16,8 +16,8 @@ trait PublishableHasFactory
     {
         $package = Str::before(get_called_class(), 'Models\\');
         $modelName = Str::after(get_called_class(), 'Models\\');
-        $path = $package.'Tests\\Factories\\'.$modelName.'Factory';
+        $path = $package.'Utility\\Factories\\'.$modelName.'Factory';
 
-        return $path::new();
+        return new $path;
     }
 }

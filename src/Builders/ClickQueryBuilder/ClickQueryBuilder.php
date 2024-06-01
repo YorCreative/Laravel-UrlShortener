@@ -3,7 +3,6 @@
 namespace YorCreative\UrlShortener\Builders\ClickQueryBuilder;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use YorCreative\UrlShortener\Repositories\ClickRepository;
 
@@ -100,12 +99,14 @@ class ClickQueryBuilder extends Builder
         return $this->expirationFilter('<', now()->timestamp);
     }
 
-    public function whereOwnership(Model $model): ClickQueryBuilder
+    public function whereOwnership(string $ownerable_type, int $ownerable_id): ClickQueryBuilder
     {
-        return $this->whereIn('short_url_id', function ($query) use ($model) {
+        return $this->whereIn('short_url_id', function ($query) use ($ownerable_type, $ownerable_id) {
             $query->from('short_url_ownerships');
-            $query->where('ownerable_id', $model->id);
+            $query->where('ownerable_id', $ownerable_id)->where('ownerable_type', $ownerable_type);
             $query->select('short_url_id');
+
+            return $query;
         });
     }
 

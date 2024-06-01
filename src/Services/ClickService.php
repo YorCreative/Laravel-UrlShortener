@@ -42,11 +42,15 @@ class ClickService
 
     public static int $FAILURE_ACTIVATION = 6;
 
+    public static int $CLIENT_TERMINATED_ROUTING = 7;
+
     /**
      * @throws ClickServiceException
      */
     public static function track(string $identifier, string $request_ip, int $outcome_id, bool $test = false): void
     {
+        $request_ip = config('location.testing.enabled') ? config('location.testing.ip') : $request_ip;
+
         try {
             ClickRepository::createClick(
                 UrlRepository::findByIdentifier($identifier)->id,
@@ -66,17 +70,18 @@ class ClickService
      * @throws FilterClicksStrategyException
      * @throws Throwable
      */
-    public static function get(array $filter = []): Collection
+    public static function get(array $filter = [], bool $countOnly = false): Collection
     {
         return self::handle(
-            self::filterClickValidation($filter)
+            self::filterClickValidation($filter),
+            $countOnly
         );
     }
 
     /**
      * @throws FilterClicksStrategyException
      */
-    protected static function handle(array $filterQuery = []): Collection
+    protected static function handle(array $filterQuery = [], bool $countOnly = false): Collection
     {
         $clickQueryBuilder = ClickService::getClickQueryBuilder();
         $filterStrategy = new FilterClicksStrategy();
@@ -90,7 +95,7 @@ class ClickService
         $filterStrategy->handle($clickQueryBuilder);
 
         return new Collection([
-            'results' => $clickQueryBuilder->build(),
+            'results' => $countOnly ? collect() : $clickQueryBuilder->build(),
             'total' => $clickQueryBuilder->count(),
         ]);
     }

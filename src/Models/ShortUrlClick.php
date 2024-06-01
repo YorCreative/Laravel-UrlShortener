@@ -67,4 +67,36 @@ class ShortUrlClick extends Model
     {
         return new ClickQueryBuilder($query);
     }
+
+    public function scopeSearch($query, $keyword, $shortUrlId = null)
+    {
+        if ($shortUrlId) {
+            $query->where('short_url_id', $shortUrlId);
+        }
+
+        $query->whereIn('location_id', function ($query) use ($keyword) {
+            $query->from('short_url_locations');
+            $query->where('countryName', 'like', '%'.$keyword.'%');
+            $query->orWhere('countryCode', 'like', '%'.$keyword.'%');
+            $query->orWhere('regionName', 'like', '%'.$keyword.'%');
+            $query->orWhere('regionCode', 'like', '%'.$keyword.'%');
+            $query->orWhere('cityName', 'like', '%'.$keyword.'%');
+            $query->orWhere('zipCode', 'like', '%'.$keyword.'%');
+            $query->orWhere('postalCode', 'like', '%'.$keyword.'%');
+            $query->orWhere('timezone', 'like', '%'.$keyword.'%');
+            $query->orWhere('metroCode', 'like', '%'.$keyword.'%');
+            $query->orWhere('isoCode', 'like', '%'.$keyword.'%');
+            $query->orWhere('countryCode', 'like', '%'.$keyword.'%');
+            $query->orWhere('ip', 'like', '%'.$keyword.'%');
+            $query->select('id');
+        });
+
+        $query->orWhereIn('outcome_id', function ($query) use ($keyword) {
+            $query->from('short_url_outcomes');
+            $query->where('alias', 'like', '%'.$keyword.'%');
+            $query->select('id');
+        });
+
+        return $query;
+    }
 }

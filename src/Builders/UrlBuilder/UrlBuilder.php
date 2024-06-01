@@ -9,13 +9,15 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use YorCreative\UrlShortener\Builders\UrlBuilder\Options\BaseOption;
 use YorCreative\UrlShortener\Builders\UrlBuilder\Options\WithActivation;
+use YorCreative\UrlShortener\Builders\UrlBuilder\Options\WithBrandedIdentifier;
+use YorCreative\UrlShortener\Builders\UrlBuilder\Options\WithDomain;
 use YorCreative\UrlShortener\Builders\UrlBuilder\Options\WithExpiration;
 use YorCreative\UrlShortener\Builders\UrlBuilder\Options\WithOpenLimit;
 use YorCreative\UrlShortener\Builders\UrlBuilder\Options\WithOwnership;
 use YorCreative\UrlShortener\Builders\UrlBuilder\Options\WithPassword;
 use YorCreative\UrlShortener\Builders\UrlBuilder\Options\WithTracing;
 use YorCreative\UrlShortener\Exceptions\UrlBuilderException;
-use YorCreative\UrlShortener\Exceptions\UrlServiceException;
+use YorCreative\UrlShortener\Exceptions\UtilityServiceException;
 use YorCreative\UrlShortener\Services\UtilityService;
 use YorCreative\UrlShortener\Traits\ShortUrlHelper;
 
@@ -43,8 +45,9 @@ class UrlBuilder implements UrlBuilderInterface
     public static function shorten(string $plain_text): UrlBuilder
     {
         $b = self::$builder = new static;
-        $b->shortUrlCollection->put('plain_text', $plain_text);
-        $b->shortUrlCollection->put('hashed', md5($plain_text));
+
+        $b->shortUrlCollection->put('plain_text', $url = $plain_text.$b->getDuplicateShortUrlQueryTag());
+        $b->shortUrlCollection->put('hashed', md5($url));
 
         $b->options->add(new BaseOption());
 
@@ -55,7 +58,7 @@ class UrlBuilder implements UrlBuilderInterface
      * @return $this
      *
      * @throws UrlBuilderException
-     * @throws UrlServiceException
+     * @throws UtilityServiceException
      */
     public function withPassword(string $password): UrlBuilder
     {
@@ -108,6 +111,28 @@ class UrlBuilder implements UrlBuilderInterface
 
         $this->options->add(
             new WithActivation()
+        );
+
+        return $this;
+    }
+
+    public function withDomain(string $domain): UrlBuilder
+    {
+        $this->shortUrlCollection->put('domain', $domain);
+
+        $this->options->add(
+            new WithDomain()
+        );
+
+        return $this;
+    }
+
+    public function withBrandedIdentifier(string $identifier): UrlBuilder
+    {
+        $this->shortUrlCollection->put('identifier', $identifier);
+
+        $this->options->add(
+            new WithBrandedIdentifier()
         );
 
         return $this;
@@ -173,7 +198,7 @@ class UrlBuilder implements UrlBuilderInterface
 
         DB::commit();
 
-        return $this->builtShortUrl($shortUrlCollection->get('identifier'));
+        return $this->builtShortUrl($shortUrlCollection->get('identifier'), $shortUrlCollection->get('domain'));
     }
 
     public function getOptions(): Collection

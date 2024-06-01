@@ -2,7 +2,6 @@
 
 namespace YorCreative\UrlShortener\Traits;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Throwable;
@@ -11,6 +10,8 @@ use YorCreative\UrlShortener\Repositories\UrlRepository;
 
 trait ShortUrlHelper
 {
+    const string SHORT_URL_DUP_KEY = '?x_short_url_dup_id=';
+
     /**
      * @throws Throwable
      */
@@ -18,18 +19,13 @@ trait ShortUrlHelper
     {
         $filterValidation = Validator::make($filter, [
             'ownership' => ['array'],
-            'ownership.*' => [function ($attribute, $value, $fail) {
-                if (! $value instanceof Model) {
-                    return $fail('Ownership must be an instance of the owners model.');
-                }
-
-                return true;
-            }],
+            'ownership.ownerable_type' => ['string', 'sometimes', 'max:255'],
+            'ownership.ownerable_id' => ['int', 'sometimes'],
             'outcome' => [
                 'array',
             ],
             'outcome.*' => [
-                'in:1,2,3,4,5',
+                'in:1,2,3,4,5,6,7',
             ],
             'status' => [
                 'in:active,expired,expiring',
@@ -101,18 +97,18 @@ trait ShortUrlHelper
         return $identifier;
     }
 
-    private function builtShortUrl($identifier): string
+    private function builtShortUrl(string $identifier, ?string $domain = null): string
     {
         return str_replace(
             '{identifier}',
             $identifier,
-            $this->buildShortUrl()
+            $this->buildShortUrl($domain)
         );
     }
 
-    private function buildShortUrl(): string
+    private function buildShortUrl(?string $domain): string
     {
-        $host = config('urlshortener.branding.host') ?? 'localhost.test';
+        $host = ! empty($domain) ? $domain : config('urlshortener.branding.host') ?? 'localhost.test';
         $host = str_ends_with('/', $host)
             ? $host
             : $host.'/';
@@ -131,5 +127,17 @@ trait ShortUrlHelper
         return is_null($prefix)
             ? $host.$identifier
             : $host.$prefix.$identifier;
+    }
+
+    public function getDuplicateShortUrlQueryTag(): string
+    {
+        return self::SHORT_URL_DUP_KEY.Str::uuid()->toString();
+    }
+
+    public function removeDuplicateShortUrlQueryTag(string $plain_text): string
+    {
+        $pattern = "~\?x_short_url_dup_id=[^&]+~xim";
+
+        return preg_replace($pattern, '', $plain_text);
     }
 }

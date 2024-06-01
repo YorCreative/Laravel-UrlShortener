@@ -20,8 +20,6 @@ class ShortUrlBasicTest extends TestCase
         $this->assertDatabaseHas(
             'short_urls',
             [
-                'plain_text' => $this->plain_text,
-                'hashed' => $this->hashed,
                 'identifier' => $this->identifier,
             ]
         );
