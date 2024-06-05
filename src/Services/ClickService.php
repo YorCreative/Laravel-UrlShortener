@@ -47,15 +47,15 @@ class ClickService
     /**
      * @throws ClickServiceException
      */
-    public static function track(string $identifier, string $request_ip, int $outcome_id, bool $test = false): void
+    public static function track(string $identifier, string $request_ip, int $outcome_id, ?string $domain = null): void
     {
         $request_ip = config('location.testing.enabled') ? config('location.testing.ip') : $request_ip;
 
         try {
             ClickRepository::createClick(
-                UrlRepository::findByIdentifier($identifier)->id,
+                UrlRepository::findByDomainIdentifier($identifier, $domain)->id,
                 LocationRepository::findOrCreateLocationRecord(
-                    ! $test
+                    ! config('location.testing.enabled')
                         ? LocationRepository::getLocationFrom($request_ip)
                         : LocationRepository::locationUnknown($request_ip)
                 )->id,
