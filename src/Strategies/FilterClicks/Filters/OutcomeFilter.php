@@ -26,6 +26,7 @@ class OutcomeFilter extends AbstractFilter
             ClickService::$FAILURE_EXPIRATION,
             ClickService::$FAILURE_ACTIVATION,
             ClickService::$CLIENT_TERMINATED_ROUTING,
+            ClickService::$CLIENT_INITIATED_ROUTING
         ];
     }
 

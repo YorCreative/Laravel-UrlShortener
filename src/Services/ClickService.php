@@ -44,6 +44,8 @@ class ClickService
 
     public static int $CLIENT_TERMINATED_ROUTING = 7;
 
+    public static int $CLIENT_INITIATED_ROUTING = 8;
+
     /**
      * @throws ClickServiceException
      */
@@ -54,11 +56,7 @@ class ClickService
         try {
             ClickRepository::createClick(
                 UrlRepository::findByDomainIdentifier($identifier, $domain)->id,
-                LocationRepository::findOrCreateLocationRecord(
-                    ! config('location.testing.enabled')
-                        ? LocationRepository::getLocationFrom($request_ip)
-                        : LocationRepository::locationUnknown($request_ip)
-                )->id,
+                LocationRepository::findOrCreateLocationRecord(LocationRepository::getLocationFrom($request_ip))->id,
                 $outcome_id
             );
         } catch (Exception $exception) {
