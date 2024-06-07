@@ -102,16 +102,17 @@ class ShortUrl extends Model
         return $query;
     }
 
-    public function scopeHasTracing($query, $search) {
+    public function scopeHasTracing($query, $search)
+    {
         $query->whereHas('tracing')
             ->whereIn('short_urls.id', function ($subQuery) use ($search) {
                 $subQuery->from('short_url_tracings')
                     ->where(function ($subWhereQuery) use ($search) {
-                        $subWhereQuery->where('short_url_tracings.utm_source', 'like', '%' . $search . '%')
-                            ->orWhere('short_url_tracings.utm_medium', 'like', '%' . $search . '%')
-                            ->orWhere('short_url_tracings.utm_campaign', 'like', '%' . $search . '%')
-                            ->orWhere('short_url_tracings.utm_content', 'like', '%' . $search . '%')
-                            ->orWhere('short_url_tracings.utm_term', 'like', '%' . $search . '%');
+                        $subWhereQuery->where('short_url_tracings.utm_source', 'like', '%'.$search.'%')
+                            ->orWhere('short_url_tracings.utm_medium', 'like', '%'.$search.'%')
+                            ->orWhere('short_url_tracings.utm_campaign', 'like', '%'.$search.'%')
+                            ->orWhere('short_url_tracings.utm_content', 'like', '%'.$search.'%')
+                            ->orWhere('short_url_tracings.utm_term', 'like', '%'.$search.'%');
                     })
                     ->select('short_url_tracings.short_url_id');
             });
