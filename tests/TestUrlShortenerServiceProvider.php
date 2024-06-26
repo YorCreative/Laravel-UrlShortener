@@ -11,9 +11,7 @@ class TestUrlShortenerServiceProvider extends UrlShortenerServiceProvider
      *
      * @return void
      */
-    public function register()
-    {
-    }
+    public function register() {}
 
     /**
      * Bootstrap services.
