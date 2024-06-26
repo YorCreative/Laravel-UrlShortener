@@ -26,7 +26,7 @@ class UtilityService
 
     protected static function databaseEncryptionKey(): ?string
     {
-        return base64_decode(Str::after(env('APP_KEY'), 'base64:'));
+        return base64_decode(Str::after(config('app.key'), 'base64:'));
     }
 
     public static function getRedirectCode(): int
