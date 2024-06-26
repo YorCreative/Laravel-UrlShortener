@@ -18,7 +18,7 @@ class UtilityService
         try {
             return new Encrypter(
                 UtilityService::databaseEncryptionKey(),
-                'AES-256-CBC');
+                'aes-128-cbc');
         } catch (Exception $exception) {
             throw new UtilityServiceException($exception->getMessage());
         }
