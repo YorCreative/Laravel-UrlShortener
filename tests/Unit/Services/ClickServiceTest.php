@@ -3,6 +3,7 @@
 namespace YorCreative\UrlShortener\Tests\Unit\Services;
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Config;
 use Throwable;
 use YorCreative\UrlShortener\Exceptions\FilterClicksStrategyException;
 use YorCreative\UrlShortener\Exceptions\UrlRepositoryException;
@@ -14,6 +15,7 @@ class ClickServiceTest extends TestCase
 {
     use DatabaseTransactions;
 
+
     /**
      * @test
      *
@@ -23,11 +25,12 @@ class ClickServiceTest extends TestCase
     {
         $ip = '0.0.0.0';
 
+        Config::set('location.testing.enabled', true);
+
         ClickService::track(
             $this->identifier,
             $ip,
-            ClickService::$SUCCESS_ROUTED,
-            true
+            ClickService::$SUCCESS_ROUTED
         );
 
         $this->assertDatabaseHas(
@@ -59,11 +62,12 @@ class ClickServiceTest extends TestCase
     {
         $ip = '0.0.0.0';
 
+        Config::set('location.testing.enabled', true);
+
         ClickService::track(
             $this->identifier,
             $ip,
-            ClickService::$SUCCESS_ROUTED,
-            true
+            ClickService::$SUCCESS_ROUTED
         );
 
         $clicks = ClickService::get([

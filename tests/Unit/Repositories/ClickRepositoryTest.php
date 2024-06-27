@@ -3,6 +3,8 @@
 namespace YorCreative\UrlShortener\Tests\Unit\Repositories;
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Config;
+use YorCreative\UrlShortener\Models\ShortUrl;
 use YorCreative\UrlShortener\Repositories\ClickRepository;
 use YorCreative\UrlShortener\Services\ClickService;
 use YorCreative\UrlShortener\Tests\TestCase;
@@ -18,11 +20,12 @@ class ClickRepositoryTest extends TestCase
      */
     public function it_can_find_a_click_by_its_id()
     {
+        Config::set('location.testing.enabled', true);
+
         ClickService::track(
             $this->identifier,
             '0.0.0.0',
-            ClickService::$SUCCESS_ROUTED,
-            true
+            ClickService::$SUCCESS_ROUTED
         );
 
         $this->assertEquals(

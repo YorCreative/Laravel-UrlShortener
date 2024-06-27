@@ -45,8 +45,8 @@ class UtilityService
     {
         return array_merge(
             config('urlshortener.redirect.headers') ?? [
-                'Referer' => 'localhost:1337',
-            ],
+            'Referer' => 'localhost:1337',
+        ],
             $dynamic_headers
         );
     }
