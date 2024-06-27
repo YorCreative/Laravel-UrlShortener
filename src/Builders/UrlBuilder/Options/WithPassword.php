@@ -16,6 +16,7 @@ class WithPassword implements UrlBuilderOptionInterface
     {
         UrlRepository::updateShortUrl(
             $shortUrlCollection->get('identifier'),
+            $shortUrlCollection->get('domain'),
             ['password' => $shortUrlCollection->get('password')]
         );
     }

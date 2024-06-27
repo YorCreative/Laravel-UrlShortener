@@ -20,12 +20,14 @@ class BaseOption implements UrlBuilderOptionInterface
      */
     public function resolve(Collection &$shortUrlCollection): void
     {
+        $domain = $shortUrlCollection->get('domain');
         $identifier = $shortUrlCollection->has('identifier')
             ? $shortUrlCollection->get('identifier')
             : $this->generateUrlIdentifier();
 
         $shortUrlCollection = $shortUrlCollection->merge([
             'identifier' => $identifier,
+            'domain' => $domain,
         ]);
 
         $shortUrlArr = $shortUrlCollection->only([

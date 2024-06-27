@@ -22,8 +22,9 @@ class WithTracing implements UrlBuilderOptionInterface
         );
 
         $trace = [
-            'short_url_id' => UrlRepository::findByIdentifier(
-                $shortUrlCollection->get('identifier')
+            'short_url_id' => UrlRepository::findByDomainIdentifier(
+                $shortUrlCollection->get('domain'),
+                $shortUrlCollection->get('identifier'),
             )->id,
         ];
 

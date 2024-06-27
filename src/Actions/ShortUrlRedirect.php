@@ -24,6 +24,7 @@ class ShortUrlRedirect extends Controller
      */
     public function __invoke(Request $request, string $identifier)
     {
+        dd($request, $identifier);
         $this->identifier = $identifier;
         /**
          * Get Short URL Identifier & Validate

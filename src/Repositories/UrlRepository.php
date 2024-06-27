@@ -97,10 +97,10 @@ class UrlRepository
     /**
      * @throws UrlRepositoryException
      */
-    public static function updateShortUrl(string $identifier, array $updates): ShortUrl
+    public static function updateShortUrl(string $identifier, string $domain, array $updates): ShortUrl
     {
         try {
-            $ShortUrlRecord = self::findByIdentifier($identifier);
+            $ShortUrlRecord = self::findByDomainIdentifier($domain, $identifier);
             $ShortUrlRecord->update($updates);
 
             return $ShortUrlRecord;

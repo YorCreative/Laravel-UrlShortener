@@ -72,11 +72,11 @@ class UrlService
     /**
      * @throws UrlRepositoryException
      */
-    public static function attachOwnership($identifier, $type, $id): void
+    public static function attachOwnership($domain, $identifier, $type, $id): void
     {
         try {
             UrlRepository::findOrCreateOwnershipRecord([
-                'short_url_id' => UrlRepository::findByIdentifier($identifier)->id,
+                'short_url_id' => UrlRepository::findByDomainIdentifier($domain, $identifier)->id,
                 'ownerable_type' => $type,
                 'ownerable_id' => $id,
             ]);

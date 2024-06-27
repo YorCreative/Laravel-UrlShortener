@@ -7,6 +7,9 @@ use YorCreative\UrlShortener\Builders\UrlBuilder\UrlBuilderOptionInterface;
 use YorCreative\UrlShortener\Exceptions\UrlRepositoryException;
 use YorCreative\UrlShortener\Repositories\UrlRepository;
 
+/**
+ * @deprecated
+ */
 class WithDomain implements UrlBuilderOptionInterface
 {
     /**

@@ -18,6 +18,7 @@ class WithOwnership implements UrlBuilderOptionInterface
         $primary_key = $model->getKeyName();
 
         UrlService::attachOwnership(
+            $shortUrlCollection->get('domain'),
             $shortUrlCollection->get('identifier'),
             $model->getMorphClass(),
             $model->$primary_key
