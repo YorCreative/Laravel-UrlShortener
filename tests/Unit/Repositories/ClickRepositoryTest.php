@@ -4,7 +4,6 @@ namespace YorCreative\UrlShortener\Tests\Unit\Repositories;
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Config;
-use YorCreative\UrlShortener\Models\ShortUrl;
 use YorCreative\UrlShortener\Repositories\ClickRepository;
 use YorCreative\UrlShortener\Services\ClickService;
 use YorCreative\UrlShortener\Tests\TestCase;

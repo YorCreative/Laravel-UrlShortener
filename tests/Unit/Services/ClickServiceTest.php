@@ -15,7 +15,6 @@ class ClickServiceTest extends TestCase
 {
     use DatabaseTransactions;
 
-
     /**
      * @test
      *
