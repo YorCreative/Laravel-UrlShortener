@@ -4,11 +4,12 @@ namespace YorCreative\UrlShortener\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use YorCreative\UrlShortener\Traits\PublishableHasFactory;
 
 class ShortUrlOwnership extends Model
 {
-    use PublishableHasFactory;
+    use PublishableHasFactory, SoftDeletes;
 
     /**
      * @var bool
