@@ -120,9 +120,9 @@ class UrlBuilder implements UrlBuilderInterface
     {
         $this->shortUrlCollection->put('domain', $domain);
 
-//        $this->options->add(
-//            new WithDomain()
-//        );
+        //        $this->options->add(
+        //            new WithDomain()
+        //        );
 
         // handled in baseOption now
 
