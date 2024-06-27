@@ -18,7 +18,7 @@ class UtilityService
         try {
             return new Encrypter(
                 UtilityService::databaseEncryptionKey(),
-                'aes-128-cbc');
+                'AES-256-CBC');
         } catch (Exception $exception) {
             throw new UtilityServiceException($exception->getMessage());
         }
@@ -26,7 +26,7 @@ class UtilityService
 
     protected static function databaseEncryptionKey(): ?string
     {
-        return base64_decode(Str::after(config('app.key'), 'base64:'));
+        return base64_decode(Str::after(env('APP_KEY'), 'base64:'));
     }
 
     public static function getRedirectCode(): int
