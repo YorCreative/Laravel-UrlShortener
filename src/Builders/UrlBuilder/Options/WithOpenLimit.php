@@ -16,6 +16,7 @@ class WithOpenLimit implements UrlBuilderOptionInterface
     {
         UrlRepository::updateShortUrl(
             $shortUrlCollection->get('identifier'),
+            $shortUrlCollection->get('domain'),
             ['limit' => $shortUrlCollection->get('limit')]
         );
     }
