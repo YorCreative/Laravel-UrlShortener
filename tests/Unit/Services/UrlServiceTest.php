@@ -124,7 +124,7 @@ class UrlServiceTest extends TestCase
             ->withPassword('password')
             ->build();
 
-        $identifier = str_replace($this->base .'/v1/', '', $url);
+        $identifier = str_replace($this->base.'/v1/', '', $url);
         $shortUrl = UrlService::attempt($identifier, $this->base, 'password');
 
         $this->assertTrue($plain_text == $shortUrl->plain_text);
@@ -149,7 +149,7 @@ class UrlServiceTest extends TestCase
 
         $identifier = str_replace($this->base, '', $url);
 
-        $this->assertNull(UrlService::attempt($identifier, $domain,'not_password'));
+        $this->assertNull(UrlService::attempt($identifier, $domain, 'not_password'));
     }
 
     /**
