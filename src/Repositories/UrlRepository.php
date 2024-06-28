@@ -118,7 +118,7 @@ class UrlRepository
     {
         return (new ShortUrl())->where([
             'identifier' => $identifier,
-            'domain' => $domain
+            'domain' => $domain,
         ])->exists();
     }
 
