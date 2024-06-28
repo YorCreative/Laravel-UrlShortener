@@ -29,10 +29,10 @@ class ShortUrlFactory extends Factory
         $plain_text = 'something-really-really-long.com/even/longer/thanks?ref=please&no=more&ref='.rand(4, 999999);
 
         return [
-            'domain' => 'short.url',
+            'domain' => $domain = 'short.url',
             'plain_text' => $plain_text,
             'hashed' => md5($plain_text),
-            'identifier' => $this->generateUrlIdentifier(),
+            'identifier' => $this->generateUrlIdentifier($domain),
             'activation' => null,
             'expiration' => Carbon::now()->addDays(60)->timestamp,
             'password' => null,

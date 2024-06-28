@@ -118,6 +118,19 @@ class UrlRepositoryTest extends TestCase
         $this->assertNotEquals($link, $record);
     }
 
+    public function test_domain_identifier_exists()
+    {
+        $shortUrl = ShortUrl::factory()->create([
+            'domain' => $domain = 'test.domain',
+            'plain_text' => $link = 'http://test.com'.$this->getDuplicateShortUrlQueryTag(),
+            'hashed' => md5($link),
+        ]);
+
+        $this->assertFalse(UrlRepository::domainIdentifierExists($shortUrl->domain, $shortUrl->identifier.'333'));
+
+        $this->assertTrue(UrlRepository::domainIdentifierExists($shortUrl->domain, $shortUrl->identifier));
+    }
+
     /**
      * @test
      *

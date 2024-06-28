@@ -27,7 +27,7 @@ class UrlServiceTest extends TestCase
     public function it_can_find_a_short_url_by_utm_combination()
     {
         // extra url to filter through
-        UrlService::shorten('testing.com/something/so/long/i/need/a/short/url'.rand(999, 999999))
+        UrlService::shorten('testing.com/something/so/long/i/need/a/short/url'.rand(999, 999999), $domain = 'test.domain')
             ->withTracing([
                 'utm_campaign' => 'alpha',
                 'utm_source' => 'alpha',
@@ -43,12 +43,12 @@ class UrlServiceTest extends TestCase
             'utm_medium' => 'testing',
         ];
 
-        UrlService::shorten($targetPlainText)
+        UrlService::shorten($targetPlainText, $domain)
             ->withTracing($targetUtmCombination)
             ->build();
 
         // extra url to filter through
-        UrlService::shorten('testing.com/something/so/long/i/need/a/short/url'.rand(999, 999999))
+        UrlService::shorten('testing.com/something/so/long/i/need/a/short/url'.rand(999, 999999), $domain)
             ->withTracing([
                 'utm_campaign' => 'alpha',
                 'utm_source' => 'charlie',
@@ -102,7 +102,7 @@ class UrlServiceTest extends TestCase
      */
     public function it_can_can_find_short_url_by_the_identifier()
     {
-        $shortUrl = UrlService::findByIdentifier($this->identifier);
+        $shortUrl = UrlService::findByIdentifier($this->identifier, $this->base);
 
         $this->assertEquals($shortUrl->plain_text, $this->plain_text);
     }

@@ -114,6 +114,14 @@ class UrlRepository
         return (new ShortUrl())->where('identifier', $identifier)->exists();
     }
 
+    public static function domainIdentifierExists(string $domain, string $identifier): bool
+    {
+        return (new ShortUrl())->where([
+            'identifier' => $identifier,
+            'domain' => $domain
+        ])->exists();
+    }
+
     public static function hashExists(string $hashed): ?ShortUrl
     {
         return (new ShortUrl())->where('hashed', $hashed)->first();

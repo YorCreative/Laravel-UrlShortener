@@ -84,14 +84,14 @@ trait ShortUrlHelper
         return $filter;
     }
 
-    private function generateUrlIdentifier(): string
+    private function generateUrlIdentifier(string $domain): string
     {
         $identifier = Str::random(
             config('urlshortener.branding.identifier.length') ?? 6
         );
 
-        if (UrlRepository::identifierExists($identifier)) {
-            return $this->generateUrlIdentifier();
+        if (UrlRepository::domainIdentifierExists($domain, $identifier)) {
+            return $this->generateUrlIdentifier($domain);
         }
 
         return $identifier;
