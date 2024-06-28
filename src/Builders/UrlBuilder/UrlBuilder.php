@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Validator;
 use YorCreative\UrlShortener\Builders\UrlBuilder\Options\BaseOption;
 use YorCreative\UrlShortener\Builders\UrlBuilder\Options\WithActivation;
 use YorCreative\UrlShortener\Builders\UrlBuilder\Options\WithBrandedIdentifier;
-use YorCreative\UrlShortener\Builders\UrlBuilder\Options\WithDomain;
 use YorCreative\UrlShortener\Builders\UrlBuilder\Options\WithExpiration;
 use YorCreative\UrlShortener\Builders\UrlBuilder\Options\WithOpenLimit;
 use YorCreative\UrlShortener\Builders\UrlBuilder\Options\WithOwnership;
@@ -42,12 +41,13 @@ class UrlBuilder implements UrlBuilderInterface
         $this->shortUrlCollection = new Collection();
     }
 
-    public static function shorten(string $plain_text): UrlBuilder
+    public static function shorten(string $plain_text, ?string $domain = null): UrlBuilder
     {
         $b = self::$builder = new static;
 
         $b->shortUrlCollection->put('plain_text', $url = $plain_text.$b->getDuplicateShortUrlQueryTag());
         $b->shortUrlCollection->put('hashed', md5($url));
+        $b->shortUrlCollection->put('domain', $domain);
 
         $b->options->add(new BaseOption());
 

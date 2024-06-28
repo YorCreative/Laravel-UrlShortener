@@ -39,11 +39,11 @@ class TestCase extends \Orchestra\Testbench\TestCase
             $migration->up();
         });
 
-        $this->base = 'localhost.test/v1/';
+        $this->base = 'localhost.test';
         $this->plain_text = $this->getPlainText();
         $this->hashed = md5($this->plain_text);
 
-        $this->url = UrlService::shorten($this->plain_text)->withTracing([
+        $this->url = UrlService::shorten($this->plain_text, 'localhost.test')->withTracing([
             TracingRepository::$ID => 'testing',
             TracingRepository::$CAMPAIGN => 'testing',
             TracingRepository::$SOURCE => 'testing',
@@ -52,9 +52,9 @@ class TestCase extends \Orchestra\Testbench\TestCase
             TracingRepository::$TERM => 'testing',
         ])->build();
 
-        $this->identifier = str_replace($this->base, '', $this->url);
+        $this->identifier = str_replace($this->base.'/v1/', '', $this->url);
 
-        $this->shortUrl = UrlService::findByIdentifier($this->identifier);
+        $this->shortUrl = UrlService::findByIdentifier($this->identifier, $this->base);
 
         $this->request = Request::create('something-short.com/not-really');
         $this->changeRequestIp(

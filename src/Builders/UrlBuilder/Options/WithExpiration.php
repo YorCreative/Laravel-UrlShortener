@@ -16,6 +16,7 @@ class WithExpiration implements UrlBuilderOptionInterface
     {
         UrlRepository::updateShortUrl(
             $shortUrlCollection->get('identifier'),
+            $shortUrlCollection->get('domain'),
             ['expiration' => $shortUrlCollection->get('expiration')]
         );
     }

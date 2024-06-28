@@ -22,9 +22,9 @@ class ClickServiceTest extends TestCase
      */
     public function it_can_can_track_a_click()
     {
-        $ip = '0.0.0.0';
-
         Config::set('location.testing.enabled', true);
+
+        Config::set('location.testing.ip', $ip = '66.102.0.0');
 
         ClickService::track(
             $this->identifier,
@@ -59,9 +59,9 @@ class ClickServiceTest extends TestCase
      */
     public function it_can_get_basic_scoped_clicks_for_short_url()
     {
-        $ip = '0.0.0.0';
-
         Config::set('location.testing.enabled', true);
+
+        Config::set('location.testing.ip', $ip = '66.102.0.0');
 
         ClickService::track(
             $this->identifier,

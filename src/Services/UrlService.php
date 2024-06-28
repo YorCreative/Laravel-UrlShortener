@@ -53,9 +53,9 @@ class UrlService
      * @throws UrlRepositoryException
      * @throws UtilityServiceException
      */
-    public static function attempt(string $identifier, string $password): ?ShortUrl
+    public static function attempt(string $identifier, ?string $domain, string $password): ?ShortUrl
     {
-        if (! $shortUrl = UrlRepository::findByIdentifier($identifier)) {
+        if (! $shortUrl = UrlRepository::findByDomainIdentifier($domain, $identifier)) {
             return null;
         }
 
@@ -85,9 +85,9 @@ class UrlService
         }
     }
 
-    public static function shorten(string $plain_text): UrlBuilder
+    public static function shorten(string $plain_text, ?string $domain = null): UrlBuilder
     {
-        return UrlBuilder::shorten($plain_text);
+        return UrlBuilder::shorten($plain_text, $domain);
     }
 
     /**

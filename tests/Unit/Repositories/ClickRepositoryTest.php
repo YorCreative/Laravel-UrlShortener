@@ -21,14 +21,16 @@ class ClickRepositoryTest extends TestCase
     {
         Config::set('location.testing.enabled', true);
 
+        Config::set('location.testing.ip', $ip = '66.102.0.0');
+
         ClickService::track(
             $this->identifier,
-            '0.0.0.0',
+            $ip,
             ClickService::$SUCCESS_ROUTED
         );
 
         $this->assertEquals(
-            '0.0.0.0',
+            $ip,
             ClickRepository::findById(1)->toArray()['location']['ip']
         );
     }

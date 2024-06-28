@@ -96,11 +96,11 @@ class UrlRepositoryTest extends TestCase
     {
         $this->assertNull($this->shortUrl->activation);
 
-        UrlRepository::updateShortUrl($this->identifier, [
+        UrlRepository::updateShortUrl($this->identifier, $this->base, [
             'activation' => Carbon::now()->timestamp,
         ]);
 
-        $shortUrl = UrlRepository::findByIdentifier($this->identifier);
+        $shortUrl = UrlRepository::findByIdentifier($this->identifier, $this->base);
 
         $this->assertNotNull($shortUrl->activation);
     }

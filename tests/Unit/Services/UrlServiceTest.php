@@ -120,13 +120,12 @@ class UrlServiceTest extends TestCase
     {
         $plain_text = 'something.com/really-long'.rand(5, 9999);
 
-        $url = UrlBuilder::shorten($plain_text)
+        $url = UrlBuilder::shorten($plain_text, $this->base)
             ->withPassword('password')
             ->build();
 
-        $identifier = str_replace($this->base, '', $url);
-
-        $shortUrl = UrlService::attempt($identifier, 'password');
+        $identifier = str_replace($this->base .'/v1/', '', $url);
+        $shortUrl = UrlService::attempt($identifier, $this->base, 'password');
 
         $this->assertTrue($plain_text == $shortUrl->plain_text);
     }
@@ -144,13 +143,13 @@ class UrlServiceTest extends TestCase
     {
         $plain_text = 'something.com/really-long'.rand(5, 9999);
 
-        $url = UrlBuilder::shorten($plain_text)
+        $url = UrlBuilder::shorten($plain_text, $domain = 'test.domain')
             ->withPassword('password')
             ->build();
 
         $identifier = str_replace($this->base, '', $url);
 
-        $this->assertNull(UrlService::attempt($identifier, 'not_password'));
+        $this->assertNull(UrlService::attempt($identifier, $domain,'not_password'));
     }
 
     /**
@@ -173,7 +172,7 @@ class UrlServiceTest extends TestCase
             'ownerable_id' => $owner->$primary_key,
         ];
 
-        UrlService::attachOwnership($this->identifier, $ownership['ownerable_type'], $ownership['ownerable_id']);
+        UrlService::attachOwnership($this->base, $this->identifier, $ownership['ownerable_type'], $ownership['ownerable_id']);
 
         $this->assertDatabaseHas(
             'short_url_ownerships',
@@ -192,7 +191,7 @@ class UrlServiceTest extends TestCase
      */
     public function it_can_set_an_activation_time_successfully()
     {
-        $shortUrl = UrlService::shorten('something')
+        $shortUrl = UrlService::shorten('something', $domain = 'test.domain')
             ->withActivation(Carbon::now()->addMinute()->timestamp)
             ->build();
 
