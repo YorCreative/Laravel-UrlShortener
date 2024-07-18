@@ -3,8 +3,10 @@
 namespace YorCreative\UrlShortener\Utility\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use YorCreative\UrlShortener\Models\ShortUrl;
+use YorCreative\UrlShortener\Models\ShortUrlOwnership;
 use YorCreative\UrlShortener\Services\UtilityService;
 use YorCreative\UrlShortener\Traits\ShortUrlHelper;
 
@@ -84,5 +86,12 @@ class ShortUrlFactory extends Factory
                 'hashed' => md5($plain_text),
             ];
         });
+    }
+
+    public function withOwner(Model $model): self
+    {
+        ShortUrlOwnership::factory()->withOwner($model)->create();
+
+        return $this;
     }
 }
