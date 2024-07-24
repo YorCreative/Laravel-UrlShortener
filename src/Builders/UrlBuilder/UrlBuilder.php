@@ -37,8 +37,8 @@ class UrlBuilder implements UrlBuilderInterface
      */
     public function __construct()
     {
-        $this->options = new Collection();
-        $this->shortUrlCollection = new Collection();
+        $this->options = new Collection;
+        $this->shortUrlCollection = new Collection;
     }
 
     public static function shorten(string $plain_text, ?string $domain = null): UrlBuilder
@@ -49,7 +49,7 @@ class UrlBuilder implements UrlBuilderInterface
         $b->shortUrlCollection->put('hashed', md5($url));
         $b->shortUrlCollection->put('domain', $domain);
 
-        $b->options->add(new BaseOption());
+        $b->options->add(new BaseOption);
 
         return $b;
     }
@@ -82,7 +82,7 @@ class UrlBuilder implements UrlBuilderInterface
         $this->shortUrlCollection->put('password', UtilityService::getEncrypter()->encryptString($password));
 
         $this->options->add(
-            new WithPassword()
+            new WithPassword
         );
 
         return $this;
@@ -96,7 +96,7 @@ class UrlBuilder implements UrlBuilderInterface
         $this->shortUrlCollection->put('expiration', $timestamp);
 
         $this->options->add(
-            new WithExpiration()
+            new WithExpiration
         );
 
         return $this;
@@ -110,7 +110,7 @@ class UrlBuilder implements UrlBuilderInterface
         $this->shortUrlCollection->put('activation', $timestamp);
 
         $this->options->add(
-            new WithActivation()
+            new WithActivation
         );
 
         return $this;
@@ -134,7 +134,7 @@ class UrlBuilder implements UrlBuilderInterface
         $this->shortUrlCollection->put('identifier', $identifier);
 
         $this->options->add(
-            new WithBrandedIdentifier()
+            new WithBrandedIdentifier
         );
 
         return $this;
@@ -148,7 +148,7 @@ class UrlBuilder implements UrlBuilderInterface
         $this->shortUrlCollection->put('limit', $limit);
 
         $this->options->add(
-            new WithOpenLimit()
+            new WithOpenLimit
         );
 
         return $this;
@@ -159,7 +159,7 @@ class UrlBuilder implements UrlBuilderInterface
         $this->shortUrlCollection->put('owner_model', $model);
 
         $this->options->add(
-            new WithOwnership()
+            new WithOwnership
         );
 
         return $this;
@@ -173,7 +173,7 @@ class UrlBuilder implements UrlBuilderInterface
         $this->shortUrlCollection->put('utm_parameters', $utm_parameters);
 
         $this->options->add(
-            new WithTracing()
+            new WithTracing
         );
 
         return $this;

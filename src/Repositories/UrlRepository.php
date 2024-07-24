@@ -111,12 +111,12 @@ class UrlRepository
 
     public static function identifierExists(string $identifier): bool
     {
-        return (new ShortUrl())->where('identifier', $identifier)->exists();
+        return (new ShortUrl)->where('identifier', $identifier)->exists();
     }
 
     public static function domainIdentifierExists(string $domain, string $identifier): bool
     {
-        return (new ShortUrl())->where([
+        return (new ShortUrl)->where([
             'identifier' => $identifier,
             'domain' => $domain,
         ])->exists();
@@ -124,7 +124,7 @@ class UrlRepository
 
     public static function hashExists(string $hashed): ?ShortUrl
     {
-        return (new ShortUrl())->where('hashed', $hashed)->first();
+        return (new ShortUrl)->where('hashed', $hashed)->first();
     }
 
     /**
