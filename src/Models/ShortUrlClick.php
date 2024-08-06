@@ -68,33 +68,24 @@ class ShortUrlClick extends Model
         return new ClickQueryBuilder($query);
     }
 
-    public function scopeSearch($query, $keyword, $shortUrlId = null)
-    {
-        if ($shortUrlId) {
-            $query->where('short_url_id', $shortUrlId);
-        }
-
-        $query->whereIn('location_id', function ($query) use ($keyword) {
-            $query->from('short_url_locations');
-            $query->where('countryName', 'like', '%'.$keyword.'%');
-            $query->orWhere('countryCode', 'like', '%'.$keyword.'%');
-            $query->orWhere('regionName', 'like', '%'.$keyword.'%');
-            $query->orWhere('regionCode', 'like', '%'.$keyword.'%');
-            $query->orWhere('cityName', 'like', '%'.$keyword.'%');
-            $query->orWhere('zipCode', 'like', '%'.$keyword.'%');
-            $query->orWhere('postalCode', 'like', '%'.$keyword.'%');
-            $query->orWhere('timezone', 'like', '%'.$keyword.'%');
-            $query->orWhere('metroCode', 'like', '%'.$keyword.'%');
-            $query->orWhere('isoCode', 'like', '%'.$keyword.'%');
-            $query->orWhere('countryCode', 'like', '%'.$keyword.'%');
-            $query->orWhere('ip', 'like', '%'.$keyword.'%');
-            $query->select('id');
+    public function scopeSearch($query, $keyword) {
+        $query->whereHas('location', function ($q) use ($keyword) {
+            $q->where('countryName', 'like', '%'.$keyword.'%')
+                ->orWhere('countryCode', 'like', '%'.$keyword.'%')
+                ->orWhere('regionName', 'like', '%'.$keyword.'%')
+                ->orWhere('regionCode', 'like', '%'.$keyword.'%')
+                ->orWhere('cityName', 'like', '%'.$keyword.'%')
+                ->orWhere('zipCode', 'like', '%'.$keyword.'%')
+                ->orWhere('postalCode', 'like', '%'.$keyword.'%')
+                ->orWhere('timezone', 'like', '%'.$keyword.'%')
+                ->orWhere('metroCode', 'like', '%'.$keyword.'%')
+                ->orWhere('isoCode', 'like', '%'.$keyword.'%')
+                ->orWhere('ip', 'like', '%'.$keyword.'%');
         });
 
-        $query->orWhereIn('outcome_id', function ($query) use ($keyword) {
-            $query->from('short_url_outcomes');
-            $query->where('alias', 'like', '%'.$keyword.'%');
-            $query->select('id');
+        // Eager load the 'outcomes' relationship
+        $query->orWhereHas('outcome', function ($q) use ($keyword) {
+            $q->where('alias', 'like', '%'.$keyword.'%');
         });
 
         return $query;
