@@ -68,7 +68,8 @@ class ShortUrlClick extends Model
         return new ClickQueryBuilder($query);
     }
 
-    public function scopeSearch($query, $keyword) {
+    public function scopeSearch($query, $keyword)
+    {
         $query->whereHas('location', function ($q) use ($keyword) {
             $q->where('countryName', 'like', '%'.$keyword.'%')
                 ->orWhere('countryCode', 'like', '%'.$keyword.'%')
