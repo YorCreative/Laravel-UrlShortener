@@ -19,7 +19,8 @@ return new class extends Migration
         });
     }
 
-    public function down(){
+    public function down()
+    {
         Schema::table('short_url_tracings', function (Blueprint $table) {
             $table->dropIndex('utm_composite_index');
         });
