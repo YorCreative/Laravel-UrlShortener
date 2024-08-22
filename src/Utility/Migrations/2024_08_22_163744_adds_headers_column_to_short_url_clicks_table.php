@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('short_urls', function (Blueprint $table) {
+        Schema::table('short_url_clicks', function (Blueprint $table) {
             $table->json('headers')->after('outcome_id')->nullable();
             $table->string('headers_signature')->after('headers')->nullable();
 
