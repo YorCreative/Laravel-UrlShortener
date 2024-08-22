@@ -36,7 +36,7 @@ class ClickRepository
                 'location_id' => $location_id,
                 'outcome_id' => $outcome_id,
                 'headers' => $headers,
-                'headers_signature' => md5(json_encode($headers))
+                'headers_signature' => md5(json_encode($headers)),
             ]);
         } catch (Exception $exception) {
             throw new UrlRepositoryException($exception->getMessage());
