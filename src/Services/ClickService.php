@@ -46,6 +46,8 @@ class ClickService
 
     public static int $CLIENT_INITIATED_ROUTING = 8;
 
+    public static int $CLIENT_INITIATED_QRCODE = 9;
+
     /**
      * @throws ClickServiceException
      */
