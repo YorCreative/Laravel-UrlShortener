@@ -137,7 +137,7 @@ class UrlRepository
         )->with(self::defaultWithRelationship())->first();
     }
 
-    public static function findByDomainIdentifier(?string $domain, string $identifier): ?ShortUrl
+    public static function findByDomainIdentifier(string $domain, string $identifier): ?ShortUrl
     {
         return ShortUrl::where('identifier', $identifier)
             ->where('domain', $domain)

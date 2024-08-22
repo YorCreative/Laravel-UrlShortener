@@ -57,7 +57,7 @@ class ClickService
 
         try {
             ClickRepository::createClick(
-                UrlRepository::findByIdentifier($identifier, $domain)->id,
+                UrlRepository::findByDomainIdentifier($domain, $identifier)->id,
                 LocationRepository::findOrCreateLocationRecord(
                     ! config('location.testing.enabled')
                         ? LocationRepository::getLocationFrom($request_ip)
