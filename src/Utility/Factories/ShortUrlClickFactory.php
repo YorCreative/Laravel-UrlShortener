@@ -26,6 +26,8 @@ class ShortUrlClickFactory extends Factory
             'short_url_id' => ShortUrl::factory(),
             'location_id' => ShortUrlLocation::factory(),
             'outcome_id' => ClickService::$SUCCESS_ROUTED,
+            'headers' => $headers = ['Accept' => 'application/json'],
+            'headers_signature' => md5(json_encode($headers))
         ];
     }
 

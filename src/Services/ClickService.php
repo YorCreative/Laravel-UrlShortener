@@ -51,7 +51,7 @@ class ClickService
     /**
      * @throws ClickServiceException
      */
-    public static function track(string $identifier, string $request_ip, int $outcome_id, ?string $domain = null): void
+    public static function track(string $identifier, string $request_ip, int $outcome_id, ?string $domain = null, array $headers = []): void
     {
         $request_ip = config('location.testing.enabled') ? config('location.testing.ip') : $request_ip;
 
@@ -63,7 +63,8 @@ class ClickService
                         ? LocationRepository::getLocationFrom($request_ip)
                         : LocationRepository::locationUnknown($request_ip)
                 )->id,
-                $outcome_id
+                $outcome_id,
+                $headers
             );
         } catch (Exception $exception) {
             throw new ClickServiceException($exception->getMessage());
