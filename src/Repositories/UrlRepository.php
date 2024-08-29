@@ -51,6 +51,25 @@ class UrlRepository
     }
 
     /**
+     * @throws UrlRepositoryException
+     */
+    public static function getOwnershipUrlsCount(string $owner_type, int $owner_id): int
+    {
+        try {
+            return ShortUrl::whereIn('id', function ($query) use ($owner_type, $owner_id) {
+                $query->from('short_url_ownerships');
+                $query->where([
+                    'ownerable_type' => $owner_type,
+                    'ownerable_id' => $owner_id,
+                ]);
+                $query->select('short_url_id');
+            })->count();
+        } catch (Exception $exception) {
+            throw new UrlRepositoryException($exception->getMessage());
+        }
+    }
+
+    /**
      * @return mixed
      *
      * @throws UrlRepositoryException
