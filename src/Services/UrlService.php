@@ -103,6 +103,6 @@ class UrlService
      */
     public static function getAllByOwnerCount(string $ownerable_type, string $ownerable_id): int
     {
-        return UrlRepository::getOwnershipUrlsCount($ownerable_type,$ownerable_id);
+        return UrlRepository::getOwnershipUrlsCount($ownerable_type, $ownerable_id);
     }
 }
