@@ -39,5 +39,6 @@ return [
             'Referer' => getenv('APP_URL', 'localhost:1337'),
         ],
     ],
+    'use_custom_routes' => false,
     'allow_duplicate_long_links' => getenv('ALLOW_DUPLICATE_LONG_LINKS', true),
 ];
