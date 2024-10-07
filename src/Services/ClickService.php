@@ -49,6 +49,11 @@ class ClickService
     public static int $CLIENT_INITIATED_QRCODE = 9;
 
     /**
+     * @param string $identifier
+     * @param string $request_ip
+     * @param int $outcome_id
+     * @param string|null $domain
+     * @param array $headers
      * @throws ClickServiceException
      */
     public static function track(string $identifier, string $request_ip, int $outcome_id, ?string $domain = null, array $headers = []): void
@@ -62,6 +67,33 @@ class ClickService
                     ! config('location.testing.enabled')
                         ? LocationRepository::getLocationFrom($request_ip)
                         : LocationRepository::locationUnknown($request_ip)
+                )->id,
+                $outcome_id,
+                $headers
+            );
+        } catch (Exception $exception) {
+            throw new ClickServiceException($exception->getMessage());
+        }
+    }
+
+    /**
+     * @param string $identifier
+     * @param string $request_ip
+     * @param int $outcome_id
+     * @param string|null $domain
+     * @param array $headers
+     * @return void
+     * @throws ClickServiceException
+     */
+    public static function trackWithoutLookup(string $identifier, string $request_ip, int $outcome_id, ?string $domain = null, array $headers = []): void
+    {
+        $request_ip = config('location.testing.enabled') ? config('location.testing.ip') : $request_ip;
+
+        try {
+            ClickRepository::createClick(
+                UrlRepository::findByDomainIdentifier($domain, $identifier)->id,
+                LocationRepository::findOrCreateLocationRecord(
+                    LocationRepository::locationUnknown($request_ip)
                 )->id,
                 $outcome_id,
                 $headers
