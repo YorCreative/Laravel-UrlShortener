@@ -29,7 +29,7 @@ class LocationRepository
                     ->where('regionCode', $clickLocation['regionCode'])
                     ->firstOrFail();
             } catch (Exception $exception) {
-                return ShortUrlLocation::create($clickLocation);
+                return ShortUrlLocation::query()->firstOrCreate($clickLocation);
             }
         } catch (Exception $exception) {
             throw new UrlRepositoryException($exception->getMessage());
@@ -48,7 +48,7 @@ class LocationRepository
             ->first()) {
             $clickLocation = Location::get($ip);
 
-            if (!$clickLocation) {
+            if (! $clickLocation) {
                 return LocationRepository::locationUnknown($ip);
             }
 
