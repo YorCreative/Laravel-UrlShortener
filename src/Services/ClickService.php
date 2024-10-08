@@ -49,11 +49,6 @@ class ClickService
     public static int $CLIENT_INITIATED_QRCODE = 9;
 
     /**
-     * @param string $identifier
-     * @param string $request_ip
-     * @param int $outcome_id
-     * @param string|null $domain
-     * @param array $headers
      * @throws ClickServiceException
      */
     public static function track(string $identifier, string $request_ip, int $outcome_id, ?string $domain = null, array $headers = []): void
@@ -77,12 +72,6 @@ class ClickService
     }
 
     /**
-     * @param string $identifier
-     * @param string $request_ip
-     * @param int $outcome_id
-     * @param string|null $domain
-     * @param array $headers
-     * @return void
      * @throws ClickServiceException
      */
     public static function trackWithoutLookup(string $identifier, string $request_ip, int $outcome_id, ?string $domain = null, array $headers = []): void
