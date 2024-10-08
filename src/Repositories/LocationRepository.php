@@ -48,15 +48,17 @@ class LocationRepository
             ->first()) {
             $clickLocation = Location::get($ip);
 
+            if (!$clickLocation) {
+                return LocationRepository::locationUnknown($ip);
+            }
+
             $clickLocation->longitude = (float)$clickLocation->longitude;
             $clickLocation->latitude = (float)$clickLocation->latitude;
 
             unset($clickLocation->driver);
         }
 
-        if (!$clickLocation) {
-            return LocationRepository::locationUnknown($ip);
-        }
+
 
         return $clickLocation->toArray();
     }
