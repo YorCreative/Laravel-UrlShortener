@@ -3,6 +3,7 @@
 namespace YorCreative\UrlShortener\Repositories;
 
 use Exception;
+use Illuminate\Support\Carbon;
 use Stevebauman\Location\Facades\Location;
 use YorCreative\UrlShortener\Exceptions\UrlRepositoryException;
 use YorCreative\UrlShortener\Models\ShortUrlLocation;
@@ -37,16 +38,25 @@ class LocationRepository
 
     public static function getLocationFrom(string $ip): array
     {
-        $clickLocation = Location::get($ip);
+        // only look up location when not existing yet
+        if (!$clickLocation = ShortUrlLocation::query()
+            ->where('ip', $ip)
+            ->whereNotNull('countryCode')
+            ->whereNotNull('longitude')
+            ->whereNotNull('latitude')
+            ->whereDate('updated_at', '>', Carbon::now()->subMonths(3))
+            ->first()) {
+            $clickLocation = Location::get($ip);
 
-        if (! $clickLocation) {
-            return LocationRepository::locationUnknown($ip);
+            $clickLocation->longitude = (float)$clickLocation->longitude;
+            $clickLocation->latitude = (float)$clickLocation->latitude;
+
+            unset($clickLocation->driver);
         }
 
-        $clickLocation->longitude = (float) $clickLocation->longitude;
-        $clickLocation->latitude = (float) $clickLocation->latitude;
-
-        unset($clickLocation->driver);
+        if (!$clickLocation) {
+            return LocationRepository::locationUnknown($ip);
+        }
 
         return $clickLocation->toArray();
     }
