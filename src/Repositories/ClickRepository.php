@@ -28,10 +28,10 @@ class ClickRepository
     /**
      * @throws UrlRepositoryException
      */
-    public static function createClick(int $short_url_id, int $location_id, int $outcome_id, array $headers): void
+    public static function createClick(int $short_url_id, int $location_id, int $outcome_id, array $headers): ShortUrlClick
     {
         try {
-            ShortUrlClick::create([
+            return ShortUrlClick::create([
                 'short_url_id' => $short_url_id,
                 'location_id' => $location_id,
                 'outcome_id' => $outcome_id,

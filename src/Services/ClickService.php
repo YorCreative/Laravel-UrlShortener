@@ -51,12 +51,12 @@ class ClickService
     /**
      * @throws ClickServiceException
      */
-    public static function track(string $identifier, string $request_ip, int $outcome_id, ?string $domain = null, array $headers = []): void
+    public static function track(string $identifier, string $request_ip, int $outcome_id, ?string $domain = null, array $headers = []): ShortUrlClick
     {
         $request_ip = config('location.testing.enabled') ? config('location.testing.ip') : $request_ip;
 
         try {
-            ClickRepository::createClick(
+            return ClickRepository::createClick(
                 UrlRepository::findByDomainIdentifier($domain, $identifier)->id,
                 LocationRepository::findOrCreateLocationRecord(
                     ! config('location.testing.enabled')
@@ -74,12 +74,12 @@ class ClickService
     /**
      * @throws ClickServiceException
      */
-    public static function trackWithoutLookup(string $identifier, string $request_ip, int $outcome_id, ?string $domain = null, array $headers = []): void
+    public static function trackWithoutLookup(string $identifier, string $request_ip, int $outcome_id, ?string $domain = null, array $headers = []): ShortUrlClick
     {
         $request_ip = config('location.testing.enabled') ? config('location.testing.ip') : $request_ip;
 
         try {
-            ClickRepository::createClick(
+            return ClickRepository::createClick(
                 UrlRepository::findByDomainIdentifier($domain, $identifier)->id,
                 LocationRepository::findOrCreateLocationRecord(
                     LocationRepository::locationUnknown($request_ip)
