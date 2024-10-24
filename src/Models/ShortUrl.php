@@ -117,6 +117,9 @@ class ShortUrl extends Model
         $query->join('short_url_tracings', 'short_urls.id', '=', 'short_url_tracings.short_url_id')
             ->where(function ($subWhereQuery) use ($search) {
                 $subWhereQuery->where('short_url_tracings.utm_source', 'like', '%'.$search.'%')
+                    ->orWhere('short_urls.identifier', 'like', '%'.$search.'%')
+                    ->orWhere('short_urls.domain', 'like', '%'.$search.'%')
+                    ->orWhere('short_url_tracings.utm_id', 'like', '%'.$search.'%')
                     ->orWhere('short_url_tracings.utm_medium', 'like', '%'.$search.'%')
                     ->orWhere('short_url_tracings.utm_campaign', 'like', '%'.$search.'%')
                     ->orWhere('short_url_tracings.utm_content', 'like', '%'.$search.'%')
