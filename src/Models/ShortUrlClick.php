@@ -36,7 +36,7 @@ class ShortUrlClick extends Model
         'location_id',
         'outcome_id',
         'headers',
-        'headers_signature'
+        'headers_signature',
     ];
 
     protected $hidden = [
