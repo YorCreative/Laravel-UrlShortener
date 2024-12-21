@@ -96,7 +96,7 @@ class UrlRepository
     {
         try {
             return ShortUrl::where(
-                'plain_text', 'like', $plain_text . '%'
+                'plain_text', 'like', $plain_text.'%'
             )->with(self::defaultWithRelationship())->firstOrFail();
         } catch (Exception $exception) {
             throw new UrlRepositoryException($exception->getMessage());

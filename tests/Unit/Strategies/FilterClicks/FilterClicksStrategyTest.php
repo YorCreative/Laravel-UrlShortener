@@ -20,7 +20,7 @@ use YorCreative\UrlShortener\Tests\TestCase;
 
 class FilterClicksStrategyTest extends TestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
