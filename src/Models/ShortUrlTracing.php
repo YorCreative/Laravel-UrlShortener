@@ -14,7 +14,7 @@ class ShortUrlTracing extends Model
     /**
      * @var bool
      */
-    public $incrementing = true;
+    public $incrementing = false;
 
     /**
      * @var string
@@ -24,7 +24,7 @@ class ShortUrlTracing extends Model
     /**
      * @var string
      */
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'short_url_id';
 
     /**
      * @var string[]
