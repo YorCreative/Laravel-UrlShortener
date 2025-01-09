@@ -23,20 +23,7 @@ class LocationRepository
     public static function findOrCreateLocationRecord(array $clickLocation): ShortUrlLocation
     {
         try {
-            try {
-                return ShortUrlLocation::where('ip', $clickLocation['ip'])
-                    ->where('countryCode', $clickLocation['countryCode'])
-                    ->where('regionCode', $clickLocation['regionCode'])
-                    ->firstOrFail();
-            } catch (Exception $exception) {
-                $ipAddress = $clickLocation['ip'];
-
-                unset($clickLocation['ip']);
-
-                return ShortUrlLocation::query()->firstOrCreate([
-                    'ip' => $ipAddress,
-                ], $clickLocation);
-            }
+            return ShortUrlLocation::query()->firstOrCreate($clickLocation);
         } catch (Exception $exception) {
             throw new UrlRepositoryException($exception->getMessage());
         }
@@ -45,7 +32,7 @@ class LocationRepository
     public static function getLocationFrom(string $ip): array
     {
         // only look up location when not existing yet
-        if (! $clickLocation = ShortUrlLocation::query()
+        if (!$clickLocation = ShortUrlLocation::query()
             ->where('ip', $ip)
             ->whereNotNull('countryCode')
             ->whereNotNull('longitude')
@@ -54,12 +41,12 @@ class LocationRepository
             ->first()) {
             $clickLocation = Location::get($ip);
 
-            if (! $clickLocation) {
+            if (!$clickLocation) {
                 return LocationRepository::locationUnknown($ip);
             }
 
-            $clickLocation->longitude = (float) $clickLocation->longitude;
-            $clickLocation->latitude = (float) $clickLocation->latitude;
+            $clickLocation->longitude = (float)$clickLocation->longitude;
+            $clickLocation->latitude = (float)$clickLocation->latitude;
 
             unset($clickLocation->driver);
         }
