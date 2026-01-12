@@ -4,3 +4,4 @@
 .phpunit.result.cache
 /.idea
 /.vscode
+.gitignore
