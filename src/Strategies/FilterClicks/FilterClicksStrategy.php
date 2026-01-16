@@ -14,7 +14,7 @@ class FilterClicksStrategy
 
     public function __construct()
     {
-        $this->strategies = new Collection();
+        $this->strategies = new Collection;
     }
 
     /**

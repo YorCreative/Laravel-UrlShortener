@@ -28,7 +28,7 @@ class UrlServiceTest extends TestCase
     public function it_can_find_a_short_url_by_utm_combination()
     {
         // extra url to filter through
-        UrlService::shorten('testing.com/something/so/long/i/need/a/short/url'.rand(999, 999999))
+        UrlService::shorten('https://testing.com/something/so/long/i/need/a/short/url'.rand(999, 999999))
             ->withTracing([
                 'utm_campaign' => 'alpha',
                 'utm_source' => 'alpha',
@@ -37,7 +37,7 @@ class UrlServiceTest extends TestCase
             ->build();
 
         // url to find
-        $targetPlainText = 'testing.com/something/so/long/i/need/a/short/url'.rand(999, 999999);
+        $targetPlainText = 'https://testing.com/something/so/long/i/need/a/short/url'.rand(999, 999999);
         $targetUtmCombination = [
             'utm_campaign' => 'alpha',
             'utm_source' => 'bravo',
@@ -49,7 +49,7 @@ class UrlServiceTest extends TestCase
             ->build();
 
         // extra url to filter through
-        UrlService::shorten('testing.com/something/so/long/i/need/a/short/url'.rand(999, 999999))
+        UrlService::shorten('https://testing.com/something/so/long/i/need/a/short/url'.rand(999, 999999))
             ->withTracing([
                 'utm_campaign' => 'alpha',
                 'utm_source' => 'charlie',
@@ -120,7 +120,7 @@ class UrlServiceTest extends TestCase
      */
     public function it_can_successfully_attempt_to_verify_password()
     {
-        $plain_text = 'something.com/really-long'.rand(5, 9999);
+        $plain_text = 'https://something.com/really-long'.rand(5, 9999);
 
         $url = UrlBuilder::shorten($plain_text)
             ->withPassword('password')
@@ -144,7 +144,7 @@ class UrlServiceTest extends TestCase
      */
     public function it_can_successfully_attempt_to_verify_password_and_fail()
     {
-        $plain_text = 'something.com/really-long'.rand(5, 9999);
+        $plain_text = 'https://something.com/really-long'.rand(5, 9999);
 
         $url = UrlBuilder::shorten($plain_text)
             ->withPassword('password')
@@ -194,10 +194,56 @@ class UrlServiceTest extends TestCase
      */
     public function it_can_set_an_activation_time_successfully()
     {
-        UrlService::shorten('something')
+        UrlService::shorten('https://something.com/activation-test')
             ->withActivation(Carbon::now()->addMinute()->timestamp)
             ->build();
 
-        $this->assertTrue(ShortUrl::where('plain_text', 'something')->first()->hasActivation());
+        $this->assertTrue(ShortUrl::where('plain_text', 'https://something.com/activation-test')->first()->hasActivation());
+    }
+
+    /**
+     * @test
+     *
+     * @group UrlService
+     */
+    public function it_can_find_or_create_returns_existing_short_url()
+    {
+        $plain_text = 'https://testing.com/findorcreate/existing/'.rand(999, 999999);
+
+        // First, create a short URL
+        UrlService::shorten($plain_text)->build();
+
+        // Now use findOrCreate - should return the existing ShortUrl model
+        $result = UrlService::findOrCreate($plain_text);
+
+        $this->assertInstanceOf(ShortUrl::class, $result);
+        $this->assertEquals($plain_text, $result->plain_text);
+    }
+
+    /**
+     * @test
+     *
+     * @group UrlService
+     */
+    public function it_can_find_or_create_returns_builder_for_new_url()
+    {
+        $plain_text = 'https://testing.com/findorcreate/new/'.rand(999, 999999);
+
+        // Use findOrCreate for a URL that doesn't exist - should return UrlBuilder
+        $result = UrlService::findOrCreate($plain_text);
+
+        $this->assertInstanceOf(UrlBuilder::class, $result);
+    }
+
+    /**
+     * @test
+     *
+     * @group UrlService
+     */
+    public function it_throws_exception_when_finding_nonexistent_identifier()
+    {
+        $this->expectException(UrlRepositoryException::class);
+
+        UrlService::findByIdentifier('nonexistent_identifier_'.rand(999, 999999));
     }
 }

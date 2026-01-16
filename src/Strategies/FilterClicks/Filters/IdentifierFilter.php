@@ -10,7 +10,9 @@ class IdentifierFilter extends AbstractFilter
     {
         $this->filter = $filter;
 
-        return isset($filter['identifiers']) && is_array($filter['identifiers']);
+        return isset($filter['identifiers'])
+            && is_array($filter['identifiers'])
+            && ! empty($filter['identifiers']);
     }
 
     public function getAvailableFilterOptions(): array

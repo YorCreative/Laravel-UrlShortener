@@ -21,10 +21,11 @@ class WithTracing implements UrlBuilderOptionInterface
             $shortUrlCollection->get('utm_parameters')
         );
 
+        $identifier = $shortUrlCollection->get('identifier');
+        $domain = $shortUrlCollection->get('domain');
+
         $trace = [
-            'short_url_id' => UrlRepository::findByIdentifier(
-                $shortUrlCollection->get('identifier')
-            )->id,
+            'short_url_id' => UrlRepository::findByIdentifier($identifier, $domain)->id,
         ];
 
         $trace = array_merge($trace, $sanitizedUtmParameters);

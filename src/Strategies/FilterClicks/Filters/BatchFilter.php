@@ -10,16 +10,9 @@ class BatchFilter extends AbstractFilter
     {
         $this->filter = $filter;
 
-        return isset($filter['limit'])
-            || ((
-                isset($filter['limit'])
-                && is_int($filter['limit'])
-            )
-            && (
-                isset($filter['offset'])
-                && is_int($filter['offset'])
-            )
-            );
+        // Process if limit or offset is provided (for pagination)
+        return (isset($filter['limit']) && is_int($filter['limit']))
+            || (isset($filter['offset']) && is_int($filter['offset']));
     }
 
     public function getAvailableFilterOptions(): array
@@ -29,7 +22,10 @@ class BatchFilter extends AbstractFilter
 
     public function handle(ClickQueryBuilder &$clickQueryBuilder): void
     {
-        $clickQueryBuilder->offset(($this->filter['offset'] > 0) ? $this->filter['offset'] : 0);
-        $clickQueryBuilder->limit(($this->filter['limit'] > 0 && $this->filter['limit'] <= 100) ? $this->filter['limit'] : 100);
+        $offset = $this->filter['offset'] ?? 0;
+        $limit = $this->filter['limit'] ?? 100;
+
+        $clickQueryBuilder->offset(($offset > 0) ? $offset : 0);
+        $clickQueryBuilder->limit(($limit > 0 && $limit <= 100) ? $limit : 100);
     }
 }

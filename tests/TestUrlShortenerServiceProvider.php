@@ -11,9 +11,7 @@ class TestUrlShortenerServiceProvider extends UrlShortenerServiceProvider
      *
      * @return void
      */
-    public function register()
-    {
-    }
+    public function register() {}
 
     /**
      * Bootstrap services.
@@ -22,6 +20,7 @@ class TestUrlShortenerServiceProvider extends UrlShortenerServiceProvider
      */
     public function boot()
     {
+        parent::boot();
         $this->loadMigrationsFrom(__DIR__.'/migrations');
     }
 }

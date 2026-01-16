@@ -45,11 +45,11 @@ class ClickService
     /**
      * @throws ClickServiceException
      */
-    public static function track(string $identifier, string $request_ip, int $outcome_id, bool $test = false): void
+    public static function track(string $identifier, string $request_ip, int $outcome_id, bool $test = false, ?string $domain = null): void
     {
         try {
             ClickRepository::createClick(
-                UrlRepository::findByIdentifier($identifier)->id,
+                UrlRepository::findByIdentifier($identifier, $domain)->id,
                 LocationRepository::findOrCreateLocationRecord(
                     ! $test
                         ? LocationRepository::getLocationFrom($request_ip)
@@ -58,7 +58,7 @@ class ClickService
                 $outcome_id
             );
         } catch (Exception $exception) {
-            throw new ClickServiceException($exception->getMessage());
+            throw new ClickServiceException($exception->getMessage(), 0, $exception);
         }
     }
 
@@ -79,7 +79,7 @@ class ClickService
     protected static function handle(array $filterQuery = []): Collection
     {
         $clickQueryBuilder = ClickService::getClickQueryBuilder();
-        $filterStrategy = new FilterClicksStrategy();
+        $filterStrategy = new FilterClicksStrategy;
 
         self::getFilters()->each(function ($filterObject) use ($filterQuery, &$filterStrategy) {
             if ($filterObject->canProcess($filterQuery)) {
@@ -103,17 +103,17 @@ class ClickService
     protected static function getFilters(): Collection
     {
         return new Collection([
-            new OutcomeFilter(),
-            new BatchFilter(),
-            new IdentifierFilter(),
-            new StatusFilter(),
-            new OwnershipFilter(),
-            new TracingIdFilter(),
-            new TracingCampaignFilter(),
-            new TracingSourceFilter(),
-            new TracingMediumFilter(),
-            new TracingContentFilter(),
-            new TracingTermFilter(),
+            new OutcomeFilter,
+            new BatchFilter,
+            new IdentifierFilter,
+            new StatusFilter,
+            new OwnershipFilter,
+            new TracingIdFilter,
+            new TracingCampaignFilter,
+            new TracingSourceFilter,
+            new TracingMediumFilter,
+            new TracingContentFilter,
+            new TracingTermFilter,
         ]);
     }
 }

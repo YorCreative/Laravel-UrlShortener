@@ -14,9 +14,20 @@ class WithOpenLimit implements UrlBuilderOptionInterface
      */
     public function resolve(Collection &$shortUrlCollection): void
     {
-        UrlRepository::updateShortUrl(
-            $shortUrlCollection->get('identifier'),
-            ['limit' => $shortUrlCollection->get('limit')]
-        );
+        $identifier = $shortUrlCollection->get('identifier');
+        $domain = $shortUrlCollection->get('domain');
+
+        if (config('urlshortener.domains.enabled', false)) {
+            UrlRepository::updateShortUrlForDomain(
+                $identifier,
+                ['limit' => $shortUrlCollection->get('limit')],
+                $domain
+            );
+        } else {
+            UrlRepository::updateShortUrl(
+                $identifier,
+                ['limit' => $shortUrlCollection->get('limit')]
+            );
+        }
     }
 }

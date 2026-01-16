@@ -14,9 +14,20 @@ class WithActivation implements UrlBuilderOptionInterface
      */
     public function resolve(Collection &$shortUrlCollection): void
     {
-        UrlRepository::updateShortUrl(
-            $shortUrlCollection->get('identifier'),
-            ['activation' => $shortUrlCollection->get('activation')]
-        );
+        $identifier = $shortUrlCollection->get('identifier');
+        $domain = $shortUrlCollection->get('domain');
+
+        if (config('urlshortener.domains.enabled', false)) {
+            UrlRepository::updateShortUrlForDomain(
+                $identifier,
+                ['activation' => $shortUrlCollection->get('activation')],
+                $domain
+            );
+        } else {
+            UrlRepository::updateShortUrl(
+                $identifier,
+                ['activation' => $shortUrlCollection->get('activation')]
+            );
+        }
     }
 }

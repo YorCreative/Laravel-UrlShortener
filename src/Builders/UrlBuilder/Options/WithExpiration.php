@@ -14,9 +14,20 @@ class WithExpiration implements UrlBuilderOptionInterface
      */
     public function resolve(Collection &$shortUrlCollection): void
     {
-        UrlRepository::updateShortUrl(
-            $shortUrlCollection->get('identifier'),
-            ['expiration' => $shortUrlCollection->get('expiration')]
-        );
+        $identifier = $shortUrlCollection->get('identifier');
+        $domain = $shortUrlCollection->get('domain');
+
+        if (config('urlshortener.domains.enabled', false)) {
+            UrlRepository::updateShortUrlForDomain(
+                $identifier,
+                ['expiration' => $shortUrlCollection->get('expiration')],
+                $domain
+            );
+        } else {
+            UrlRepository::updateShortUrl(
+                $identifier,
+                ['expiration' => $shortUrlCollection->get('expiration')]
+            );
+        }
     }
 }
