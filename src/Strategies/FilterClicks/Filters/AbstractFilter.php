@@ -4,6 +4,8 @@ namespace YorCreative\UrlShortener\Strategies\FilterClicks\Filters;
 
 abstract class AbstractFilter
 {
+    protected array $filter = [];
+
     public function hasOptions(array $options): bool
     {
         return

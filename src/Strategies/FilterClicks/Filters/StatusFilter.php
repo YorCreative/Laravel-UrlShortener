@@ -26,16 +26,60 @@ class StatusFilter extends AbstractFilter
 
     public function handle(ClickQueryBuilder &$clickQueryBuilder): void
     {
-        if (in_array('active', $this->filter['status'])) {
-            $clickQueryBuilder->isNotExpired();
+        $statuses = array_intersect($this->filter['status'], $this->getAvailableFilterOptions());
+
+        if (empty($statuses)) {
+            return;
         }
 
-        if (in_array('expired', $this->filter['status'])) {
-            $clickQueryBuilder->isExpired();
+        // If only one status, apply directly
+        if (count($statuses) === 1) {
+            $this->applyStatus($clickQueryBuilder, reset($statuses));
+
+            return;
         }
 
-        if (in_array('expiring', $this->filter['status'])) {
-            $clickQueryBuilder->isExpiring();
-        }
+        // Multiple statuses should use OR logic
+        $clickQueryBuilder->where(function ($query) use ($statuses) {
+            foreach ($statuses as $index => $status) {
+                if ($index === 0) {
+                    $this->applyStatusToQuery($query, $status);
+                } else {
+                    $query->orWhere(function ($q) use ($status) {
+                        $this->applyStatusToQuery($q, $status);
+                    });
+                }
+            }
+        });
+    }
+
+    protected function applyStatus(ClickQueryBuilder &$clickQueryBuilder, string $status): void
+    {
+        match ($status) {
+            'active' => $clickQueryBuilder->isNotExpired(),
+            'expired' => $clickQueryBuilder->isExpired(),
+            'expiring' => $clickQueryBuilder->isExpiring(),
+            default => null,
+        };
+    }
+
+    protected function applyStatusToQuery($query, string $status): void
+    {
+        $now = now()->timestamp;
+
+        match ($status) {
+            'active' => $query->whereIn('short_url_id', function ($q) use ($now) {
+                $q->from('short_urls')->where('expiration', '>', $now)->select('id');
+            }),
+            'expired' => $query->whereIn('short_url_id', function ($q) use ($now) {
+                $q->from('short_urls')->where('expiration', '<', $now)->select('id');
+            }),
+            'expiring' => $query->whereIn('short_url_id', function ($q) {
+                $q->from('short_urls')
+                    ->whereBetween('expiration', [now()->addMinute()->timestamp, now()->addMinutes(30)])
+                    ->select('id');
+            }),
+            default => null,
+        };
     }
 }

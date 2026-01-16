@@ -59,8 +59,12 @@ class ShortUrlHelperTest extends TestCase
      */
     public function it_can_build_short_url()
     {
+        $host = config('urlshortener.branding.host') ?? 'localhost.test';
+        $prefix = config('urlshortener.branding.prefix') ?? 'v1';
+        $expected = rtrim($host, '/').'/'.trim($prefix, '/').'/'.$this->identifier;
+
         $this->assertEquals(
-            "localhost.test/v1/$this->identifier",
+            $expected,
             $this->builtShortUrl($this->identifier)
         );
     }

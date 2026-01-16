@@ -3,6 +3,9 @@
 namespace YorCreative\UrlShortener;
 
 use Illuminate\Support\ServiceProvider;
+use YorCreative\UrlShortener\Contracts\DomainResolverInterface;
+use YorCreative\UrlShortener\Middleware\ResolveDomain;
+use YorCreative\UrlShortener\Services\DomainResolver;
 
 class UrlShortenerServiceProvider extends ServiceProvider
 {
@@ -13,6 +16,12 @@ class UrlShortenerServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        // Register DomainResolver as singleton
+        $this->app->singleton(DomainResolverInterface::class, DomainResolver::class);
+        $this->app->singleton(DomainResolver::class);
+
+        // Register middleware
+        $this->app->singleton(ResolveDomain::class);
     }
 
     /**
@@ -35,5 +44,9 @@ class UrlShortenerServiceProvider extends ServiceProvider
             __DIR__.'/Utility/Views' => base_path('resources/views/yorcreative/urlshortener'),
             __DIR__.'/Utility/Config' => base_path('config'),
         ]);
+
+        // Register middleware alias for users who want to apply it manually
+        $router = $this->app->make('router');
+        $router->aliasMiddleware('urlshortener.domain', ResolveDomain::class);
     }
 }

@@ -64,10 +64,10 @@ trait ShortUrlHelper
             'utm_medium.*' => [
                 'string',
             ],
-            'utm_context' => [
+            'utm_content' => [
                 'array',
             ],
-            'utm_context.*' => [
+            'utm_content.*' => [
                 'string',
             ],
             'utm_term' => [
@@ -88,20 +88,28 @@ trait ShortUrlHelper
         return $filter;
     }
 
-    private function generateUrlIdentifier(): string
+    private function generateUrlIdentifier(?string $domain = null, ?int $length = null, int $attempt = 0): string
     {
-        $identifier = Str::random(
-            config('urlshortener.branding.identifier.length') ?? 6
-        );
+        $maxAttempts = 100;
 
-        if (UrlRepository::identifierExists($identifier)) {
-            return $this->generateUrlIdentifier();
+        if ($attempt >= $maxAttempts) {
+            throw new UrlServiceException(
+                "Unable to generate unique identifier after {$maxAttempts} attempts. Consider increasing identifier length."
+            );
+        }
+
+        $length = $length ?? config('urlshortener.branding.identifier.length') ?? 6;
+
+        $identifier = Str::random($length);
+
+        if (UrlRepository::identifierExists($identifier, $domain)) {
+            return $this->generateUrlIdentifier($domain, $length, $attempt + 1);
         }
 
         return $identifier;
     }
 
-    private function builtShortUrl($identifier): string
+    private function builtShortUrl(string $identifier): string
     {
         return str_replace(
             '{identifier}',
@@ -113,16 +121,16 @@ trait ShortUrlHelper
     private function buildShortUrl(): string
     {
         $host = config('urlshortener.branding.host') ?? 'localhost.test';
-        $host = str_ends_with('/', $host)
+        $host = str_ends_with($host, '/')
             ? $host
             : $host.'/';
 
-        $prefix = is_null(config('urlshortener.branding.host')) ? 'v1' : config('urlshortener.branding.prefix');
+        $prefix = is_null(config('urlshortener.branding.prefix')) ? 'v1' : config('urlshortener.branding.prefix');
         $prefix = str_starts_with($prefix, '/')
-            ? str_replace($prefix, '/', '')
+            ? str_replace('/', '', $prefix)
             : $prefix;
 
-        $prefix = str_ends_with('/', $prefix)
+        $prefix = str_ends_with($prefix, '/')
             ? $prefix
             : $prefix.'/';
 

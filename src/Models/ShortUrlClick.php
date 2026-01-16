@@ -3,7 +3,7 @@
 namespace YorCreative\UrlShortener\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\Builder;
 use YorCreative\UrlShortener\Builders\ClickQueryBuilder\ClickQueryBuilder;
@@ -45,19 +45,19 @@ class ShortUrlClick extends Model
         'outcome_id',
     ];
 
-    public function shortUrl(): HasOne
+    public function shortUrl(): BelongsTo
     {
-        return $this->hasOne(ShortUrl::class, 'id', 'short_url_id');
+        return $this->belongsTo(ShortUrl::class);
     }
 
-    public function location(): HasOne
+    public function location(): BelongsTo
     {
-        return $this->hasOne(ShortUrlLocation::class, 'id', 'location_id');
+        return $this->belongsTo(ShortUrlLocation::class);
     }
 
-    public function outcome(): HasOne
+    public function outcome(): BelongsTo
     {
-        return $this->hasOne(ShortUrlOutcome::class, 'id', 'outcome_id');
+        return $this->belongsTo(ShortUrlOutcome::class);
     }
 
     /**

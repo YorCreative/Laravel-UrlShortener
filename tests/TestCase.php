@@ -39,7 +39,9 @@ class TestCase extends \Orchestra\Testbench\TestCase
             $migration->up();
         });
 
-        $this->base = 'localhost.test/v1/';
+        $host = config('urlshortener.branding.host') ?? 'localhost.test';
+        $prefix = config('urlshortener.branding.prefix') ?? 'v1';
+        $this->base = rtrim($host, '/').'/'.trim($prefix, '/').'/';
         $this->plain_text = $this->getPlainText();
         $this->hashed = md5($this->plain_text);
 

@@ -22,6 +22,7 @@ class TestUrlShortenerServiceProvider extends UrlShortenerServiceProvider
      */
     public function boot()
     {
+        parent::boot();
         $this->loadMigrationsFrom(__DIR__.'/migrations');
     }
 }

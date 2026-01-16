@@ -2,13 +2,11 @@
 
 namespace YorCreative\UrlShortener\Tests\Feature;
 
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use YorCreative\UrlShortener\Services\UrlService;
 use YorCreative\UrlShortener\Tests\TestCase;
 
 class ShortUrlBasicTest extends TestCase
 {
-    use DatabaseTransactions;
 
     /**
      * @test
@@ -39,5 +37,41 @@ class ShortUrlBasicTest extends TestCase
                 'short_url_id' => $shortUrl->id,
             ]
         );
+    }
+
+    /**
+     * @test
+     *
+     * @group Feature
+     */
+    public function it_returns_404_for_nonexistent_identifier()
+    {
+        $prefix = config('urlshortener.branding.prefix') ?? 'v1';
+        $response = $this->get('/'.trim($prefix, '/').'/nonexistent_'.rand(999, 999999));
+
+        $response->assertStatus(404);
+    }
+
+    /**
+     * @test
+     *
+     * @group Feature
+     */
+    public function it_can_redirect_to_short_url()
+    {
+        // Create a fresh short URL in this test
+        $plain_text = 'http://test-redirect.com/page/'.rand(1, 99999);
+        $builtUrl = UrlService::shorten($plain_text)->build();
+
+        $prefix = config('urlshortener.branding.prefix') ?? 'v1';
+        $host = config('urlshortener.branding.host') ?? 'localhost.test';
+        $base = rtrim($host, '/').'/'.trim($prefix, '/').'/';
+        $identifier = str_replace($base, '', $builtUrl);
+
+        $requestUrl = '/'.trim($prefix, '/').'/'.$identifier;
+
+        $response = $this->get($requestUrl);
+
+        $response->assertRedirect($plain_text);
     }
 }

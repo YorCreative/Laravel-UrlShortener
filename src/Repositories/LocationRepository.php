@@ -15,23 +15,25 @@ class LocationRepository
     }
 
     /**
-     * @return mixed
-     *
      * @throws UrlRepositoryException
      */
     public static function findOrCreateLocationRecord(array $clickLocation): ShortUrlLocation
     {
         try {
-            try {
-                return ShortUrlLocation::where('ip', $clickLocation['ip'])
-                    ->where('countryCode', $clickLocation['countryCode'])
-                    ->where('regionCode', $clickLocation['regionCode'])
-                    ->firstOrFail();
-            } catch (Exception $exception) {
-                return ShortUrlLocation::create($clickLocation);
+            // Build the unique key attributes - only include fields that are present
+            $uniqueAttributes = ['ip' => $clickLocation['ip']];
+
+            if (isset($clickLocation['countryCode'])) {
+                $uniqueAttributes['countryCode'] = $clickLocation['countryCode'];
             }
+
+            if (isset($clickLocation['regionCode'])) {
+                $uniqueAttributes['regionCode'] = $clickLocation['regionCode'];
+            }
+
+            return ShortUrlLocation::firstOrCreate($uniqueAttributes, $clickLocation);
         } catch (Exception $exception) {
-            throw new UrlRepositoryException($exception->getMessage());
+            throw new UrlRepositoryException($exception->getMessage(), 0, $exception);
         }
     }
 

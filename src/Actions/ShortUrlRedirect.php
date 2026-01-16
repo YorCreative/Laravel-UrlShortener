@@ -9,6 +9,7 @@ use YorCreative\UrlShortener\Exceptions\ClickServiceException;
 use YorCreative\UrlShortener\Exceptions\UrlRepositoryException;
 use YorCreative\UrlShortener\Models\ShortUrl;
 use YorCreative\UrlShortener\Services\ClickService;
+use YorCreative\UrlShortener\Services\DomainResolver;
 use YorCreative\UrlShortener\Services\UrlService;
 use YorCreative\UrlShortener\Services\UtilityService;
 
@@ -18,22 +19,39 @@ class ShortUrlRedirect extends Controller
 
     protected ?ShortUrl $shortUrl;
 
+    protected ?string $domain = null;
+
+    protected Request $request;
+
     /**
-     * @throws UrlRepositoryException
      * @throws ClickServiceException
      */
     public function __invoke(Request $request, string $identifier)
     {
+        $this->request = $request;
         $this->identifier = $identifier;
-        /**
-         * Get Short URL Identifier & Validate
-         */
-        if (! $this->shortUrl = UrlService::findByIdentifier($this->identifier)) {
-            /**
-             * ShortUrl Identifier does not exists
-             */
 
-            return abort(404);
+        // Resolve domain from request attributes (set by middleware) or resolve directly
+        if (config('urlshortener.domains.enabled', false)) {
+            $this->domain = $request->attributes->get('urlshortener_domain');
+
+            if ($this->domain === null) {
+                $resolver = app(DomainResolver::class);
+                $this->domain = $resolver->resolve($request);
+            }
+        }
+
+        /**
+         * Get Short URL Identifier & Validate (with domain)
+         */
+        try {
+            $this->shortUrl = UrlService::findByIdentifier($this->identifier, $this->domain);
+        } catch (UrlRepositoryException $e) {
+            abort(404);
+        }
+
+        if (! $this->shortUrl) {
+            abort(404);
         }
 
         /**
@@ -63,12 +81,15 @@ class ShortUrlRedirect extends Controller
              */
             ClickService::track(
                 $this->identifier,
-                request()->ip(),
-                ClickService::$SUCCESS_PROTECTED
+                $this->request->ip(),
+                ClickService::$SUCCESS_PROTECTED,
+                false,
+                $this->domain
             );
 
             return view('yorcreative.urlshortener.protected', [
                 'identifier' => $this->identifier,
+                'domain' => $this->domain,
             ]);
         }
 
@@ -77,15 +98,17 @@ class ShortUrlRedirect extends Controller
          * Record the click and route away.
          */
         ClickService::track(
-            $identifier,
-            $request->ip(),
-            ClickService::$SUCCESS_ROUTED
+            $this->identifier,
+            $this->request->ip(),
+            ClickService::$SUCCESS_ROUTED,
+            false,
+            $this->domain
         );
 
         return redirect()->away(
             $this->shortUrl->plain_text,
-            UtilityService::getRedirectCode(),
-            UtilityService::getRedirectHeaders($request)
+            UtilityService::getRedirectCode($this->domain),
+            UtilityService::getRedirectHeaders($this->request, $this->domain)
         );
     }
 
@@ -106,8 +129,10 @@ class ShortUrlRedirect extends Controller
              */
             ClickService::track(
                 $this->identifier,
-                request()->ip(),
-                ClickService::$FAILURE_ACTIVATION
+                $this->request->ip(),
+                ClickService::$FAILURE_ACTIVATION,
+                false,
+                $this->domain
             );
 
             abort(404);
@@ -128,8 +153,10 @@ class ShortUrlRedirect extends Controller
              */
             ClickService::track(
                 $this->identifier,
-                request()->ip(),
-                ClickService::$FAILURE_EXPIRATION
+                $this->request->ip(),
+                ClickService::$FAILURE_EXPIRATION,
+                false,
+                $this->domain
             );
 
             abort(404);
@@ -153,8 +180,10 @@ class ShortUrlRedirect extends Controller
              */
             ClickService::track(
                 $this->identifier,
-                request()->ip(),
-                ClickService::$FAILURE_LIMIT
+                $this->request->ip(),
+                ClickService::$FAILURE_LIMIT,
+                false,
+                $this->domain
             );
 
             abort(404);

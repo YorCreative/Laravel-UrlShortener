@@ -45,11 +45,11 @@ class ClickService
     /**
      * @throws ClickServiceException
      */
-    public static function track(string $identifier, string $request_ip, int $outcome_id, bool $test = false): void
+    public static function track(string $identifier, string $request_ip, int $outcome_id, bool $test = false, ?string $domain = null): void
     {
         try {
             ClickRepository::createClick(
-                UrlRepository::findByIdentifier($identifier)->id,
+                UrlRepository::findByIdentifier($identifier, $domain)->id,
                 LocationRepository::findOrCreateLocationRecord(
                     ! $test
                         ? LocationRepository::getLocationFrom($request_ip)
@@ -58,7 +58,7 @@ class ClickService
                 $outcome_id
             );
         } catch (Exception $exception) {
-            throw new ClickServiceException($exception->getMessage());
+            throw new ClickServiceException($exception->getMessage(), 0, $exception);
         }
     }
 
