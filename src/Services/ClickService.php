@@ -79,7 +79,7 @@ class ClickService
     protected static function handle(array $filterQuery = []): Collection
     {
         $clickQueryBuilder = ClickService::getClickQueryBuilder();
-        $filterStrategy = new FilterClicksStrategy();
+        $filterStrategy = new FilterClicksStrategy;
 
         self::getFilters()->each(function ($filterObject) use ($filterQuery, &$filterStrategy) {
             if ($filterObject->canProcess($filterQuery)) {
@@ -103,17 +103,17 @@ class ClickService
     protected static function getFilters(): Collection
     {
         return new Collection([
-            new OutcomeFilter(),
-            new BatchFilter(),
-            new IdentifierFilter(),
-            new StatusFilter(),
-            new OwnershipFilter(),
-            new TracingIdFilter(),
-            new TracingCampaignFilter(),
-            new TracingSourceFilter(),
-            new TracingMediumFilter(),
-            new TracingContentFilter(),
-            new TracingTermFilter(),
+            new OutcomeFilter,
+            new BatchFilter,
+            new IdentifierFilter,
+            new StatusFilter,
+            new OwnershipFilter,
+            new TracingIdFilter,
+            new TracingCampaignFilter,
+            new TracingSourceFilter,
+            new TracingMediumFilter,
+            new TracingContentFilter,
+            new TracingTermFilter,
         ]);
     }
 }

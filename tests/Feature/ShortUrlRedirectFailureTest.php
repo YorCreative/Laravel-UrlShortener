@@ -13,7 +13,7 @@ class ShortUrlRedirectFailureTest extends TestCase
 {
     protected string $prefix;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->prefix = config('urlshortener.branding.prefix') ?? 'v1';
@@ -21,6 +21,7 @@ class ShortUrlRedirectFailureTest extends TestCase
         // Create a location record for click tests
         ShortUrlLocation::firstOrCreate(['ip' => '127.0.0.1']);
     }
+
     /**
      * @test
      *

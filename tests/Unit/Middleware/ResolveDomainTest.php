@@ -12,10 +12,10 @@ class ResolveDomainTest extends TestCase
 {
     protected ResolveDomain $middleware;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
-        $this->middleware = new ResolveDomain(new DomainResolver());
+        $this->middleware = new ResolveDomain(new DomainResolver);
     }
 
     /**

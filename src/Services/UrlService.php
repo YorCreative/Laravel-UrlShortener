@@ -172,8 +172,6 @@ class UrlService
     /**
      * Find an existing short URL by plain text or create a new one.
      * Returns the existing ShortUrl model if found, otherwise returns a UrlBuilder for building a new one.
-     *
-     * @return ShortUrl|UrlBuilder
      */
     public static function findOrCreate(string $plain_text, ?string $domain = null): ShortUrl|UrlBuilder
     {

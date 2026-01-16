@@ -10,7 +10,7 @@ use YorCreative\UrlShortener\Tests\TestCase;
 
 class MultiDomainTest extends TestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

@@ -128,7 +128,7 @@ class UrlRepository
      */
     public static function identifierExists(string $identifier, ?string $domain = null): bool
     {
-        $query = (new ShortUrl())->where('identifier', $identifier);
+        $query = (new ShortUrl)->where('identifier', $identifier);
 
         if (config('urlshortener.domains.enabled', false)) {
             // Handle NULL domain explicitly since SQL NULL != NULL
@@ -147,7 +147,7 @@ class UrlRepository
      */
     public static function hashExists(string $hashed, ?string $domain = null): ?ShortUrl
     {
-        $query = (new ShortUrl())->where('hashed', $hashed);
+        $query = (new ShortUrl)->where('hashed', $hashed);
 
         if (config('urlshortener.domains.enabled', false)) {
             // Handle NULL domain explicitly since SQL NULL != NULL

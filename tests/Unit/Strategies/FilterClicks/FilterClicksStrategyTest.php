@@ -20,17 +20,17 @@ use YorCreative\UrlShortener\Tests\TestCase;
 
 class FilterClicksStrategyTest extends TestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->getFilters = new Collection([
-            new OutcomeFilter(),
-            new BatchFilter(),
-            new IdentifierFilter(),
-            new StatusFilter(),
-            new OwnershipFilter(),
-            new TracingIdFilter(),
+            new OutcomeFilter,
+            new BatchFilter,
+            new IdentifierFilter,
+            new StatusFilter,
+            new OwnershipFilter,
+            new TracingIdFilter,
         ]);
     }
 
@@ -41,7 +41,7 @@ class FilterClicksStrategyTest extends TestCase
      */
     public function it_can_add_filter_strategies()
     {
-        $filterStrategy = new FilterClicksStrategy();
+        $filterStrategy = new FilterClicksStrategy;
 
         $this->getFilters->each(function ($filter) use ($filterStrategy) {
             $filterStrategy->addFilter($filter);
@@ -63,7 +63,7 @@ class FilterClicksStrategyTest extends TestCase
             ],
         ];
 
-        $this->assertTrue((new OutcomeFilter())->canProcess($filterQuery));
+        $this->assertTrue((new OutcomeFilter)->canProcess($filterQuery));
     }
 
     /**
@@ -78,7 +78,7 @@ class FilterClicksStrategyTest extends TestCase
             'offset' => 1500,
         ];
 
-        $this->assertTrue((new BatchFilter())->canProcess($filterQuery));
+        $this->assertTrue((new BatchFilter)->canProcess($filterQuery));
     }
 
     /**
@@ -94,7 +94,7 @@ class FilterClicksStrategyTest extends TestCase
             ],
         ];
 
-        $this->assertTrue((new IdentifierFilter())->canProcess($filterQuery));
+        $this->assertTrue((new IdentifierFilter)->canProcess($filterQuery));
     }
 
     /**
@@ -110,7 +110,7 @@ class FilterClicksStrategyTest extends TestCase
             ],
         ];
 
-        $this->assertTrue((new StatusFilter())->canProcess($filterQuery));
+        $this->assertTrue((new StatusFilter)->canProcess($filterQuery));
     }
 
     /**
@@ -122,11 +122,11 @@ class FilterClicksStrategyTest extends TestCase
     {
         $filterQuery = [
             'ownership' => [
-                (new DemoOwner()),
+                (new DemoOwner),
             ],
         ];
 
-        $this->assertTrue((new OwnershipFilter())->canProcess($filterQuery));
+        $this->assertTrue((new OwnershipFilter)->canProcess($filterQuery));
     }
 
     /**
@@ -143,7 +143,7 @@ class FilterClicksStrategyTest extends TestCase
             ],
         ];
 
-        $this->assertTrue((new TracingIdFilter())->canProcess($filterQuery));
+        $this->assertTrue((new TracingIdFilter)->canProcess($filterQuery));
     }
 
     /**
@@ -160,7 +160,7 @@ class FilterClicksStrategyTest extends TestCase
             ],
         ];
 
-        $this->assertTrue((new TracingCampaignFilter())->canProcess($filterQuery));
+        $this->assertTrue((new TracingCampaignFilter)->canProcess($filterQuery));
     }
 
     /**
@@ -177,7 +177,7 @@ class FilterClicksStrategyTest extends TestCase
             ],
         ];
 
-        $this->assertTrue((new TracingSourceFilter())->canProcess($filterQuery));
+        $this->assertTrue((new TracingSourceFilter)->canProcess($filterQuery));
     }
 
     /**
@@ -194,7 +194,7 @@ class FilterClicksStrategyTest extends TestCase
             ],
         ];
 
-        $this->assertTrue((new TracingMediumFilter())->canProcess($filterQuery));
+        $this->assertTrue((new TracingMediumFilter)->canProcess($filterQuery));
     }
 
     /**
@@ -211,7 +211,7 @@ class FilterClicksStrategyTest extends TestCase
             ],
         ];
 
-        $this->assertTrue((new TracingContentFilter())->canProcess($filterQuery));
+        $this->assertTrue((new TracingContentFilter)->canProcess($filterQuery));
     }
 
     /**
@@ -228,6 +228,6 @@ class FilterClicksStrategyTest extends TestCase
             ],
         ];
 
-        $this->assertTrue((new TracingTermFilter())->canProcess($filterQuery));
+        $this->assertTrue((new TracingTermFilter)->canProcess($filterQuery));
     }
 }

@@ -67,7 +67,6 @@ class ClickRepository
         }
     }
 
-
     /**
      * @return string[]
      */

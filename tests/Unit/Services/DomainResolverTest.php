@@ -11,10 +11,10 @@ class DomainResolverTest extends TestCase
 {
     protected DomainResolver $resolver;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
-        $this->resolver = new DomainResolver();
+        $this->resolver = new DomainResolver;
     }
 
     /**

@@ -14,7 +14,7 @@ class RateLimitingTest extends TestCase
 
     protected string $protectedPlainText;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -28,7 +28,7 @@ class RateLimitingTest extends TestCase
         $this->protectedIdentifier = end($parts);
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         // Clear rate limiter after each test
         RateLimiter::clear('urlshortener:password_attempt:127.0.0.1:'.$this->protectedIdentifier);

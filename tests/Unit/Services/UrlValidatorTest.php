@@ -8,7 +8,7 @@ use YorCreative\UrlShortener\Tests\TestCase;
 
 class UrlValidatorTest extends TestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

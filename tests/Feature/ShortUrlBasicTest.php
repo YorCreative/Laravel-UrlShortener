@@ -7,7 +7,6 @@ use YorCreative\UrlShortener\Tests\TestCase;
 
 class ShortUrlBasicTest extends TestCase
 {
-
     /**
      * @test
      *
