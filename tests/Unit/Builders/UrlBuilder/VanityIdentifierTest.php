@@ -5,7 +5,6 @@ namespace YorCreative\UrlShortener\Tests\Unit\Builders\UrlBuilder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use YorCreative\UrlShortener\Builders\UrlBuilder\UrlBuilder;
 use YorCreative\UrlShortener\Exceptions\UrlBuilderException;
-use YorCreative\UrlShortener\Services\UrlService;
 use YorCreative\UrlShortener\Tests\TestCase;
 
 class VanityIdentifierTest extends TestCase
