@@ -243,6 +243,52 @@ class UrlRepository
     }
 
     /**
+     * Soft delete a ShortUrl by identifier.
+     *
+     * @throws UrlRepositoryException
+     */
+    public static function deleteByIdentifier(string $identifier, ?string $domain = null): bool
+    {
+        try {
+            $shortUrl = self::findByIdentifier($identifier, $domain);
+
+            return (bool) $shortUrl->delete();
+        } catch (Exception $exception) {
+            throw new UrlRepositoryException($exception->getMessage(), 0, $exception);
+        }
+    }
+
+    /**
+     * Restore a soft-deleted ShortUrl by identifier.
+     *
+     * @throws UrlRepositoryException
+     */
+    public static function restoreByIdentifier(string $identifier, ?string $domain = null): bool
+    {
+        try {
+            $query = ShortUrl::onlyTrashed()->where('identifier', $identifier);
+
+            if (config('urlshortener.domains.enabled', false)) {
+                if ($domain === null) {
+                    $query->whereNull('domain');
+                } else {
+                    $query->where('domain', $domain);
+                }
+            }
+
+            $shortUrl = $query->firstOrFail();
+
+            return $shortUrl->restore();
+        } catch (Exception $exception) {
+            throw new UrlRepositoryException(
+                'Unable to restore short url identifier: '.$identifier,
+                0,
+                $exception
+            );
+        }
+    }
+
+    /**
      * @return string[]
      */
     public static function defaultWithRelationship(): array

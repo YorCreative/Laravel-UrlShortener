@@ -29,10 +29,10 @@ class UtilityService
      */
     protected static function databaseEncryptionKey(): string
     {
-        $appKey = env('APP_KEY');
+        $appKey = config('app.key');
 
         if (empty($appKey)) {
-            throw new UtilityServiceException('APP_KEY environment variable is not set.');
+            throw new UtilityServiceException('APP_KEY is not configured.');
         }
 
         if (! Str::startsWith($appKey, 'base64:')) {

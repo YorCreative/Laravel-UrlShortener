@@ -27,6 +27,52 @@ class BaseOption implements UrlBuilderOptionInterface
     public function resolve(Collection &$shortUrlCollection): void
     {
         $domain = $shortUrlCollection->get('domain');
+        $customIdentifier = $shortUrlCollection->get('custom_identifier');
+
+        // Handle custom (vanity) identifiers
+        if ($customIdentifier !== null) {
+            // Check uniqueness
+            if (UrlRepository::identifierExists($customIdentifier, $domain)) {
+                throw new UrlBuilderException(
+                    "The identifier '{$customIdentifier}' is already in use"
+                    .($domain ? " on domain '{$domain}'." : '.')
+                );
+            }
+
+            // Check hash exists (duplicate URL check)
+            if (UrlRepository::hashExists($shortUrlCollection->get('hashed'), $domain)) {
+                $message = config('urlshortener.domains.enabled', false)
+                    ? 'A short url already exists for the long url provided on this domain.'
+                    : 'A short url already exists for the long url provided.';
+                throw new UrlBuilderException($message);
+            }
+
+            $shortUrlCollection = $shortUrlCollection->merge(['identifier' => $customIdentifier]);
+
+            $createData = ['plain_text', 'hashed', 'identifier'];
+            if (config('urlshortener.domains.enabled', false)) {
+                $createData[] = 'domain';
+            }
+
+            try {
+                $model = UrlRepository::create($shortUrlCollection->only($createData)->toArray());
+                $shortUrlCollection->put('_model', $model);
+            } catch (UrlRepositoryException $e) {
+                $previous = $e->getPrevious();
+                if ($previous instanceof QueryException && $this->isDuplicateKeyError($previous)) {
+                    throw new UrlBuilderException(
+                        "The identifier '{$customIdentifier}' is already in use"
+                        .($domain ? " on domain '{$domain}'." : '.'),
+                        0,
+                        $e
+                    );
+                }
+                throw $e;
+            }
+
+            return;
+        }
+
         $identifierLength = $shortUrlCollection->get('identifier_length');
 
         // Get identifier length from domain config if not specified
@@ -73,7 +119,8 @@ class BaseOption implements UrlBuilderOptionInterface
             ]);
 
             try {
-                UrlRepository::create($shortUrlCollection->only($createData)->toArray());
+                $model = UrlRepository::create($shortUrlCollection->only($createData)->toArray());
+                $shortUrlCollection->put('_model', $model);
 
                 return; // Success - exit the retry loop
             } catch (UrlRepositoryException $e) {

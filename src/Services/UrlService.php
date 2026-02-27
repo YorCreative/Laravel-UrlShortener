@@ -164,6 +164,26 @@ class UrlService
         }
     }
 
+    /**
+     * Soft delete a short URL by identifier.
+     *
+     * @throws UrlRepositoryException
+     */
+    public static function delete(string $identifier, ?string $domain = null): bool
+    {
+        return UrlRepository::deleteByIdentifier($identifier, $domain);
+    }
+
+    /**
+     * Restore a soft-deleted short URL by identifier.
+     *
+     * @throws UrlRepositoryException
+     */
+    public static function restore(string $identifier, ?string $domain = null): bool
+    {
+        return UrlRepository::restoreByIdentifier($identifier, $domain);
+    }
+
     public static function shorten(string $plain_text): UrlBuilder
     {
         return UrlBuilder::shorten($plain_text);

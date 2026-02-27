@@ -9,6 +9,7 @@ use YorCreative\UrlShortener\Builders\ClickQueryBuilder\ClickQueryBuilder;
 use YorCreative\UrlShortener\Exceptions\ClickServiceException;
 use YorCreative\UrlShortener\Exceptions\FilterClicksStrategyException;
 use YorCreative\UrlShortener\Models\ShortUrlClick;
+use YorCreative\UrlShortener\Events\ShortUrlClicked;
 use YorCreative\UrlShortener\Repositories\ClickRepository;
 use YorCreative\UrlShortener\Repositories\LocationRepository;
 use YorCreative\UrlShortener\Repositories\UrlRepository;
@@ -59,6 +60,12 @@ class ClickService
             );
         } catch (Exception $exception) {
             throw new ClickServiceException($exception->getMessage(), 0, $exception);
+        }
+
+        try {
+            ShortUrlClicked::dispatch($identifier, $outcome_id, $request_ip, $domain);
+        } catch (\Throwable $e) {
+            report($e);
         }
     }
 

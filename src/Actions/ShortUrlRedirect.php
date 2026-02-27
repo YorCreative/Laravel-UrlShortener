@@ -5,6 +5,7 @@ namespace YorCreative\UrlShortener\Actions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use YorCreative\UrlShortener\Events\ShortUrlExpired;
 use YorCreative\UrlShortener\Exceptions\ClickServiceException;
 use YorCreative\UrlShortener\Exceptions\UrlRepositoryException;
 use YorCreative\UrlShortener\Models\ShortUrl;
@@ -158,6 +159,12 @@ class ShortUrlRedirect extends Controller
                 false,
                 $this->domain
             );
+
+            try {
+                ShortUrlExpired::dispatch($this->shortUrl, $this->identifier, $this->domain);
+            } catch (\Throwable $e) {
+                report($e);
+            }
 
             abort(404);
         }
