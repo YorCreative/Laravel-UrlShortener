@@ -20,8 +20,8 @@
 </div>
 
 A Laravel URL Shortener package that provides URL redirects with optionally protected URL password, URL expiration, open
-limits before expiration, ability to set feature activation dates, and click tracking out of the box for your Laravel
-applications.
+limits before expiration, ability to set feature activation dates, click tracking, custom vanity identifiers, event dispatching,
+and soft delete/restore out of the box for your Laravel applications.
 
 ## Requirements
 
@@ -81,6 +81,14 @@ $url = UrlService::shorten('https://something-extremely-long.com/even/longer?ref
         ])
         ->build();
 // http(s)://host/prefix/identifier
+
+/**
+ * Custom (Vanity) Identifier
+ */
+$url = UrlService::shorten('https://example.com/my-product-launch')
+        ->withIdentifier('launch2025')
+        ->build();
+// http(s)://host/prefix/launch2025
 ```
 
 Finding Existing Short Urls
@@ -140,6 +148,26 @@ $shortUrlCollection = UrlService::findByUtmCombination([
     'utm_medium' => 'testing'
 ])
 // returns an instance of Eloquent Collection of ShortUrl Models.
+```
+
+Deleting & Restoring Short Urls
+
+```php
+/**
+ * Soft delete a Short URL by identifier
+ */
+UrlService::delete('identifier');
+
+// With multi-domain support
+UrlService::delete('identifier', 'short.io');
+
+/**
+ * Restore a soft-deleted Short URL
+ */
+UrlService::restore('identifier');
+
+// With multi-domain support
+UrlService::restore('identifier', 'short.io');
 ```
 
 Getting Click Information
@@ -328,6 +356,31 @@ When creating a Short URL, the following UTM parameters are available to attach 
 - utm_term
 
 UTM information is hidden in the Short URL identifier and clicks are filterable by UTM parameters.
+
+## Events
+
+The package dispatches events that you can listen to in your application:
+
+| Event | Dispatched When | Payload |
+|-------|----------------|---------|
+| `ShortUrlCreated` | A new short URL is built | `ShortUrl $shortUrl`, `string $builtUrl` |
+| `ShortUrlClicked` | A short URL is clicked | `string $identifier`, `int $outcomeId`, `string $requestIp`, `?string $domain` |
+| `ShortUrlExpired` | An expired short URL is accessed | `ShortUrl $shortUrl`, `string $identifier`, `?string $domain` |
+
+```php
+// EventServiceProvider or listener registration
+use YorCreative\UrlShortener\Events\ShortUrlCreated;
+use YorCreative\UrlShortener\Events\ShortUrlClicked;
+use YorCreative\UrlShortener\Events\ShortUrlExpired;
+
+// Example listener
+Event::listen(ShortUrlCreated::class, function (ShortUrlCreated $event) {
+    Log::info('Short URL created', [
+        'identifier' => $event->shortUrl->identifier,
+        'url' => $event->builtUrl,
+    ]);
+});
+```
 
 ## Multi-Domain Support
 

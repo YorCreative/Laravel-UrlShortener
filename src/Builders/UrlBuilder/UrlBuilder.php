@@ -15,6 +15,7 @@ use YorCreative\UrlShortener\Builders\UrlBuilder\Options\WithOpenLimit;
 use YorCreative\UrlShortener\Builders\UrlBuilder\Options\WithOwnership;
 use YorCreative\UrlShortener\Builders\UrlBuilder\Options\WithPassword;
 use YorCreative\UrlShortener\Builders\UrlBuilder\Options\WithTracing;
+use YorCreative\UrlShortener\Events\ShortUrlCreated;
 use YorCreative\UrlShortener\Exceptions\UrlBuilderException;
 use YorCreative\UrlShortener\Exceptions\UrlServiceException;
 use YorCreative\UrlShortener\Services\DomainResolver;
@@ -274,6 +275,34 @@ class UrlBuilder implements UrlBuilderInterface
     }
 
     /**
+     * Set a custom identifier (vanity URL) for this short URL.
+     *
+     * @throws UrlBuilderException
+     */
+    public function withIdentifier(string $identifier): UrlBuilder
+    {
+        $identifier = trim($identifier);
+
+        if (empty($identifier)) {
+            throw new UrlBuilderException('Custom identifier cannot be empty.');
+        }
+
+        if (strlen($identifier) > 255) {
+            throw new UrlBuilderException('Custom identifier cannot exceed 255 characters.');
+        }
+
+        if (! preg_match('/^[a-zA-Z0-9_-]+$/', $identifier)) {
+            throw new UrlBuilderException(
+                'Custom identifier may only contain letters, numbers, hyphens, and underscores.'
+            );
+        }
+
+        $this->shortUrlCollection->put('custom_identifier', $identifier);
+
+        return $this;
+    }
+
+    /**
      * Build and persist the short URL.
      *
      * Uses database transaction with automatic deadlock retry for concurrent requests.
@@ -299,11 +328,19 @@ class UrlBuilder implements UrlBuilderInterface
 
         if (config('urlshortener.domains.enabled', false)) {
             $resolver = app(DomainResolver::class);
-
-            return $resolver->buildUrl($identifier, $domain);
+            $url = $resolver->buildUrl($identifier, $domain);
+        } else {
+            $url = $this->builtShortUrl($identifier);
         }
 
-        return $this->builtShortUrl($identifier);
+        try {
+            $shortUrl = $shortUrlCollection->get('_model');
+            ShortUrlCreated::dispatch($shortUrl, $url);
+        } catch (\Throwable $e) {
+            report($e);
+        }
+
+        return $url;
     }
 
     public function getOptions(): Collection

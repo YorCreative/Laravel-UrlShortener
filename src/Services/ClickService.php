@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Support\Collection;
 use Throwable;
 use YorCreative\UrlShortener\Builders\ClickQueryBuilder\ClickQueryBuilder;
+use YorCreative\UrlShortener\Events\ShortUrlClicked;
 use YorCreative\UrlShortener\Exceptions\ClickServiceException;
 use YorCreative\UrlShortener\Exceptions\FilterClicksStrategyException;
 use YorCreative\UrlShortener\Models\ShortUrlClick;
@@ -59,6 +60,12 @@ class ClickService
             );
         } catch (Exception $exception) {
             throw new ClickServiceException($exception->getMessage(), 0, $exception);
+        }
+
+        try {
+            ShortUrlClicked::dispatch($identifier, $outcome_id, $request_ip, $domain);
+        } catch (\Throwable $e) {
+            report($e);
         }
     }
 
