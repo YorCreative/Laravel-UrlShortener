@@ -185,6 +185,32 @@ class UrlRepository
     }
 
     /**
+     * Find a ShortUrl for redirect flow with minimal selected columns and no eager relations.
+     *
+     * @throws UrlRepositoryException
+     */
+    public static function findForRedirectByIdentifier(string $identifier, ?string $domain = null): ShortUrl
+    {
+        try {
+            $query = ShortUrl::query()
+                ->select(['id', 'domain', 'plain_text', 'identifier', 'activation', 'expiration', 'password', 'limit'])
+                ->where('identifier', $identifier);
+
+            if (config('urlshortener.domains.enabled', false)) {
+                if ($domain === null) {
+                    $query->whereNull('domain');
+                } else {
+                    $query->where('domain', $domain);
+                }
+            }
+
+            return $query->firstOrFail();
+        } catch (Exception $exception) {
+            throw new UrlRepositoryException('Unable to find short url identifier: '.$identifier, 0, $exception);
+        }
+    }
+
+    /**
      * Find all short URLs for a specific domain.
      */
     public static function findByDomain(string $domain): Collection

@@ -2,6 +2,8 @@
 
 namespace YorCreative\UrlShortener\Tests\Unit\Services;
 
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use YorCreative\UrlShortener\Exceptions\UrlBuilderException;
 use YorCreative\UrlShortener\Services\UrlValidator;
 use YorCreative\UrlShortener\Tests\TestCase;
@@ -16,11 +18,8 @@ class UrlValidatorTest extends TestCase
         config(['urlshortener.url_validation.enabled' => true]);
     }
 
-    /**
-     * @test
-     *
-     * @group UrlValidator
-     */
+    #[Test]
+    #[Group('UrlValidator')]
     public function it_allows_valid_https_urls()
     {
         $this->expectNotToPerformAssertions();
@@ -30,11 +29,8 @@ class UrlValidatorTest extends TestCase
         UrlValidator::validate('https://example.com:8080/page');
     }
 
-    /**
-     * @test
-     *
-     * @group UrlValidator
-     */
+    #[Test]
+    #[Group('UrlValidator')]
     public function it_allows_valid_http_urls()
     {
         $this->expectNotToPerformAssertions();
@@ -42,11 +38,8 @@ class UrlValidatorTest extends TestCase
         UrlValidator::validate('http://example.com/path/to/page');
     }
 
-    /**
-     * @test
-     *
-     * @group UrlValidator
-     */
+    #[Test]
+    #[Group('UrlValidator')]
     public function it_rejects_urls_without_scheme()
     {
         $this->expectException(UrlBuilderException::class);
@@ -55,11 +48,8 @@ class UrlValidatorTest extends TestCase
         UrlValidator::validate('example.com/path');
     }
 
-    /**
-     * @test
-     *
-     * @group UrlValidator
-     */
+    #[Test]
+    #[Group('UrlValidator')]
     public function it_rejects_javascript_protocol()
     {
         $this->expectException(UrlBuilderException::class);
@@ -68,11 +58,8 @@ class UrlValidatorTest extends TestCase
         UrlValidator::validate('javascript:alert("XSS")');
     }
 
-    /**
-     * @test
-     *
-     * @group UrlValidator
-     */
+    #[Test]
+    #[Group('UrlValidator')]
     public function it_rejects_data_protocol()
     {
         $this->expectException(UrlBuilderException::class);
@@ -81,11 +68,8 @@ class UrlValidatorTest extends TestCase
         UrlValidator::validate('data:text/html,<script>alert("XSS")</script>');
     }
 
-    /**
-     * @test
-     *
-     * @group UrlValidator
-     */
+    #[Test]
+    #[Group('UrlValidator')]
     public function it_rejects_file_protocol()
     {
         $this->expectException(UrlBuilderException::class);
@@ -94,11 +78,8 @@ class UrlValidatorTest extends TestCase
         UrlValidator::validate('file:///etc/passwd');
     }
 
-    /**
-     * @test
-     *
-     * @group UrlValidator
-     */
+    #[Test]
+    #[Group('UrlValidator')]
     public function it_rejects_localhost_urls()
     {
         $this->expectException(UrlBuilderException::class);
@@ -107,11 +88,8 @@ class UrlValidatorTest extends TestCase
         UrlValidator::validate('http://localhost/admin');
     }
 
-    /**
-     * @test
-     *
-     * @group UrlValidator
-     */
+    #[Test]
+    #[Group('UrlValidator')]
     public function it_rejects_loopback_ip()
     {
         $this->expectException(UrlBuilderException::class);
@@ -120,11 +98,8 @@ class UrlValidatorTest extends TestCase
         UrlValidator::validate('http://127.0.0.1/admin');
     }
 
-    /**
-     * @test
-     *
-     * @group UrlValidator
-     */
+    #[Test]
+    #[Group('UrlValidator')]
     public function it_rejects_private_ip_ranges()
     {
         $this->expectException(UrlBuilderException::class);
@@ -133,11 +108,8 @@ class UrlValidatorTest extends TestCase
         UrlValidator::validate('http://192.168.1.1/admin');
     }
 
-    /**
-     * @test
-     *
-     * @group UrlValidator
-     */
+    #[Test]
+    #[Group('UrlValidator')]
     public function it_rejects_aws_metadata_endpoint()
     {
         $this->expectException(UrlBuilderException::class);
@@ -146,11 +118,8 @@ class UrlValidatorTest extends TestCase
         UrlValidator::validate('http://169.254.169.254/latest/meta-data/');
     }
 
-    /**
-     * @test
-     *
-     * @group UrlValidator
-     */
+    #[Test]
+    #[Group('UrlValidator')]
     public function it_allows_urls_when_validation_disabled()
     {
         config(['urlshortener.url_validation.enabled' => false]);
@@ -162,11 +131,8 @@ class UrlValidatorTest extends TestCase
         UrlValidator::validate('http://localhost/admin');
     }
 
-    /**
-     * @test
-     *
-     * @group UrlValidator
-     */
+    #[Test]
+    #[Group('UrlValidator')]
     public function it_allows_private_ips_when_config_disabled()
     {
         config(['urlshortener.url_validation.block_private_ips' => false]);
@@ -174,5 +140,100 @@ class UrlValidatorTest extends TestCase
         $this->expectNotToPerformAssertions();
 
         UrlValidator::validate('http://192.168.1.1/admin');
+    }
+
+    #[Test]
+    #[Group('UrlValidator')]
+    public function it_rejects_hosts_that_resolve_to_private_ips()
+    {
+        config(['urlshortener.url_validation.resolve_dns_private_ips' => true]);
+
+        $validator = new class extends UrlValidator
+        {
+            public static function validateWithStubbedDns(string $url): void
+            {
+                self::validate($url);
+            }
+
+            protected static function resolveHostIps(string $host): array
+            {
+                return $host === 'example.com' ? ['10.0.0.5'] : [];
+            }
+        };
+
+        $this->expectException(UrlBuilderException::class);
+        $this->expectExceptionMessage('resolves to a private/internal IP');
+
+        $validator::validateWithStubbedDns('https://example.com/resource');
+    }
+
+    #[Test]
+    #[Group('UrlValidator')]
+    public function it_skips_dns_private_ip_checks_when_config_disabled()
+    {
+        config(['urlshortener.url_validation.resolve_dns_private_ips' => false]);
+
+        $validator = new class extends UrlValidator
+        {
+            public static function validateWithStubbedDns(string $url): void
+            {
+                self::validate($url);
+            }
+
+            protected static function resolveHostIps(string $host): array
+            {
+                throw new \RuntimeException('DNS resolution should not be called.');
+            }
+        };
+
+        $this->expectNotToPerformAssertions();
+
+        $validator::validateWithStubbedDns('https://example.com/resource');
+    }
+
+    #[Test]
+    #[Group('UrlValidator')]
+    public function it_does_not_resolve_dns_by_default()
+    {
+        $validator = new class extends UrlValidator
+        {
+            public static function validateWithStubbedDns(string $url): void
+            {
+                self::validate($url);
+            }
+
+            protected static function resolveHostIps(string $host): array
+            {
+                throw new \RuntimeException('DNS resolution should not be called.');
+            }
+        };
+
+        $this->expectNotToPerformAssertions();
+
+        $validator::validateWithStubbedDns('https://example.com/resource');
+    }
+
+    #[Test]
+    #[Group('UrlValidator')]
+    public function it_allows_hosts_when_dns_resolution_returns_no_ips()
+    {
+        config(['urlshortener.url_validation.resolve_dns_private_ips' => true]);
+
+        $validator = new class extends UrlValidator
+        {
+            public static function validateWithStubbedDns(string $url): void
+            {
+                self::validate($url);
+            }
+
+            protected static function resolveHostIps(string $host): array
+            {
+                return [];
+            }
+        };
+
+        $this->expectNotToPerformAssertions();
+
+        $validator::validateWithStubbedDns('https://unresolved.example/resource');
     }
 }

@@ -69,14 +69,22 @@ class StatusFilter extends AbstractFilter
 
         match ($status) {
             'active' => $query->whereIn('short_url_id', function ($q) use ($now) {
-                $q->from('short_urls')->where('expiration', '>', $now)->select('id');
+                $q->from('short_urls')
+                    ->whereNull('expiration')
+                    ->orWhere('expiration', '>', $now)
+                    ->select('id');
             }),
             'expired' => $query->whereIn('short_url_id', function ($q) use ($now) {
-                $q->from('short_urls')->where('expiration', '<', $now)->select('id');
+                // Expired when now >= expiration, consistent with the redirect flow.
+                $q->from('short_urls')->where('expiration', '<=', $now)->select('id');
             }),
             'expiring' => $query->whereIn('short_url_id', function ($q) {
+                $now = now();
+                $startsAt = $now->copy()->addMinute()->timestamp;
+                $endsAt = $now->copy()->addMinutes(30)->timestamp;
+
                 $q->from('short_urls')
-                    ->whereBetween('expiration', [now()->addMinute()->timestamp, now()->addMinutes(30)])
+                    ->whereBetween('expiration', [$startsAt, $endsAt])
                     ->select('id');
             }),
             default => null,

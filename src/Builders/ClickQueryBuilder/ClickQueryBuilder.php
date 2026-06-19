@@ -74,10 +74,17 @@ class ClickQueryBuilder extends Builder
 
     public function isNotExpired(): ClickQueryBuilder
     {
-        return $this->expirationFilter('>', now()->timestamp);
+        $now = now()->timestamp;
+
+        return $this->whereIn('short_url_id', function ($query) use ($now) {
+            $query->from('short_urls');
+            $query->whereNull('expiration')
+                ->orWhere('expiration', '>', $now);
+            $query->select('id');
+        });
     }
 
-    protected function expirationFilter(string $direction, $current_timestamp): ClickQueryBuilder
+    protected function expirationFilter(string $direction, int $current_timestamp): ClickQueryBuilder
     {
         return $this->whereIn('short_url_id', function ($query) use ($direction, $current_timestamp) {
             $query->from('short_urls');
@@ -88,16 +95,21 @@ class ClickQueryBuilder extends Builder
 
     public function isExpiring(): ClickQueryBuilder
     {
-        return $this->whereIn('short_url_id', function ($query) {
+        $now = now();
+        $startsAt = $now->copy()->addMinute()->timestamp;
+        $endsAt = $now->copy()->addMinutes(30)->timestamp;
+
+        return $this->whereIn('short_url_id', function ($query) use ($startsAt, $endsAt) {
             $query->from('short_urls');
-            $query->whereBetween('expiration', [now()->addMinute()->timestamp, now()->addMinutes(30)]);
+            $query->whereBetween('expiration', [$startsAt, $endsAt]);
             $query->select('id');
         });
     }
 
     public function isExpired(): ClickQueryBuilder
     {
-        return $this->expirationFilter('<', now()->timestamp);
+        // Expired when now >= expiration, consistent with the redirect flow.
+        return $this->expirationFilter('<=', now()->timestamp);
     }
 
     public function whereOwnership(Model $model): ClickQueryBuilder

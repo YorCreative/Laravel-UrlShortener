@@ -5,6 +5,8 @@ namespace YorCreative\UrlShortener\Tests\Unit\Events;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Event;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use YorCreative\UrlShortener\Builders\UrlBuilder\UrlBuilder;
 use YorCreative\UrlShortener\Events\ShortUrlClicked;
 use YorCreative\UrlShortener\Events\ShortUrlCreated;
@@ -18,11 +20,8 @@ class ShortUrlEventsTest extends TestCase
 {
     use DatabaseTransactions;
 
-    /**
-     * @test
-     *
-     * @group Events
-     */
+    #[Test]
+    #[Group('Events')]
     public function it_dispatches_short_url_created_event_on_build()
     {
         Event::fake([ShortUrlCreated::class]);
@@ -36,11 +35,8 @@ class ShortUrlEventsTest extends TestCase
         });
     }
 
-    /**
-     * @test
-     *
-     * @group Events
-     */
+    #[Test]
+    #[Group('Events')]
     public function it_dispatches_short_url_clicked_event_on_track()
     {
         Event::fake([ShortUrlClicked::class]);
@@ -60,11 +56,8 @@ class ShortUrlEventsTest extends TestCase
         });
     }
 
-    /**
-     * @test
-     *
-     * @group Events
-     */
+    #[Test]
+    #[Group('Events')]
     public function it_dispatches_short_url_expired_event_on_expired_redirect()
     {
         Event::fake([ShortUrlExpired::class]);

@@ -3,6 +3,8 @@
 namespace YorCreative\UrlShortener\Tests\Unit\Builders\UrlBuilder;
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use YorCreative\UrlShortener\Builders\UrlBuilder\UrlBuilder;
 use YorCreative\UrlShortener\Exceptions\UrlBuilderException;
 use YorCreative\UrlShortener\Tests\TestCase;
@@ -11,11 +13,8 @@ class VanityIdentifierTest extends TestCase
 {
     use DatabaseTransactions;
 
-    /**
-     * @test
-     *
-     * @group UrlBuilder
-     */
+    #[Test]
+    #[Group('UrlBuilder')]
     public function it_can_build_short_url_with_custom_identifier()
     {
         $plainText = 'https://example.com/vanity-test/'.rand(999, 999999);
@@ -32,11 +31,8 @@ class VanityIdentifierTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     *
-     * @group UrlBuilder
-     */
+    #[Test]
+    #[Group('UrlBuilder')]
     public function it_rejects_empty_identifier()
     {
         $this->expectException(UrlBuilderException::class);
@@ -45,11 +41,8 @@ class VanityIdentifierTest extends TestCase
             ->withIdentifier('');
     }
 
-    /**
-     * @test
-     *
-     * @group UrlBuilder
-     */
+    #[Test]
+    #[Group('UrlBuilder')]
     public function it_rejects_identifier_exceeding_max_length()
     {
         $this->expectException(UrlBuilderException::class);
@@ -58,11 +51,8 @@ class VanityIdentifierTest extends TestCase
             ->withIdentifier(str_repeat('a', 256));
     }
 
-    /**
-     * @test
-     *
-     * @group UrlBuilder
-     */
+    #[Test]
+    #[Group('UrlBuilder')]
     public function it_rejects_identifier_with_invalid_characters()
     {
         $this->expectException(UrlBuilderException::class);
@@ -71,11 +61,8 @@ class VanityIdentifierTest extends TestCase
             ->withIdentifier('my slug with spaces');
     }
 
-    /**
-     * @test
-     *
-     * @group UrlBuilder
-     */
+    #[Test]
+    #[Group('UrlBuilder')]
     public function it_rejects_duplicate_custom_identifier()
     {
         $plainText1 = 'https://example.com/dup-test-1/'.rand(999, 999999);

@@ -2,16 +2,15 @@
 
 namespace YorCreative\UrlShortener\Tests\Feature;
 
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use YorCreative\UrlShortener\Services\UrlService;
 use YorCreative\UrlShortener\Tests\TestCase;
 
 class ShortUrlBasicTest extends TestCase
 {
-    /**
-     * @test
-     *
-     * @group Feature
-     */
+    #[Test]
+    #[Group('Feature')]
     public function it_can_create_a_basic_short_url()
     {
         $this->assertDatabaseHas(
@@ -38,11 +37,8 @@ class ShortUrlBasicTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     *
-     * @group Feature
-     */
+    #[Test]
+    #[Group('Feature')]
     public function it_returns_404_for_nonexistent_identifier()
     {
         $prefix = config('urlshortener.branding.prefix') ?? 'v1';
@@ -51,11 +47,8 @@ class ShortUrlBasicTest extends TestCase
         $response->assertStatus(404);
     }
 
-    /**
-     * @test
-     *
-     * @group Feature
-     */
+    #[Test]
+    #[Group('Feature')]
     public function it_can_redirect_to_short_url()
     {
         // Create a fresh short URL in this test

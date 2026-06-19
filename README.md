@@ -25,8 +25,8 @@ and soft delete/restore out of the box for your Laravel applications.
 
 ## Requirements
 
-- PHP 8.1+
-- Laravel 10.x, 11.x, or 12.x
+- PHP 8.1+ (PHP 8.3+ when using Laravel 13)
+- Laravel 10.x, 11.x, 12.x, or 13.x
 
 ## Installation
 
@@ -39,6 +39,13 @@ composer require yorcreative/laravel-urlshortener
 Publish the packages assets.
 ```bash
 php artisan vendor:publish --provider="YorCreative\UrlShortener\UrlShortenerServiceProvider"
+```
+
+You can also publish assets by tag.
+```bash
+php artisan vendor:publish --tag=urlshortener-config
+php artisan vendor:publish --tag=urlshortener-views
+php artisan vendor:publish --tag=urlshortener-migrations
 ```
 
 Run migrations.
@@ -249,8 +256,9 @@ $clicks = ClickService::get([
         1, // successful_routed
         2, // successful_protected
         3, // failure_password
-        4, // failure_expiration
-        5  // failure_limit
+        4, // failure_limit
+        5, // failure_expiration
+        6, // failure_activation
     ]
 ]);
 ```
@@ -270,7 +278,7 @@ Filtered on YorShortUrl Identifier(s)
 
 ```php
 $clicks = ClickService::get([
-    'identifier' => [
+    'identifiers' => [
          'xyz',
          'yxz'
     ]
@@ -310,8 +318,8 @@ Iterate Through Results With Batches
 
 ```php
 $clicks = ClickService::get([
-    'limit' => 500
-    'offset' => 1500
+    'limit' => 500,
+    'offset' => 1500,
 ]);
 
 $clicks->get('results');
@@ -328,19 +336,19 @@ Putting it all Together
 $clicks = ClickService::get([
     'ownership' => Model::whereIn('id', [1,2,3,4])->get()->toArray(),
     'outcome' => [
-        3 // successful_routed
+        1, // successful_routed
     ],
     'status' => [
-        'active'
+        'active',
     ],
     'utm_campaign' => [
-        'awareness'
+        'awareness',
     ],
     'utm_source' => [
-        'github'
+        'github',
     ],
-    'limit' => 500
-    'offset' => 1500
+    'limit' => 500,
+    'offset' => 1500,
 ]);
 ```
 
@@ -441,6 +449,12 @@ $url = UrlService::shorten('https://example.com/long-url')
     ->withPrefix('custom')
     ->build();
 
+// Custom prefixes must be registered so package routes can resolve them:
+// config/urlshortener.php
+'routing' => [
+    'additional_prefixes' => ['custom'],
+],
+
 // Custom identifier length
 $url = UrlService::shorten('https://example.com/long-url')
     ->forDomain('short.io')
@@ -491,6 +505,7 @@ URL_SHORTENER_VALIDATE_URLS=true
     'enabled' => env('URL_SHORTENER_VALIDATE_URLS', false),
     'allowed_schemes' => ['http', 'https'],
     'block_private_ips' => env('URL_SHORTENER_BLOCK_PRIVATE_IPS', true),
+    'resolve_dns_private_ips' => env('URL_SHORTENER_RESOLVE_DNS_PRIVATE_IPS', true),
     'blocked_hosts' => [
         // 'internal.company.com',
     ],
@@ -505,6 +520,8 @@ URL_SHORTENER_VALIDATE_URLS=true
 - Private IP ranges (SSRF)
 - Cloud metadata endpoints (SSRF)
 - Localhost redirects
+
+When DNS private IP checks are enabled, hostnames are resolved during URL creation and any private or reserved resolved IP is rejected. DNS lookup failures or hosts with no IP records are allowed, so add known internal hostnames to `blocked_hosts` when they should always be rejected.
 
 ### Rate Limiting for Password-Protected URLs
 
@@ -533,6 +550,7 @@ After exceeding the maximum attempts, users receive a `429 Too Many Requests` re
 | `URL_SHORTENER_DOMAINS_DATABASE` | `false` | Store domain config in database |
 | `URL_SHORTENER_VALIDATE_URLS` | `false` | Enable URL validation (recommended) |
 | `URL_SHORTENER_BLOCK_PRIVATE_IPS` | `true` | Block private/internal IPs |
+| `URL_SHORTENER_RESOLVE_DNS_PRIVATE_IPS` | `true` | Resolve hostnames and block private/reserved IP results |
 | `URL_SHORTENER_BLOCK_METADATA` | `true` | Block cloud metadata endpoints |
 | `URL_SHORTENER_PASSWORD_MAX_ATTEMPTS` | `5` | Max password attempts before rate limit |
 | `URL_SHORTENER_PASSWORD_DECAY_MINUTES` | `1` | Minutes until rate limit resets |
@@ -547,4 +565,3 @@ composer test
 
 - [Yorda](https://github.com/yordadev)
 - [All Contributors](../../contributors)
-

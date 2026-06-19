@@ -3,6 +3,9 @@
 namespace YorCreative\UrlShortener\Tests\Unit\Services;
 
 use Illuminate\Http\Request;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
+use YorCreative\UrlShortener\Contracts\DomainResolverInterface;
 use YorCreative\UrlShortener\Exceptions\DomainResolutionException;
 use YorCreative\UrlShortener\Services\DomainResolver;
 use YorCreative\UrlShortener\Tests\TestCase;
@@ -17,11 +20,8 @@ class DomainResolverTest extends TestCase
         $this->resolver = new DomainResolver;
     }
 
-    /**
-     * @test
-     *
-     * @group DomainResolver
-     */
+    #[Test]
+    #[Group('DomainResolver')]
     public function it_returns_null_when_domains_disabled()
     {
         config(['urlshortener.domains.enabled' => false]);
@@ -32,11 +32,8 @@ class DomainResolverTest extends TestCase
         $this->assertNull($result);
     }
 
-    /**
-     * @test
-     *
-     * @group DomainResolver
-     */
+    #[Test]
+    #[Group('DomainResolver')]
     public function it_resolves_domain_from_host_strategy()
     {
         config(['urlshortener.domains.enabled' => true]);
@@ -48,11 +45,8 @@ class DomainResolverTest extends TestCase
         $this->assertEquals('test.io', $result);
     }
 
-    /**
-     * @test
-     *
-     * @group DomainResolver
-     */
+    #[Test]
+    #[Group('DomainResolver')]
     public function it_strips_www_prefix_from_host()
     {
         config(['urlshortener.domains.enabled' => true]);
@@ -64,11 +58,8 @@ class DomainResolverTest extends TestCase
         $this->assertEquals('test.io', $result);
     }
 
-    /**
-     * @test
-     *
-     * @group DomainResolver
-     */
+    #[Test]
+    #[Group('DomainResolver')]
     public function it_resolves_domain_from_subdomain_strategy()
     {
         config(['urlshortener.domains.enabled' => true]);
@@ -81,11 +72,8 @@ class DomainResolverTest extends TestCase
         $this->assertEquals('test', $result);
     }
 
-    /**
-     * @test
-     *
-     * @group DomainResolver
-     */
+    #[Test]
+    #[Group('DomainResolver')]
     public function it_returns_null_for_subdomain_without_base_domain()
     {
         config(['urlshortener.domains.enabled' => true]);
@@ -98,11 +86,8 @@ class DomainResolverTest extends TestCase
         $this->assertNull($result);
     }
 
-    /**
-     * @test
-     *
-     * @group DomainResolver
-     */
+    #[Test]
+    #[Group('DomainResolver')]
     public function it_resolves_domain_from_path_strategy()
     {
         config(['urlshortener.domains.enabled' => true]);
@@ -114,11 +99,8 @@ class DomainResolverTest extends TestCase
         $this->assertEquals('mycompany', $result);
     }
 
-    /**
-     * @test
-     *
-     * @group DomainResolver
-     */
+    #[Test]
+    #[Group('DomainResolver')]
     public function it_resolves_domain_aliases()
     {
         config(['urlshortener.domains.enabled' => true]);
@@ -133,11 +115,8 @@ class DomainResolverTest extends TestCase
         $this->assertEquals('test.io', $result);
     }
 
-    /**
-     * @test
-     *
-     * @group DomainResolver
-     */
+    #[Test]
+    #[Group('DomainResolver')]
     public function it_throws_exception_for_unknown_strategy()
     {
         config(['urlshortener.domains.enabled' => true]);
@@ -150,11 +129,8 @@ class DomainResolverTest extends TestCase
         $this->resolver->resolve($request);
     }
 
-    /**
-     * @test
-     *
-     * @group DomainResolver
-     */
+    #[Test]
+    #[Group('DomainResolver')]
     public function it_builds_url_with_protocol()
     {
         config(['urlshortener.domains.enabled' => true]);
@@ -169,11 +145,8 @@ class DomainResolverTest extends TestCase
         $this->assertStringContainsString('abc123', $url);
     }
 
-    /**
-     * @test
-     *
-     * @group DomainResolver
-     */
+    #[Test]
+    #[Group('DomainResolver')]
     public function it_builds_url_with_prefix()
     {
         config(['urlshortener.domains.enabled' => true]);
@@ -186,11 +159,23 @@ class DomainResolverTest extends TestCase
         $this->assertEquals('https://test.io/go/abc123', $url);
     }
 
-    /**
-     * @test
-     *
-     * @group DomainResolver
-     */
+    #[Test]
+    #[Group('DomainResolver')]
+    public function it_builds_url_with_a_numeric_zero_prefix()
+    {
+        config(['urlshortener.domains.enabled' => true]);
+        config(['urlshortener.domains.hosts' => [
+            'test.io' => ['prefix' => '0'],
+        ]]);
+
+        $url = $this->resolver->buildUrl('abc123', 'test.io');
+
+        // A "0" prefix is a valid, routable segment and must not be dropped.
+        $this->assertEquals('https://test.io/0/abc123', $url);
+    }
+
+    #[Test]
+    #[Group('DomainResolver')]
     public function it_builds_url_without_prefix()
     {
         config(['urlshortener.domains.enabled' => true]);
@@ -203,11 +188,8 @@ class DomainResolverTest extends TestCase
         $this->assertEquals('https://test.io/abc123', $url);
     }
 
-    /**
-     * @test
-     *
-     * @group DomainResolver
-     */
+    #[Test]
+    #[Group('DomainResolver')]
     public function it_checks_if_domain_is_allowed_when_disabled()
     {
         config(['urlshortener.domains.enabled' => false]);
@@ -215,11 +197,8 @@ class DomainResolverTest extends TestCase
         $this->assertTrue($this->resolver->isAllowed('any-domain.com'));
     }
 
-    /**
-     * @test
-     *
-     * @group DomainResolver
-     */
+    #[Test]
+    #[Group('DomainResolver')]
     public function it_checks_if_domain_is_allowed_from_config()
     {
         config(['urlshortener.domains.enabled' => true]);
@@ -232,11 +211,8 @@ class DomainResolverTest extends TestCase
         $this->assertFalse($this->resolver->isAllowed('not-allowed.io'));
     }
 
-    /**
-     * @test
-     *
-     * @group DomainResolver
-     */
+    #[Test]
+    #[Group('DomainResolver')]
     public function it_allows_null_domain_as_default()
     {
         config(['urlshortener.domains.enabled' => true]);
@@ -244,11 +220,8 @@ class DomainResolverTest extends TestCase
         $this->assertTrue($this->resolver->isAllowed(null));
     }
 
-    /**
-     * @test
-     *
-     * @group DomainResolver
-     */
+    #[Test]
+    #[Group('DomainResolver')]
     public function it_gets_prefix_for_domain()
     {
         config(['urlshortener.domains.enabled' => true]);
@@ -259,11 +232,8 @@ class DomainResolverTest extends TestCase
         $this->assertEquals('myprefix', $this->resolver->getPrefix('test.io'));
     }
 
-    /**
-     * @test
-     *
-     * @group DomainResolver
-     */
+    #[Test]
+    #[Group('DomainResolver')]
     public function it_gets_identifier_length_for_domain()
     {
         config(['urlshortener.domains.enabled' => true]);
@@ -274,11 +244,8 @@ class DomainResolverTest extends TestCase
         $this->assertEquals(8, $this->resolver->getIdentifierLength('test.io'));
     }
 
-    /**
-     * @test
-     *
-     * @group DomainResolver
-     */
+    #[Test]
+    #[Group('DomainResolver')]
     public function it_returns_default_identifier_length_when_not_configured()
     {
         config(['urlshortener.domains.enabled' => true]);
@@ -290,11 +257,8 @@ class DomainResolverTest extends TestCase
         $this->assertEquals(6, $this->resolver->getIdentifierLength('test.io'));
     }
 
-    /**
-     * @test
-     *
-     * @group DomainResolver
-     */
+    #[Test]
+    #[Group('DomainResolver')]
     public function it_can_set_domain_manually()
     {
         $this->resolver->setDomain('manual.io');
@@ -302,11 +266,8 @@ class DomainResolverTest extends TestCase
         $this->assertEquals('manual.io', $this->resolver->current());
     }
 
-    /**
-     * @test
-     *
-     * @group DomainResolver
-     */
+    #[Test]
+    #[Group('DomainResolver')]
     public function it_returns_current_resolved_domain()
     {
         config(['urlshortener.domains.enabled' => true]);
@@ -316,5 +277,45 @@ class DomainResolverTest extends TestCase
         $this->resolver->resolve($request);
 
         $this->assertEquals('current.io', $this->resolver->current());
+    }
+
+    #[Test]
+    #[Group('DomainResolver')]
+    public function it_preserves_the_domain_resolver_interface_build_url_signature()
+    {
+        $resolver = new class implements DomainResolverInterface
+        {
+            public function resolve(?Request $request = null): ?string
+            {
+                return null;
+            }
+
+            public function getConfig(?string $domain = null): array
+            {
+                return [];
+            }
+
+            public function current(): ?string
+            {
+                return null;
+            }
+
+            public function isAllowed(?string $domain): bool
+            {
+                return true;
+            }
+
+            public function getPrefix(?string $domain = null): ?string
+            {
+                return null;
+            }
+
+            public function buildUrl(string $identifier, ?string $domain = null): string
+            {
+                return $identifier;
+            }
+        };
+
+        $this->assertSame('abc123', $resolver->buildUrl('abc123'));
     }
 }

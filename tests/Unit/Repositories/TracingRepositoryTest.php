@@ -4,6 +4,8 @@ namespace YorCreative\UrlShortener\Tests\Unit\Repositories;
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\Request;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use ReflectionClass;
 use ReflectionException;
 use YorCreative\UrlShortener\Models\ShortUrl;
@@ -15,12 +17,10 @@ class TracingRepositoryTest extends TestCase
     use DatabaseTransactions;
 
     /**
-     * @test
-     *
-     * @group TracingRepository
-     *
      * @throws ReflectionException
      */
+    #[Test]
+    #[Group('TracingRepository')]
     public function it_can_detect_all_utm_parameters()
     {
         foreach ($this->getAllowedParameters() as $parameter) {
@@ -54,12 +54,10 @@ class TracingRepositoryTest extends TestCase
     }
 
     /**
-     * @test
-     *
-     * @group TracingRepository
-     *
      * @throws ReflectionException
      */
+    #[Test]
+    #[Group('TracingRepository')]
     public function it_has_correct_allowed_parameters()
     {
         foreach ($this->getAllowedParameters() as $parameter) {
@@ -76,11 +74,8 @@ class TracingRepositoryTest extends TestCase
         }
     }
 
-    /**
-     * @test
-     *
-     * @group TracingRepository
-     */
+    #[Test]
+    #[Group('TracingRepository')]
     public function it_can_create_a_trace_record()
     {
         $utm_query = [

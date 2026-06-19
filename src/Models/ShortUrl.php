@@ -71,7 +71,8 @@ class ShortUrl extends Model
 
     public function hasLimit(): bool
     {
-        return ! is_null($this->limit);
+        // A null or 0 limit both mean "unlimited opens".
+        return ! is_null($this->limit) && $this->limit > 0;
     }
 
     public function clicks(): HasMany

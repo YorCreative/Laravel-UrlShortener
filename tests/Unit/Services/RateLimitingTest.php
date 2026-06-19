@@ -3,6 +3,8 @@
 namespace YorCreative\UrlShortener\Tests\Unit\Services;
 
 use Illuminate\Support\Facades\RateLimiter;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use YorCreative\UrlShortener\Builders\UrlBuilder\UrlBuilder;
 use YorCreative\UrlShortener\Exceptions\RateLimitExceededException;
 use YorCreative\UrlShortener\Services\UrlService;
@@ -35,11 +37,8 @@ class RateLimitingTest extends TestCase
         parent::tearDown();
     }
 
-    /**
-     * @test
-     *
-     * @group RateLimiting
-     */
+    #[Test]
+    #[Group('RateLimiting')]
     public function it_allows_successful_attempts_without_rate_limiting()
     {
         $result = UrlService::attempt($this->protectedIdentifier, 'testpass123', null, '127.0.0.1');
@@ -48,11 +47,8 @@ class RateLimitingTest extends TestCase
         $this->assertEquals($this->protectedPlainText, $result->plain_text);
     }
 
-    /**
-     * @test
-     *
-     * @group RateLimiting
-     */
+    #[Test]
+    #[Group('RateLimiting')]
     public function it_rate_limits_after_max_failed_attempts()
     {
         config(['urlshortener.protection.rate_limit.max_attempts' => 3]);
@@ -69,11 +65,8 @@ class RateLimitingTest extends TestCase
         UrlService::attempt($this->protectedIdentifier, 'wrongpassword', null, '127.0.0.1');
     }
 
-    /**
-     * @test
-     *
-     * @group RateLimiting
-     */
+    #[Test]
+    #[Group('RateLimiting')]
     public function it_clears_rate_limit_on_successful_attempt()
     {
         config(['urlshortener.protection.rate_limit.max_attempts' => 5]);
@@ -94,11 +87,8 @@ class RateLimitingTest extends TestCase
         }
     }
 
-    /**
-     * @test
-     *
-     * @group RateLimiting
-     */
+    #[Test]
+    #[Group('RateLimiting')]
     public function it_tracks_rate_limit_per_ip_and_identifier()
     {
         config(['urlshortener.protection.rate_limit.max_attempts' => 2]);
@@ -125,11 +115,8 @@ class RateLimitingTest extends TestCase
         RateLimiter::clear('urlshortener:password_attempt:192.168.1.2:'.$this->protectedIdentifier);
     }
 
-    /**
-     * @test
-     *
-     * @group RateLimiting
-     */
+    #[Test]
+    #[Group('RateLimiting')]
     public function it_provides_retry_after_seconds()
     {
         config(['urlshortener.protection.rate_limit.max_attempts' => 1]);

@@ -9,6 +9,7 @@ use YorCreative\UrlShortener\Builders\ClickQueryBuilder\ClickQueryBuilder;
 use YorCreative\UrlShortener\Events\ShortUrlClicked;
 use YorCreative\UrlShortener\Exceptions\ClickServiceException;
 use YorCreative\UrlShortener\Exceptions\FilterClicksStrategyException;
+use YorCreative\UrlShortener\Models\ShortUrl;
 use YorCreative\UrlShortener\Models\ShortUrlClick;
 use YorCreative\UrlShortener\Repositories\ClickRepository;
 use YorCreative\UrlShortener\Repositories\LocationRepository;
@@ -49,19 +50,48 @@ class ClickService
     public static function track(string $identifier, string $request_ip, int $outcome_id, bool $test = false, ?string $domain = null): void
     {
         try {
-            ClickRepository::createClick(
-                UrlRepository::findByIdentifier($identifier, $domain)->id,
-                LocationRepository::findOrCreateLocationRecord(
-                    ! $test
-                        ? LocationRepository::getLocationFrom($request_ip)
-                        : LocationRepository::locationUnknown($request_ip)
-                )->id,
-                $outcome_id
-            );
+            $shortUrl = UrlRepository::findByIdentifier($identifier, $domain);
+            self::createClickForShortUrl($shortUrl, $request_ip, $outcome_id, $test);
         } catch (Exception $exception) {
             throw new ClickServiceException($exception->getMessage(), 0, $exception);
         }
 
+        self::dispatchShortUrlClicked($identifier, $outcome_id, $request_ip, $domain);
+    }
+
+    /**
+     * Track a click for an already-loaded ShortUrl.
+     *
+     * This avoids reloading the URL during redirect handling.
+     *
+     * @throws ClickServiceException
+     */
+    public static function trackShortUrl(ShortUrl $shortUrl, string $request_ip, int $outcome_id, bool $test = false, ?string $domain = null): void
+    {
+        try {
+            self::createClickForShortUrl($shortUrl, $request_ip, $outcome_id, $test);
+        } catch (Exception $exception) {
+            throw new ClickServiceException($exception->getMessage(), 0, $exception);
+        }
+
+        self::dispatchShortUrlClicked($shortUrl->identifier, $outcome_id, $request_ip, $domain ?? $shortUrl->domain);
+    }
+
+    protected static function createClickForShortUrl(ShortUrl $shortUrl, string $request_ip, int $outcome_id, bool $test): void
+    {
+        ClickRepository::createClick(
+            $shortUrl->id,
+            LocationRepository::findOrCreateLocationRecord(
+                ! $test
+                    ? LocationRepository::getLocationFrom($request_ip)
+                    : LocationRepository::locationUnknown($request_ip)
+            )->id,
+            $outcome_id
+        );
+    }
+
+    protected static function dispatchShortUrlClicked(string $identifier, int $outcome_id, string $request_ip, ?string $domain = null): void
+    {
         try {
             ShortUrlClicked::dispatch($identifier, $outcome_id, $request_ip, $domain);
         } catch (Throwable $e) {

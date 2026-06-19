@@ -194,6 +194,45 @@ class DomainResolver implements DomainResolverInterface
     }
 
     /**
+     * Get prefixes that the package should register as routes.
+     *
+     * @return list<string>
+     */
+    public function getRoutablePrefixes(?string $domain = null): array
+    {
+        $prefixes = [];
+        $addPrefix = function ($prefix) use (&$prefixes): void {
+            if (! is_string($prefix)) {
+                return;
+            }
+
+            $prefix = trim($prefix, '/');
+
+            if ($prefix === '') {
+                return;
+            }
+
+            $prefixes[] = $prefix;
+        };
+
+        $addPrefix(config('urlshortener.branding.prefix') ?? 'v1');
+
+        if ($domain !== null) {
+            $addPrefix($this->getPrefix($domain));
+        } elseif (config('urlshortener.domains.enabled', false)) {
+            foreach (config('urlshortener.domains.hosts', []) as $config) {
+                $addPrefix($config['prefix'] ?? null);
+            }
+        }
+
+        foreach (config('urlshortener.routing.additional_prefixes', []) as $prefix) {
+            $addPrefix($prefix);
+        }
+
+        return array_values(array_unique($prefixes));
+    }
+
+    /**
      * Get the identifier length for a domain.
      */
     public function getIdentifierLength(?string $domain = null): int
@@ -209,6 +248,19 @@ class DomainResolver implements DomainResolverInterface
      * @throws DomainResolutionException
      */
     public function buildUrl(string $identifier, ?string $domain = null): string
+    {
+        return $this->buildUrlWithPrefix($identifier, $domain);
+    }
+
+    /**
+     * Build the full URL with a per-call prefix override.
+     *
+     * This is intentionally not part of DomainResolverInterface to avoid
+     * breaking existing custom resolver implementations in minor releases.
+     *
+     * @throws DomainResolutionException
+     */
+    public function buildUrlWithPrefix(string $identifier, ?string $domain = null, ?string $prefixOverride = null): string
     {
         $domain = $domain ?? $this->resolvedDomain ?? config('urlshortener.domains.default');
         $config = $this->getConfig($domain);
@@ -230,15 +282,19 @@ class DomainResolver implements DomainResolverInterface
 
         $host = str_ends_with($host, '/') ? $host : $host.'/';
 
-        $prefix = $config['prefix'] ?? null;
+        $prefix = $prefixOverride ?? ($config['prefix'] ?? null);
 
-        if ($prefix) {
-            $prefix = trim($prefix, '/').'/';
-
-            return $host.$prefix.$identifier;
+        if ($prefix === null) {
+            return $host.$identifier;
         }
 
-        return $host.$identifier;
+        $prefix = trim($prefix, '/');
+
+        if ($prefix === '') {
+            return $host.$identifier;
+        }
+
+        return $host.$prefix.'/'.$identifier;
     }
 
     /**

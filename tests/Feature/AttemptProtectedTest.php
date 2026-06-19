@@ -2,6 +2,8 @@
 
 namespace YorCreative\UrlShortener\Tests\Feature;
 
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use YorCreative\UrlShortener\Builders\UrlBuilder\UrlBuilder;
 use YorCreative\UrlShortener\Services\ClickService;
 use YorCreative\UrlShortener\Tests\TestCase;
@@ -25,12 +27,9 @@ class AttemptProtectedTest extends TestCase
         $this->protectedIdentifier = $this->extractIdentifier($url);
     }
 
-    /**
-     * @test
-     *
-     * @group Feature
-     * @group AttemptProtected
-     */
+    #[Test]
+    #[Group('Feature')]
+    #[Group('AttemptProtected')]
     public function it_redirects_with_correct_password()
     {
         $response = $this->post(route('urlshortener.attempt.protected'), [
@@ -46,12 +45,9 @@ class AttemptProtectedTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     *
-     * @group Feature
-     * @group AttemptProtected
-     */
+    #[Test]
+    #[Group('Feature')]
+    #[Group('AttemptProtected')]
     public function it_returns_404_with_wrong_password()
     {
         $response = $this->post(route('urlshortener.attempt.protected'), [
@@ -67,12 +63,9 @@ class AttemptProtectedTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     *
-     * @group Feature
-     * @group AttemptProtected
-     */
+    #[Test]
+    #[Group('Feature')]
+    #[Group('AttemptProtected')]
     public function it_validates_required_identifier()
     {
         $response = $this->post(route('urlshortener.attempt.protected'), [
@@ -83,12 +76,9 @@ class AttemptProtectedTest extends TestCase
         $response->assertSessionHasErrors('identifier');
     }
 
-    /**
-     * @test
-     *
-     * @group Feature
-     * @group AttemptProtected
-     */
+    #[Test]
+    #[Group('Feature')]
+    #[Group('AttemptProtected')]
     public function it_validates_required_password()
     {
         $response = $this->post(route('urlshortener.attempt.protected'), [
@@ -99,12 +89,9 @@ class AttemptProtectedTest extends TestCase
         $response->assertSessionHasErrors('password');
     }
 
-    /**
-     * @test
-     *
-     * @group Feature
-     * @group AttemptProtected
-     */
+    #[Test]
+    #[Group('Feature')]
+    #[Group('AttemptProtected')]
     public function it_returns_404_for_nonexistent_identifier()
     {
         $response = $this->post(route('urlshortener.attempt.protected'), [
@@ -115,12 +102,9 @@ class AttemptProtectedTest extends TestCase
         $response->assertStatus(404);
     }
 
-    /**
-     * @test
-     *
-     * @group Feature
-     * @group AttemptProtected
-     */
+    #[Test]
+    #[Group('Feature')]
+    #[Group('AttemptProtected')]
     public function it_works_when_multidomain_is_disabled()
     {
         // Test that protected URL password check works correctly
