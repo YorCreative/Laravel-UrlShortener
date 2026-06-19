@@ -64,7 +64,7 @@ class ClickService
 
         try {
             ShortUrlClicked::dispatch($identifier, $outcome_id, $request_ip, $domain);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             report($e);
         }
     }

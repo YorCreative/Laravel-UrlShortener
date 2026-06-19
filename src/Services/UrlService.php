@@ -214,7 +214,7 @@ class UrlService
     /**
      * Find all short URLs for a specific domain.
      */
-    public static function findByDomain(string $domain): \Illuminate\Database\Eloquent\Collection
+    public static function findByDomain(string $domain): Collection
     {
         return UrlRepository::findByDomain($domain);
     }

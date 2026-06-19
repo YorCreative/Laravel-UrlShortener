@@ -2,6 +2,7 @@
 
 namespace YorCreative\UrlShortener\Tests;
 
+use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
@@ -94,7 +95,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
     /**
      * Define environment setup.
      *
-     * @param  \Illuminate\Foundation\Application  $app
+     * @param  Application  $app
      * @return void
      */
     protected function defineEnvironment($app)
