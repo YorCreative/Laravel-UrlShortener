@@ -4,6 +4,8 @@ namespace YorCreative\UrlShortener\Tests\Unit\Repositories;
 
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use YorCreative\UrlShortener\Models\ShortUrlOwnership;
 use YorCreative\UrlShortener\Repositories\UrlRepository;
 use YorCreative\UrlShortener\Tests\TestCase;
@@ -12,11 +14,8 @@ class UrlRepositoryTest extends TestCase
 {
     use DatabaseTransactions;
 
-    /**
-     * @test
-     *
-     * @group UrlRepository
-     */
+    #[Test]
+    #[Group('UrlRepository')]
     public function it_can_find_ownership_record()
     {
         $ownerable = ShortUrlOwnership::factory()->create();
@@ -30,11 +29,8 @@ class UrlRepositoryTest extends TestCase
         $this->assertTrue($ownerable->id == $record->id);
     }
 
-    /**
-     * @test
-     *
-     * @group UrlRepository
-     */
+    #[Test]
+    #[Group('UrlRepository')]
     public function it_can_create_ownership_record()
     {
         $ownerable = [
@@ -50,22 +46,16 @@ class UrlRepositoryTest extends TestCase
         $this->assertDatabaseHas('short_url_ownerships', $ownerable);
     }
 
-    /**
-     * @test
-     *
-     * @group UrlRepository
-     */
+    #[Test]
+    #[Group('UrlRepository')]
     public function it_can_find_short_url_by_hash()
     {
         $shortUrl = UrlRepository::findByHash($this->hashed);
         $this->assertTrue($shortUrl->id == $this->shortUrl->id);
     }
 
-    /**
-     * @test
-     *
-     * @group UrlRepository
-     */
+    #[Test]
+    #[Group('UrlRepository')]
     public function it_can_create_a_short_url()
     {
         $plain_text = $this->plain_text.rand(9, 3333);
@@ -85,11 +75,8 @@ class UrlRepositoryTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     *
-     * @group UrlRepository
-     */
+    #[Test]
+    #[Group('UrlRepository')]
     public function it_can_update_a_short_url()
     {
         $this->assertNull($this->shortUrl->activation);
@@ -103,11 +90,8 @@ class UrlRepositoryTest extends TestCase
         $this->assertNotNull($shortUrl->activation);
     }
 
-    /**
-     * @test
-     *
-     * @group UrlRepository
-     */
+    #[Test]
+    #[Group('UrlRepository')]
     public function it_can_bool_that_identifier_exists()
     {
         $this->assertFalse(UrlRepository::identifierExists($this->identifier.'333'));

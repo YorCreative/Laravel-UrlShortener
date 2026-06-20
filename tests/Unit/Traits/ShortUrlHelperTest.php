@@ -1,5 +1,7 @@
 <?php
 
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use YorCreative\UrlShortener\Exceptions\UrlServiceException;
 use YorCreative\UrlShortener\Tests\Models\DemoOwner;
 use YorCreative\UrlShortener\Tests\TestCase;
@@ -9,11 +11,8 @@ class ShortUrlHelperTest extends TestCase
 {
     use ShortUrlHelper;
 
-    /**
-     * @test
-     *
-     * @group Traits
-     */
+    #[Test]
+    #[Group('Traits')]
     public function it_can_validate_ownership_is_array_of_models_filter()
     {
         $model = DemoOwner::factory()->create();
@@ -27,11 +26,8 @@ class ShortUrlHelperTest extends TestCase
         $this->assertEquals($filter, $this->filterClickValidation($filter));
     }
 
-    /**
-     * @test
-     *
-     * @group Traits
-     */
+    #[Test]
+    #[Group('Traits')]
     public function it_can_validate_ownership_is_not_array_of_models_filter()
     {
         $model = DemoOwner::factory()->create();
@@ -52,11 +48,48 @@ class ShortUrlHelperTest extends TestCase
         }
     }
 
-    /**
-     * @test
-     *
-     * @group Traits
-     */
+    #[Test]
+    #[Group('Traits')]
+    public function it_can_validate_failure_activation_outcome_filter()
+    {
+        $filter = [
+            'outcome' => [
+                6,
+            ],
+        ];
+
+        $this->assertEquals($filter, $this->filterClickValidation($filter));
+    }
+
+    #[Test]
+    #[Group('Traits')]
+    public function it_can_validate_status_array_filter()
+    {
+        $filter = [
+            'status' => [
+                'active',
+                'expired',
+                'expiring',
+            ],
+        ];
+
+        $this->assertEquals($filter, $this->filterClickValidation($filter));
+    }
+
+    #[Test]
+    #[Group('Traits')]
+    public function it_rejects_scalar_status_filter()
+    {
+        $this->expectException(UrlServiceException::class);
+        $this->expectExceptionMessage('status');
+
+        $this->filterClickValidation([
+            'status' => 'active',
+        ]);
+    }
+
+    #[Test]
+    #[Group('Traits')]
     public function it_can_build_short_url()
     {
         $host = config('urlshortener.branding.host') ?? 'localhost.test';

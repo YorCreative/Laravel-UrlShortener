@@ -42,6 +42,16 @@ class UrlService
     }
 
     /**
+     * Fetch minimal short URL data for redirect flow.
+     *
+     * @throws UrlRepositoryException
+     */
+    public static function findForRedirectByIdentifier(string $identifier, ?string $domain = null): ShortUrl
+    {
+        return UrlRepository::findForRedirectByIdentifier($identifier, $domain);
+    }
+
+    /**
      * @throws UrlRepositoryException
      */
     public static function findByUtmCombination(array $utm_combination, ?string $domain = null): Collection
@@ -214,7 +224,7 @@ class UrlService
     /**
      * Find all short URLs for a specific domain.
      */
-    public static function findByDomain(string $domain): \Illuminate\Database\Eloquent\Collection
+    public static function findByDomain(string $domain): Collection
     {
         return UrlRepository::findByDomain($domain);
     }

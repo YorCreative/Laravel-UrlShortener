@@ -3,6 +3,8 @@
 namespace YorCreative\UrlShortener\Tests\Unit\Middleware;
 
 use Illuminate\Http\Request;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use YorCreative\UrlShortener\Middleware\ResolveDomain;
 use YorCreative\UrlShortener\Services\DomainResolver;
@@ -18,12 +20,9 @@ class ResolveDomainTest extends TestCase
         $this->middleware = new ResolveDomain(new DomainResolver);
     }
 
-    /**
-     * @test
-     *
-     * @group Middleware
-     * @group ResolveDomain
-     */
+    #[Test]
+    #[Group('Middleware')]
+    #[Group('ResolveDomain')]
     public function it_passes_through_when_domains_disabled()
     {
         config(['urlshortener.domains.enabled' => false]);
@@ -41,12 +40,9 @@ class ResolveDomainTest extends TestCase
         $this->assertNull($request->attributes->get('urlshortener_domain'));
     }
 
-    /**
-     * @test
-     *
-     * @group Middleware
-     * @group ResolveDomain
-     */
+    #[Test]
+    #[Group('Middleware')]
+    #[Group('ResolveDomain')]
     public function it_sets_domain_attribute_on_request()
     {
         config(['urlshortener.domains.enabled' => true]);
@@ -68,12 +64,9 @@ class ResolveDomainTest extends TestCase
         $this->assertEquals('test.io', $request->attributes->get('urlshortener_domain'));
     }
 
-    /**
-     * @test
-     *
-     * @group Middleware
-     * @group ResolveDomain
-     */
+    #[Test]
+    #[Group('Middleware')]
+    #[Group('ResolveDomain')]
     public function it_aborts_for_unallowed_domain_when_validation_enabled()
     {
         config(['urlshortener.domains.enabled' => true]);
@@ -92,12 +85,9 @@ class ResolveDomainTest extends TestCase
         });
     }
 
-    /**
-     * @test
-     *
-     * @group Middleware
-     * @group ResolveDomain
-     */
+    #[Test]
+    #[Group('Middleware')]
+    #[Group('ResolveDomain')]
     public function it_allows_any_domain_when_validation_disabled()
     {
         config(['urlshortener.domains.enabled' => true]);
@@ -119,12 +109,9 @@ class ResolveDomainTest extends TestCase
         $this->assertTrue($called);
     }
 
-    /**
-     * @test
-     *
-     * @group Middleware
-     * @group ResolveDomain
-     */
+    #[Test]
+    #[Group('Middleware')]
+    #[Group('ResolveDomain')]
     public function it_handles_null_domain_gracefully()
     {
         config(['urlshortener.domains.enabled' => true]);
@@ -144,12 +131,9 @@ class ResolveDomainTest extends TestCase
         $this->assertNull($request->attributes->get('urlshortener_domain'));
     }
 
-    /**
-     * @test
-     *
-     * @group Middleware
-     * @group ResolveDomain
-     */
+    #[Test]
+    #[Group('Middleware')]
+    #[Group('ResolveDomain')]
     public function it_resolves_domain_aliases()
     {
         config(['urlshortener.domains.enabled' => true]);

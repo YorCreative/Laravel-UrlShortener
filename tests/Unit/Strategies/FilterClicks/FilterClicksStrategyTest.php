@@ -3,6 +3,8 @@
 namespace YorCreative\UrlShortener\Tests\Unit\Services;
 
 use Illuminate\Support\Collection;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use YorCreative\UrlShortener\Strategies\FilterClicks\FilterClicksStrategy;
 use YorCreative\UrlShortener\Strategies\FilterClicks\Filters\BatchFilter;
 use YorCreative\UrlShortener\Strategies\FilterClicks\Filters\IdentifierFilter;
@@ -34,11 +36,8 @@ class FilterClicksStrategyTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     *
-     * @group FilterClickStrategy
-     */
+    #[Test]
+    #[Group('FilterClickStrategy')]
     public function it_can_add_filter_strategies()
     {
         $filterStrategy = new FilterClicksStrategy;
@@ -50,11 +49,8 @@ class FilterClicksStrategyTest extends TestCase
         $this->assertCount(6, $filterStrategy->getStrategies());
     }
 
-    /**
-     * @test
-     *
-     * @group FilterClickStrategy
-     */
+    #[Test]
+    #[Group('FilterClickStrategy')]
     public function it_can_can_process_outcome_filter()
     {
         $filterQuery = [
@@ -66,11 +62,8 @@ class FilterClicksStrategyTest extends TestCase
         $this->assertTrue((new OutcomeFilter)->canProcess($filterQuery));
     }
 
-    /**
-     * @test
-     *
-     * @group FilterClickStrategy
-     */
+    #[Test]
+    #[Group('FilterClickStrategy')]
     public function it_can_can_process_batch_filter()
     {
         $filterQuery = [
@@ -81,11 +74,8 @@ class FilterClicksStrategyTest extends TestCase
         $this->assertTrue((new BatchFilter)->canProcess($filterQuery));
     }
 
-    /**
-     * @test
-     *
-     * @group FilterClickStrategy
-     */
+    #[Test]
+    #[Group('FilterClickStrategy')]
     public function it_can_can_process_identifier_filter()
     {
         $filterQuery = [
@@ -97,11 +87,8 @@ class FilterClicksStrategyTest extends TestCase
         $this->assertTrue((new IdentifierFilter)->canProcess($filterQuery));
     }
 
-    /**
-     * @test
-     *
-     * @group FilterClickStrategy
-     */
+    #[Test]
+    #[Group('FilterClickStrategy')]
     public function it_can_can_process_status_filter()
     {
         $filterQuery = [
@@ -113,11 +100,8 @@ class FilterClicksStrategyTest extends TestCase
         $this->assertTrue((new StatusFilter)->canProcess($filterQuery));
     }
 
-    /**
-     * @test
-     *
-     * @group FilterClickStrategy
-     */
+    #[Test]
+    #[Group('FilterClickStrategy')]
     public function it_can_can_process_ownership_filter()
     {
         $filterQuery = [
@@ -129,11 +113,8 @@ class FilterClicksStrategyTest extends TestCase
         $this->assertTrue((new OwnershipFilter)->canProcess($filterQuery));
     }
 
-    /**
-     * @test
-     *
-     * @group FilterClickStrategy
-     */
+    #[Test]
+    #[Group('FilterClickStrategy')]
     public function it_can_can_process_tracing_utm_id_filter()
     {
         $filterQuery = [
@@ -146,11 +127,8 @@ class FilterClicksStrategyTest extends TestCase
         $this->assertTrue((new TracingIdFilter)->canProcess($filterQuery));
     }
 
-    /**
-     * @test
-     *
-     * @group FilterClickStrategy
-     */
+    #[Test]
+    #[Group('FilterClickStrategy')]
     public function it_can_can_process_tracing_utm_campaign_filter()
     {
         $filterQuery = [
@@ -163,11 +141,8 @@ class FilterClicksStrategyTest extends TestCase
         $this->assertTrue((new TracingCampaignFilter)->canProcess($filterQuery));
     }
 
-    /**
-     * @test
-     *
-     * @group FilterClickStrategy
-     */
+    #[Test]
+    #[Group('FilterClickStrategy')]
     public function it_can_can_process_tracing_utm_source_filter()
     {
         $filterQuery = [
@@ -180,11 +155,8 @@ class FilterClicksStrategyTest extends TestCase
         $this->assertTrue((new TracingSourceFilter)->canProcess($filterQuery));
     }
 
-    /**
-     * @test
-     *
-     * @group FilterClickStrategy
-     */
+    #[Test]
+    #[Group('FilterClickStrategy')]
     public function it_can_can_process_tracing_utm_medium_filter()
     {
         $filterQuery = [
@@ -197,11 +169,8 @@ class FilterClicksStrategyTest extends TestCase
         $this->assertTrue((new TracingMediumFilter)->canProcess($filterQuery));
     }
 
-    /**
-     * @test
-     *
-     * @group FilterClickStrategy
-     */
+    #[Test]
+    #[Group('FilterClickStrategy')]
     public function it_can_can_process_tracing_utm_content_filter()
     {
         $filterQuery = [
@@ -214,11 +183,8 @@ class FilterClicksStrategyTest extends TestCase
         $this->assertTrue((new TracingContentFilter)->canProcess($filterQuery));
     }
 
-    /**
-     * @test
-     *
-     * @group FilterClickStrategy
-     */
+    #[Test]
+    #[Group('FilterClickStrategy')]
     public function it_can_can_process_tracing_utm_term_filter()
     {
         $filterQuery = [

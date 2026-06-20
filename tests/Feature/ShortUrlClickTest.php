@@ -3,6 +3,8 @@
 namespace YorCreative\UrlShortener\Tests\Feature;
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use Throwable;
 use YorCreative\UrlShortener\Exceptions\UrlRepositoryException;
 use YorCreative\UrlShortener\Models\ShortUrlClick;
@@ -15,13 +17,11 @@ class ShortUrlClickTest extends TestCase
     use DatabaseTransactions;
 
     /**
-     * @test
-     *
-     * @group Feature
-     *
      * @throws UrlRepositoryException
      * @throws Throwable
      */
+    #[Test]
+    #[Group('Feature')]
     public function it_can_track_and_retrieve_successfully_routed_clicks()
     {
         // 5 successful routed
@@ -63,13 +63,11 @@ class ShortUrlClickTest extends TestCase
     }
 
     /**
-     * @test
-     *
-     * @group Feature
-     *
      * @throws UrlRepositoryException
      * @throws Throwable
      */
+    #[Test]
+    #[Group('Feature')]
     public function it_can_successfully_routed_clicks_while_filtering_for_utm_source()
     {
         // 3 successful routed

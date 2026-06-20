@@ -5,6 +5,8 @@ namespace YorCreative\UrlShortener\Tests\Unit\Services;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use YorCreative\UrlShortener\Builders\UrlBuilder\UrlBuilder;
 use YorCreative\UrlShortener\Exceptions\UrlBuilderException;
 use YorCreative\UrlShortener\Exceptions\UrlRepositoryException;
@@ -19,12 +21,10 @@ class UrlServiceTest extends TestCase
     use DatabaseTransactions;
 
     /**
-     * @test
-     *
-     * @group UrlService
-     *
      * @throws UrlRepositoryException
      */
+    #[Test]
+    #[Group('UrlService')]
     public function it_can_find_a_short_url_by_utm_combination()
     {
         // extra url to filter through
@@ -70,11 +70,8 @@ class UrlServiceTest extends TestCase
         $this->assertEquals($targetUtmCombination['utm_medium'], $shortUrls->toArray()[0]['tracing']['utm_medium']);
     }
 
-    /**
-     * @test
-     *
-     * @group UrlService
-     */
+    #[Test]
+    #[Group('UrlService')]
     public function it_can_can_find_short_url_by_the_hash()
     {
         $shortUrl = UrlService::findByHash($this->hashed);
@@ -83,11 +80,8 @@ class UrlServiceTest extends TestCase
         $this->assertTrue($this->plain_text == $shortUrl->plain_text);
     }
 
-    /**
-     * @test
-     *
-     * @group UrlService
-     */
+    #[Test]
+    #[Group('UrlService')]
     public function it_can_can_find_short_url_by_the_plain_text()
     {
         $shortUrl = UrlService::findByPlainText($this->plain_text);
@@ -96,11 +90,8 @@ class UrlServiceTest extends TestCase
         $this->assertTrue($this->identifier == $shortUrl->identifier);
     }
 
-    /**
-     * @test
-     *
-     * @group UrlService
-     */
+    #[Test]
+    #[Group('UrlService')]
     public function it_can_can_find_short_url_by_the_identifier()
     {
         $shortUrl = UrlService::findByIdentifier($this->identifier);
@@ -110,14 +101,12 @@ class UrlServiceTest extends TestCase
     }
 
     /**
-     * @test
-     *
-     * @group UrlService
-     *
      * @throws UrlBuilderException
      * @throws UrlRepositoryException
      * @throws UrlServiceException
      */
+    #[Test]
+    #[Group('UrlService')]
     public function it_can_successfully_attempt_to_verify_password()
     {
         $plain_text = 'https://something.com/really-long'.rand(5, 9999);
@@ -134,14 +123,12 @@ class UrlServiceTest extends TestCase
     }
 
     /**
-     * @test
-     *
-     * @group UrlService
-     *
      * @throws UrlBuilderException
      * @throws UrlRepositoryException
      * @throws UrlServiceException
      */
+    #[Test]
+    #[Group('UrlService')]
     public function it_can_successfully_attempt_to_verify_password_and_fail()
     {
         $plain_text = 'https://something.com/really-long'.rand(5, 9999);
@@ -156,12 +143,10 @@ class UrlServiceTest extends TestCase
     }
 
     /**
-     * @test
-     *
-     * @group UrlService
-     *
      * @throws UrlRepositoryException
      */
+    #[Test]
+    #[Group('UrlService')]
     public function it_can_attach_ownership_to_short_url()
     {
         $owner = DemoOwner::factory()->create();
@@ -186,12 +171,10 @@ class UrlServiceTest extends TestCase
     }
 
     /**
-     * @test
-     *
-     * @group UrlService
-     *
      * @throws Exception
      */
+    #[Test]
+    #[Group('UrlService')]
     public function it_can_set_an_activation_time_successfully()
     {
         UrlService::shorten('https://something.com/activation-test')
@@ -201,11 +184,34 @@ class UrlServiceTest extends TestCase
         $this->assertTrue(ShortUrl::where('plain_text', 'https://something.com/activation-test')->first()->hasActivation());
     }
 
-    /**
-     * @test
-     *
-     * @group UrlService
-     */
+    #[Test]
+    #[Group('UrlService')]
+    public function it_treats_zero_open_limit_as_unlimited()
+    {
+        $plainText = 'https://something.com/no-limit/'.rand(999, 999999);
+        $url = UrlService::shorten($plainText)
+            ->withOpenLimit(0)
+            ->build();
+
+        $identifier = str_replace($this->base, '', $url);
+        $shortUrl = UrlService::findByIdentifier($identifier);
+
+        $this->assertNull($shortUrl->limit);
+    }
+
+    #[Test]
+    #[Group('UrlService')]
+    public function it_rejects_negative_open_limit()
+    {
+        $this->expectException(UrlBuilderException::class);
+        $this->expectExceptionMessage('cannot be negative');
+
+        UrlService::shorten('https://something.com/bad-limit/'.rand(999, 999999))
+            ->withOpenLimit(-1);
+    }
+
+    #[Test]
+    #[Group('UrlService')]
     public function it_can_find_or_create_returns_existing_short_url()
     {
         $plain_text = 'https://testing.com/findorcreate/existing/'.rand(999, 999999);
@@ -220,11 +226,8 @@ class UrlServiceTest extends TestCase
         $this->assertEquals($plain_text, $result->plain_text);
     }
 
-    /**
-     * @test
-     *
-     * @group UrlService
-     */
+    #[Test]
+    #[Group('UrlService')]
     public function it_can_find_or_create_returns_builder_for_new_url()
     {
         $plain_text = 'https://testing.com/findorcreate/new/'.rand(999, 999999);
@@ -235,11 +238,8 @@ class UrlServiceTest extends TestCase
         $this->assertInstanceOf(UrlBuilder::class, $result);
     }
 
-    /**
-     * @test
-     *
-     * @group UrlService
-     */
+    #[Test]
+    #[Group('UrlService')]
     public function it_throws_exception_when_finding_nonexistent_identifier()
     {
         $this->expectException(UrlRepositoryException::class);

@@ -44,6 +44,15 @@ class UrlShortenerServiceProvider extends ServiceProvider
             __DIR__.'/Utility/Views' => base_path('resources/views/yorcreative/urlshortener'),
             __DIR__.'/Utility/Config' => base_path('config'),
         ]);
+        $this->publishes([
+            __DIR__.'/Utility/Config/urlshortener.php' => config_path('urlshortener.php'),
+        ], 'urlshortener-config');
+        $this->publishes([
+            __DIR__.'/Utility/Views' => resource_path('views/yorcreative/urlshortener'),
+        ], 'urlshortener-views');
+        $this->publishes([
+            __DIR__.'/Utility/Migrations' => database_path('migrations'),
+        ], 'urlshortener-migrations');
 
         // Register middleware alias for users who want to apply it manually
         $router = $this->app->make('router');

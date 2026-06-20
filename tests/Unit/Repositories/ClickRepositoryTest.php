@@ -3,6 +3,8 @@
 namespace YorCreative\UrlShortener\Tests\Unit\Repositories;
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use YorCreative\UrlShortener\Builders\UrlBuilder\UrlBuilder;
 use YorCreative\UrlShortener\Exceptions\ClickRepositoryException;
 use YorCreative\UrlShortener\Models\ShortUrlClick;
@@ -14,11 +16,8 @@ class ClickRepositoryTest extends TestCase
 {
     use DatabaseTransactions;
 
-    /**
-     * @test
-     *
-     * @group ClickRepository
-     */
+    #[Test]
+    #[Group('ClickRepository')]
     public function it_can_find_a_click_by_its_id()
     {
         ClickService::track(
@@ -34,11 +33,8 @@ class ClickRepositoryTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     *
-     * @group ClickRepository
-     */
+    #[Test]
+    #[Group('ClickRepository')]
     public function it_can_create_a_click_in_db()
     {
         ClickRepository::createClick(
@@ -57,11 +53,8 @@ class ClickRepositoryTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     *
-     * @group ClickRepository
-     */
+    #[Test]
+    #[Group('ClickRepository')]
     public function it_can_get_correct_with_default_relations()
     {
         $this->assertEquals([
@@ -69,11 +62,8 @@ class ClickRepositoryTest extends TestCase
         ], ClickRepository::defaultWithRelations());
     }
 
-    /**
-     * @test
-     *
-     * @group ClickRepository
-     */
+    #[Test]
+    #[Group('ClickRepository')]
     public function it_can_find_click_for_domain_when_multidomain_disabled()
     {
         config(['urlshortener.domains.enabled' => false]);
@@ -93,11 +83,8 @@ class ClickRepositoryTest extends TestCase
         $this->assertEquals($click->id, $foundClick->id);
     }
 
-    /**
-     * @test
-     *
-     * @group ClickRepository
-     */
+    #[Test]
+    #[Group('ClickRepository')]
     public function it_filters_click_by_domain_when_multidomain_enabled()
     {
         config(['urlshortener.domains.enabled' => true]);
@@ -129,11 +116,8 @@ class ClickRepositoryTest extends TestCase
         ClickRepository::findByIdForDomain($click->id, 'domain2.io');
     }
 
-    /**
-     * @test
-     *
-     * @group ClickRepository
-     */
+    #[Test]
+    #[Group('ClickRepository')]
     public function it_throws_exception_for_nonexistent_click_id()
     {
         $this->expectException(ClickRepositoryException::class);

@@ -154,10 +154,17 @@ class UrlBuilder implements UrlBuilderInterface
 
     /**
      * @return $this
+     *
+     * @throws UrlBuilderException
      */
     public function withOpenLimit(int $limit): UrlBuilder
     {
-        $this->shortUrlCollection->put('limit', $limit);
+        if ($limit < 0) {
+            throw new UrlBuilderException('Open limit cannot be negative.');
+        }
+
+        // A limit of 0 means unlimited opens.
+        $this->shortUrlCollection->put('limit', $limit === 0 ? null : $limit);
 
         $this->options->add(
             new WithOpenLimit
@@ -325,12 +332,14 @@ class UrlBuilder implements UrlBuilderInterface
         // Use domain-aware URL building if multi-domain is enabled
         $domain = $shortUrlCollection->get('domain');
         $identifier = $shortUrlCollection->get('identifier');
+        $prefix = $shortUrlCollection->get('custom_prefix');
+        $this->validateCustomPrefix($prefix, $domain);
 
         if (config('urlshortener.domains.enabled', false)) {
             $resolver = app(DomainResolver::class);
-            $url = $resolver->buildUrl($identifier, $domain);
+            $url = $resolver->buildUrlWithPrefix($identifier, $domain, $prefix);
         } else {
-            $url = $this->builtShortUrl($identifier);
+            $url = $this->builtShortUrl($identifier, $prefix);
         }
 
         try {
@@ -341,6 +350,30 @@ class UrlBuilder implements UrlBuilderInterface
         }
 
         return $url;
+    }
+
+    /**
+     * @throws UrlBuilderException
+     */
+    protected function validateCustomPrefix(?string $prefix, ?string $domain = null): void
+    {
+        if ($prefix === null) {
+            return;
+        }
+
+        $prefix = trim($prefix, '/');
+
+        if ($prefix === '') {
+            throw new UrlBuilderException('Custom prefix cannot be empty.');
+        }
+
+        $resolver = app(DomainResolver::class);
+
+        if (! in_array($prefix, $resolver->getRoutablePrefixes($domain), true)) {
+            throw new UrlBuilderException(
+                "Custom prefix '{$prefix}' is not registered. Add it to urlshortener.routing.additional_prefixes before using withPrefix()."
+            );
+        }
     }
 
     public function getOptions(): Collection

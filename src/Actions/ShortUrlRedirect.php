@@ -46,12 +46,8 @@ class ShortUrlRedirect extends Controller
          * Get Short URL Identifier & Validate (with domain)
          */
         try {
-            $this->shortUrl = UrlService::findByIdentifier($this->identifier, $this->domain);
+            $this->shortUrl = UrlService::findForRedirectByIdentifier($this->identifier, $this->domain);
         } catch (UrlRepositoryException $e) {
-            abort(404);
-        }
-
-        if (! $this->shortUrl) {
             abort(404);
         }
 
@@ -80,8 +76,8 @@ class ShortUrlRedirect extends Controller
              * ShortUrl is Password Protected ---
              * Record the click and render the protected view.
              */
-            ClickService::track(
-                $this->identifier,
+            ClickService::trackShortUrl(
+                $this->shortUrl,
                 $this->request->ip(),
                 ClickService::$SUCCESS_PROTECTED,
                 false,
@@ -98,8 +94,8 @@ class ShortUrlRedirect extends Controller
          * ShortUrl Successfully Routed ---
          * Record the click and route away.
          */
-        ClickService::track(
-            $this->identifier,
+        ClickService::trackShortUrl(
+            $this->shortUrl,
             $this->request->ip(),
             ClickService::$SUCCESS_ROUTED,
             false,
@@ -128,8 +124,8 @@ class ShortUrlRedirect extends Controller
              * ShortUrl is not active yet ---
              * Record the click and abort.
              */
-            ClickService::track(
-                $this->identifier,
+            ClickService::trackShortUrl(
+                $this->shortUrl,
                 $this->request->ip(),
                 ClickService::$FAILURE_ACTIVATION,
                 false,
@@ -152,8 +148,8 @@ class ShortUrlRedirect extends Controller
              * ShortUrl Expired ---
              * Record the click and abort.
              */
-            ClickService::track(
-                $this->identifier,
+            ClickService::trackShortUrl(
+                $this->shortUrl,
                 $this->request->ip(),
                 ClickService::$FAILURE_EXPIRATION,
                 false,
@@ -161,7 +157,11 @@ class ShortUrlRedirect extends Controller
             );
 
             try {
-                ShortUrlExpired::dispatch($this->shortUrl, $this->identifier, $this->domain);
+                ShortUrlExpired::dispatch(
+                    UrlService::findByIdentifier($this->identifier, $this->domain),
+                    $this->identifier,
+                    $this->domain
+                );
             } catch (\Throwable $e) {
                 report($e);
             }
@@ -185,8 +185,8 @@ class ShortUrlRedirect extends Controller
              * ShortUrl Limit Reached ---
              * Record the click and abort.
              */
-            ClickService::track(
-                $this->identifier,
+            ClickService::trackShortUrl(
+                $this->shortUrl,
                 $this->request->ip(),
                 ClickService::$FAILURE_LIMIT,
                 false,

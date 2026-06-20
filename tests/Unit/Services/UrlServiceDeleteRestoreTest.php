@@ -3,6 +3,8 @@
 namespace YorCreative\UrlShortener\Tests\Unit\Services;
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use YorCreative\UrlShortener\Exceptions\UrlRepositoryException;
 use YorCreative\UrlShortener\Services\UrlService;
 use YorCreative\UrlShortener\Tests\TestCase;
@@ -11,11 +13,8 @@ class UrlServiceDeleteRestoreTest extends TestCase
 {
     use DatabaseTransactions;
 
-    /**
-     * @test
-     *
-     * @group UrlService
-     */
+    #[Test]
+    #[Group('UrlService')]
     public function it_can_soft_delete_a_short_url_by_identifier()
     {
         $this->assertDatabaseHas('short_urls', [
@@ -30,11 +29,8 @@ class UrlServiceDeleteRestoreTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     *
-     * @group UrlService
-     */
+    #[Test]
+    #[Group('UrlService')]
     public function it_can_restore_a_soft_deleted_short_url()
     {
         UrlService::delete($this->identifier);
@@ -51,11 +47,8 @@ class UrlServiceDeleteRestoreTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     *
-     * @group UrlService
-     */
+    #[Test]
+    #[Group('UrlService')]
     public function it_throws_exception_when_deleting_nonexistent_identifier()
     {
         $this->expectException(UrlRepositoryException::class);
@@ -63,11 +56,8 @@ class UrlServiceDeleteRestoreTest extends TestCase
         UrlService::delete('nonexistent_identifier_'.rand(999, 999999));
     }
 
-    /**
-     * @test
-     *
-     * @group UrlService
-     */
+    #[Test]
+    #[Group('UrlService')]
     public function it_throws_exception_when_restoring_nonexistent_identifier()
     {
         $this->expectException(UrlRepositoryException::class);

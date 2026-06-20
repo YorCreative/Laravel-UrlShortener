@@ -2,7 +2,10 @@
 
 namespace YorCreative\UrlShortener\Tests\Feature;
 
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use YorCreative\UrlShortener\Builders\UrlBuilder\UrlBuilder;
+use YorCreative\UrlShortener\Exceptions\UrlBuilderException;
 use YorCreative\UrlShortener\Models\ShortUrl;
 use YorCreative\UrlShortener\Services\DomainResolver;
 use YorCreative\UrlShortener\Services\UrlService;
@@ -22,12 +25,9 @@ class MultiDomainTest extends TestCase
         ]]);
     }
 
-    /**
-     * @test
-     *
-     * @group Feature
-     * @group MultiDomain
-     */
+    #[Test]
+    #[Group('Feature')]
+    #[Group('MultiDomain')]
     public function it_can_create_short_url_for_specific_domain()
     {
         $url = UrlBuilder::shorten('https://example.com/domain-test')
@@ -41,12 +41,9 @@ class MultiDomainTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     *
-     * @group Feature
-     * @group MultiDomain
-     */
+    #[Test]
+    #[Group('Feature')]
+    #[Group('MultiDomain')]
     public function same_identifier_can_exist_on_different_domains()
     {
         // Create short URL on domain A
@@ -78,12 +75,9 @@ class MultiDomainTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     *
-     * @group Feature
-     * @group MultiDomain
-     */
+    #[Test]
+    #[Group('Feature')]
+    #[Group('MultiDomain')]
     public function it_can_find_by_identifier_with_domain()
     {
         $identifier = 'test123';
@@ -111,12 +105,9 @@ class MultiDomainTest extends TestCase
         $this->assertEquals('https://destination-b.com', $foundB->plain_text);
     }
 
-    /**
-     * @test
-     *
-     * @group Feature
-     * @group MultiDomain
-     */
+    #[Test]
+    #[Group('Feature')]
+    #[Group('MultiDomain')]
     public function it_uses_domain_specific_identifier_length()
     {
         // test.io is configured with identifier_length = 4
@@ -128,12 +119,52 @@ class MultiDomainTest extends TestCase
         $this->assertEquals(4, strlen($identifier));
     }
 
-    /**
-     * @test
-     *
-     * @group Feature
-     * @group MultiDomain
-     */
+    #[Test]
+    #[Group('Feature')]
+    #[Group('MultiDomain')]
+    public function it_uses_custom_prefix_override_when_building_domain_url()
+    {
+        config(['urlshortener.routing.additional_prefixes' => ['custom']]);
+
+        $url = UrlBuilder::shorten('https://example.com/prefix-override')
+            ->forDomain('test.io')
+            ->withPrefix('custom')
+            ->build();
+
+        $this->assertStringStartsWith('https://test.io/custom/', $url);
+    }
+
+    #[Test]
+    #[Group('Feature')]
+    #[Group('MultiDomain')]
+    public function it_rejects_unregistered_custom_prefix_override()
+    {
+        $this->expectException(UrlBuilderException::class);
+        $this->expectExceptionMessage('not registered');
+
+        UrlBuilder::shorten('https://example.com/unregistered-prefix')
+            ->forDomain('test.io')
+            ->withPrefix('custom')
+            ->build();
+    }
+
+    #[Test]
+    #[Group('Feature')]
+    #[Group('MultiDomain')]
+    public function it_rejects_empty_custom_prefix_override()
+    {
+        $this->expectException(UrlBuilderException::class);
+        $this->expectExceptionMessage('cannot be empty');
+
+        UrlBuilder::shorten('https://example.com/empty-prefix')
+            ->forDomain('test.io')
+            ->withPrefix('')
+            ->build();
+    }
+
+    #[Test]
+    #[Group('Feature')]
+    #[Group('MultiDomain')]
     public function domain_resolver_builds_correct_url()
     {
         $resolver = app(DomainResolver::class);
@@ -145,12 +176,9 @@ class MultiDomainTest extends TestCase
         $this->assertEquals('https://link.co/l/xyz789', $url);
     }
 
-    /**
-     * @test
-     *
-     * @group Feature
-     * @group MultiDomain
-     */
+    #[Test]
+    #[Group('Feature')]
+    #[Group('MultiDomain')]
     public function it_can_find_all_urls_by_domain()
     {
         ShortUrl::create([
@@ -181,12 +209,9 @@ class MultiDomainTest extends TestCase
         $this->assertEquals(1, $linkCoUrls->count());
     }
 
-    /**
-     * @test
-     *
-     * @group Feature
-     * @group MultiDomain
-     */
+    #[Test]
+    #[Group('Feature')]
+    #[Group('MultiDomain')]
     public function it_works_in_single_domain_mode_when_disabled()
     {
         // Disable multi-domain
@@ -205,12 +230,9 @@ class MultiDomainTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     *
-     * @group Feature
-     * @group MultiDomain
-     */
+    #[Test]
+    #[Group('Feature')]
+    #[Group('MultiDomain')]
     public function find_or_create_respects_domain()
     {
         // Create a URL on test.io domain
@@ -225,6 +247,36 @@ class MultiDomainTest extends TestCase
         // findOrCreate with same URL but different domain should return builder
         $result = UrlService::findOrCreate('https://example.com/findorcreate', 'link.co');
         $this->assertInstanceOf(UrlBuilder::class, $result);
+    }
+
+    #[Test]
+    #[Group('Feature')]
+    #[Group('MultiDomain')]
+    public function it_routes_root_level_urls_for_domains_without_a_prefix()
+    {
+        config(['urlshortener.domains.enabled' => true]);
+        config(['urlshortener.domains.resolution_strategy' => 'host']);
+        config(['urlshortener.domains.hosts' => [
+            'root.test' => ['prefix' => null, 'identifier_length' => 6],
+        ]]);
+
+        require dirname(__DIR__, 2).'/src/Utility/routes.php';
+
+        $plainText = 'https://root-destination.com/'.rand(999, 999999);
+        $url = UrlBuilder::shorten($plainText)
+            ->forDomain('root.test')
+            ->build();
+
+        // The URL is generated at the host root, with no prefix segment.
+        $this->assertStringStartsWith('https://root.test/', $url);
+
+        $identifier = $this->extractIdentifier($url);
+
+        $this->assertStringNotContainsString('/', trim(str_replace('https://root.test/', '', $url), '/'));
+
+        // The generated root-level URL must actually resolve.
+        $this->get('https://root.test/'.$identifier)
+            ->assertRedirect($plainText);
     }
 
     /**

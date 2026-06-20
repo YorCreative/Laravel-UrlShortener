@@ -49,7 +49,7 @@ return [
             //     'redirect_code' => 301,
             // ],
             // 'link.company.com' => [
-            //     'prefix' => null, // No prefix - identifier at root
+            //     'prefix' => null, // No prefix - identifier at root (requires resolution_strategy 'host')
             //     'identifier_length' => 8,
             // ],
         ],
@@ -87,6 +87,24 @@ return [
             'decay_minutes' => env('URL_SHORTENER_PASSWORD_DECAY_MINUTES', 1),
         ],
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Routing
+    |--------------------------------------------------------------------------
+    |
+    | Additional prefixes that should be registered by the package routes.
+    | Custom prefixes used with withPrefix() must be listed here, or they will
+    | be rejected to avoid returning generated URLs that the package cannot
+    | resolve.
+    |
+    */
+    'routing' => [
+        'additional_prefixes' => [
+            // 'custom',
+        ],
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | URL Validation (Security)
@@ -105,6 +123,11 @@ return [
 
         // Block private/internal IP ranges (SSRF protection)
         'block_private_ips' => env('URL_SHORTENER_BLOCK_PRIVATE_IPS', true),
+
+        // Resolve DNS and reject hosts that resolve to private/reserved IPs.
+        // Opt-in: enabling this performs blocking DNS lookups (no timeout) on
+        // every shorten, so only turn it on when your resolver is reliable.
+        'resolve_dns_private_ips' => env('URL_SHORTENER_RESOLVE_DNS_PRIVATE_IPS', false),
 
         // Additional blocked hosts (e.g., internal services)
         'blocked_hosts' => [

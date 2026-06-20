@@ -87,6 +87,7 @@ class UrlValidator
         // Check private IPs
         if (config('urlshortener.url_validation.block_private_ips', true)) {
             self::validateNotPrivateIp($host);
+            self::validateResolvedIps($host);
         }
     }
 
@@ -147,5 +148,84 @@ class UrlValidator
         }
 
         return false;
+    }
+
+    /**
+     * Resolve host and validate resolved IPs against private/reserved ranges.
+     *
+     * This closes a common bypass where a public hostname resolves to a private IP.
+     *
+     * @throws UrlBuilderException
+     */
+    protected static function validateResolvedIps(string $host): void
+    {
+        if (! config('urlshortener.url_validation.resolve_dns_private_ips', false)) {
+            return;
+        }
+
+        // Literal IPs are already validated by validateNotPrivateIp(); resolving
+        // them would be wasted DNS work.
+        if (filter_var($host, FILTER_VALIDATE_IP)) {
+            return;
+        }
+
+        foreach (static::resolveHostIps($host) as $ip) {
+            if (static::isPrivateIp($ip)) {
+                throw new UrlBuilderException(
+                    "Host '{$host}' resolves to a private/internal IP address, which is not allowed."
+                );
+            }
+
+            if (config('urlshortener.url_validation.block_metadata_endpoints', true)
+                && in_array($ip, self::METADATA_ENDPOINTS, true)
+            ) {
+                throw new UrlBuilderException('Cloud metadata endpoints are blocked for security reasons.');
+            }
+        }
+    }
+
+    /**
+     * Resolve host to a list of IPv4/IPv6 addresses.
+     *
+     * @return list<string>
+     */
+    protected static function resolveHostIps(string $host): array
+    {
+        $ips = [];
+
+        if (function_exists('dns_get_record')) {
+            $aRecords = @dns_get_record($host, DNS_A);
+            if (is_array($aRecords)) {
+                foreach ($aRecords as $record) {
+                    if (isset($record['ip']) && filter_var($record['ip'], FILTER_VALIDATE_IP)) {
+                        $ips[] = $record['ip'];
+                    }
+                }
+            }
+
+            if (defined('DNS_AAAA')) {
+                $aaaaRecords = @dns_get_record($host, DNS_AAAA);
+                if (is_array($aaaaRecords)) {
+                    foreach ($aaaaRecords as $record) {
+                        if (isset($record['ipv6']) && filter_var($record['ipv6'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+                            $ips[] = $record['ipv6'];
+                        }
+                    }
+                }
+            }
+        }
+
+        if (empty($ips)) {
+            $fallback = @gethostbynamel($host);
+            if (is_array($fallback)) {
+                foreach ($fallback as $ip) {
+                    if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+                        $ips[] = $ip;
+                    }
+                }
+            }
+        }
+
+        return array_values(array_unique($ips));
     }
 }

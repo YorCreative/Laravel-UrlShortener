@@ -3,7 +3,12 @@
 namespace YorCreative\UrlShortener\Tests\Feature;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use YorCreative\UrlShortener\Builders\UrlBuilder\UrlBuilder;
+use YorCreative\UrlShortener\Events\ShortUrlExpired;
 use YorCreative\UrlShortener\Models\ShortUrl;
 use YorCreative\UrlShortener\Models\ShortUrlLocation;
 use YorCreative\UrlShortener\Services\ClickService;
@@ -22,12 +27,9 @@ class ShortUrlRedirectFailureTest extends TestCase
         ShortUrlLocation::firstOrCreate(['ip' => '127.0.0.1']);
     }
 
-    /**
-     * @test
-     *
-     * @group Feature
-     * @group ShortUrlRedirect
-     */
+    #[Test]
+    #[Group('Feature')]
+    #[Group('ShortUrlRedirect')]
     public function it_returns_404_for_expired_url()
     {
         $plainText = 'https://expired-destination.com/'.rand(999, 999999);
@@ -51,12 +53,9 @@ class ShortUrlRedirectFailureTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     *
-     * @group Feature
-     * @group ShortUrlRedirect
-     */
+    #[Test]
+    #[Group('Feature')]
+    #[Group('ShortUrlRedirect')]
     public function it_returns_404_for_not_yet_activated_url()
     {
         $plainText = 'https://future-activation.com/'.rand(999, 999999);
@@ -78,12 +77,9 @@ class ShortUrlRedirectFailureTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     *
-     * @group Feature
-     * @group ShortUrlRedirect
-     */
+    #[Test]
+    #[Group('Feature')]
+    #[Group('ShortUrlRedirect')]
     public function it_returns_404_when_click_limit_reached()
     {
         $plainText = 'https://limited-clicks.com/'.rand(999, 999999);
@@ -113,12 +109,38 @@ class ShortUrlRedirectFailureTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     *
-     * @group Feature
-     * @group ShortUrlRedirect
-     */
+    #[Test]
+    #[Group('Feature')]
+    #[Group('ShortUrlRedirect')]
+    public function it_treats_a_zero_limit_as_unlimited()
+    {
+        $plainText = 'https://zero-limit.com/'.rand(999, 999999);
+
+        $url = UrlBuilder::shorten($plainText)->build();
+        $identifier = $this->extractIdentifier($url);
+
+        // Simulate a legacy/direct row that stored 0 (rather than null) for limit.
+        ShortUrl::where('identifier', $identifier)->update(['limit' => 0]);
+
+        $shortUrl = ShortUrl::where('identifier', $identifier)->first();
+        $shortUrl->clicks()->create([
+            'location_id' => 1,
+            'outcome_id' => ClickService::$SUCCESS_ROUTED,
+        ]);
+
+        // A limit of 0 means unlimited, so this should still redirect.
+        $this->get($this->prefix.'/'.$identifier)
+            ->assertRedirect($plainText);
+
+        $this->assertDatabaseMissing('short_url_clicks', [
+            'short_url_id' => $shortUrl->id,
+            'outcome_id' => ClickService::$FAILURE_LIMIT,
+        ]);
+    }
+
+    #[Test]
+    #[Group('Feature')]
+    #[Group('ShortUrlRedirect')]
     public function it_tracks_protected_click_for_password_protected_url()
     {
         $plainText = 'https://password-protected.com/'.rand(999, 999999);
@@ -145,12 +167,9 @@ class ShortUrlRedirectFailureTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     *
-     * @group Feature
-     * @group ShortUrlRedirect
-     */
+    #[Test]
+    #[Group('Feature')]
+    #[Group('ShortUrlRedirect')]
     public function it_successfully_redirects_active_url()
     {
         $plainText = 'https://active-destination.com/'.rand(999, 999999);
@@ -168,12 +187,61 @@ class ShortUrlRedirectFailureTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     *
-     * @group Feature
-     * @group ShortUrlRedirect
-     */
+    #[Test]
+    #[Group('Feature')]
+    #[Group('ShortUrlRedirect')]
+    public function it_tracks_successful_redirect_without_reloading_short_url()
+    {
+        $plainText = 'https://active-destination-lookup.com/'.rand(999, 999999);
+
+        $url = UrlBuilder::shorten($plainText)->build();
+        $identifier = $this->extractIdentifier($url);
+
+        $queries = [];
+        DB::listen(function ($query) use (&$queries) {
+            $queries[] = $query->sql;
+        });
+
+        $response = $this->get($this->prefix.'/'.$identifier);
+
+        $response->assertRedirect($plainText);
+
+        $shortUrlQueries = array_filter($queries, function ($sql) {
+            return str_contains($sql, 'from "short_urls"')
+                || str_contains($sql, 'from `short_urls`');
+        });
+
+        $this->assertCount(1, $shortUrlQueries);
+    }
+
+    #[Test]
+    #[Group('Feature')]
+    #[Group('ShortUrlRedirect')]
+    public function it_dispatches_expired_event_with_full_short_url_payload()
+    {
+        $plainText = 'https://expired-event-payload.com/'.rand(999, 999999);
+
+        $url = UrlBuilder::shorten($plainText)->build();
+        $identifier = $this->extractIdentifier($url);
+
+        ShortUrl::where('identifier', $identifier)
+            ->update(['expiration' => Carbon::now()->subHour()->timestamp]);
+
+        Event::fake([ShortUrlExpired::class]);
+
+        $this->get($this->prefix.'/'.$identifier);
+
+        Event::assertDispatched(ShortUrlExpired::class, function (ShortUrlExpired $event) use ($plainText) {
+            return $event->shortUrl->plain_text === $plainText
+                && $event->shortUrl->relationLoaded('ownership')
+                && $event->shortUrl->relationLoaded('clicks')
+                && $event->shortUrl->relationLoaded('tracing');
+        });
+    }
+
+    #[Test]
+    #[Group('Feature')]
+    #[Group('ShortUrlRedirect')]
     public function it_allows_access_when_activation_time_passed()
     {
         $plainText = 'https://now-active.com/'.rand(999, 999999);
@@ -190,12 +258,9 @@ class ShortUrlRedirectFailureTest extends TestCase
         $response->assertRedirect($plainText);
     }
 
-    /**
-     * @test
-     *
-     * @group Feature
-     * @group ShortUrlRedirect
-     */
+    #[Test]
+    #[Group('Feature')]
+    #[Group('ShortUrlRedirect')]
     public function it_allows_access_when_under_click_limit()
     {
         $plainText = 'https://under-limit.com/'.rand(999, 999999);
@@ -212,12 +277,9 @@ class ShortUrlRedirectFailureTest extends TestCase
         $response->assertRedirect($plainText);
     }
 
-    /**
-     * @test
-     *
-     * @group Feature
-     * @group ShortUrlRedirect
-     */
+    #[Test]
+    #[Group('Feature')]
+    #[Group('ShortUrlRedirect')]
     public function it_tracks_all_outcome_types_correctly()
     {
         // Test that all 6 outcome types can be stored

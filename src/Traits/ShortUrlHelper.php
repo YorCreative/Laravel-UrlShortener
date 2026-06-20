@@ -29,9 +29,12 @@ trait ShortUrlHelper
                 'array',
             ],
             'outcome.*' => [
-                'in:1,2,3,4,5',
+                'in:1,2,3,4,5,6',
             ],
             'status' => [
+                'array',
+            ],
+            'status.*' => [
                 'in:active,expired,expiring',
             ],
             'identifiers' => [
@@ -78,6 +81,7 @@ trait ShortUrlHelper
             ],
         ], [
             'outcome.*.in' => 'Invalid outcome id provided.',
+            'status.*.in' => 'Invalid status provided.',
         ]);
 
         throw_if(
@@ -109,35 +113,35 @@ trait ShortUrlHelper
         return $identifier;
     }
 
-    private function builtShortUrl(string $identifier): string
+    private function builtShortUrl(string $identifier, ?string $prefixOverride = null): string
     {
         return str_replace(
             '{identifier}',
             $identifier,
-            $this->buildShortUrl()
+            $this->buildShortUrl($prefixOverride)
         );
     }
 
-    private function buildShortUrl(): string
+    private function buildShortUrl(?string $prefixOverride = null): string
     {
         $host = config('urlshortener.branding.host') ?? 'localhost.test';
         $host = str_ends_with($host, '/')
             ? $host
             : $host.'/';
 
-        $prefix = is_null(config('urlshortener.branding.prefix')) ? 'v1' : config('urlshortener.branding.prefix');
-        $prefix = str_starts_with($prefix, '/')
-            ? str_replace('/', '', $prefix)
-            : $prefix;
-
-        $prefix = str_ends_with($prefix, '/')
-            ? $prefix
-            : $prefix.'/';
-
+        $prefix = $prefixOverride ?? (is_null(config('urlshortener.branding.prefix')) ? 'v1' : config('urlshortener.branding.prefix'));
         $identifier = '{identifier}';
 
-        return is_null($prefix)
-            ? $host.$identifier
-            : $host.$prefix.$identifier;
+        if ($prefix === '') {
+            return $host.$identifier;
+        }
+
+        $prefix = trim($prefix, '/');
+
+        if ($prefix === '') {
+            return $host.$identifier;
+        }
+
+        return $host.$prefix.'/'.$identifier;
     }
 }
