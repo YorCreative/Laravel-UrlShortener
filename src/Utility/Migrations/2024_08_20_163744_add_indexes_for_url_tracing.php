@@ -14,8 +14,17 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('short_url_tracings', function (Blueprint $table) {
+        if (DB::connection()->getDriverName() === 'mysql') {
             DB::statement('CREATE INDEX utm_composite_index ON short_url_tracings (utm_source(100), utm_medium(100), utm_campaign(100), utm_content(100), utm_term(100))');
+
+            return;
+        }
+
+        Schema::table('short_url_tracings', function (Blueprint $table) {
+            $table->index(
+                ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'],
+                'utm_composite_index',
+            );
         });
     }
 

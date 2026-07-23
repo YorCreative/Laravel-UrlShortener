@@ -15,7 +15,7 @@ class ShortUrlBasicTest extends TestCase
      *
      * @group Feature
      */
-    public function it_can_create_a_basic_short_url()
+    public function test_it_can_create_a_basic_short_url()
     {
         $this->assertDatabaseHas(
             'short_urls',

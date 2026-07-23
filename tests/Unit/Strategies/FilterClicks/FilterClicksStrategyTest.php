@@ -39,7 +39,7 @@ class FilterClicksStrategyTest extends TestCase
      *
      * @group FilterClickStrategy
      */
-    public function it_can_add_filter_strategies()
+    public function test_it_can_add_filter_strategies()
     {
         $filterStrategy = new FilterClicksStrategy;
 
@@ -55,7 +55,7 @@ class FilterClicksStrategyTest extends TestCase
      *
      * @group FilterClickStrategy
      */
-    public function it_can_can_process_outcome_filter()
+    public function test_it_can_can_process_outcome_filter()
     {
         $filterQuery = [
             'outcome' => [
@@ -71,7 +71,7 @@ class FilterClicksStrategyTest extends TestCase
      *
      * @group FilterClickStrategy
      */
-    public function it_can_can_process_batch_filter()
+    public function test_it_can_can_process_batch_filter()
     {
         $filterQuery = [
             'limit' => 100,
@@ -86,7 +86,7 @@ class FilterClicksStrategyTest extends TestCase
      *
      * @group FilterClickStrategy
      */
-    public function it_can_can_process_identifier_filter()
+    public function test_it_can_can_process_identifier_filter()
     {
         $filterQuery = [
             'identifiers' => [
@@ -102,7 +102,7 @@ class FilterClicksStrategyTest extends TestCase
      *
      * @group FilterClickStrategy
      */
-    public function it_can_can_process_status_filter()
+    public function test_it_can_can_process_status_filter()
     {
         $filterQuery = [
             'status' => [
@@ -118,7 +118,7 @@ class FilterClicksStrategyTest extends TestCase
      *
      * @group FilterClickStrategy
      */
-    public function it_can_can_process_ownership_filter()
+    public function test_it_can_can_process_ownership_filter()
     {
         $filterQuery = [
             'ownership' => [
@@ -134,7 +134,7 @@ class FilterClicksStrategyTest extends TestCase
      *
      * @group FilterClickStrategy
      */
-    public function it_can_can_process_tracing_utm_id_filter()
+    public function test_it_can_can_process_tracing_utm_id_filter()
     {
         $filterQuery = [
             'utm_id' => [
@@ -151,7 +151,7 @@ class FilterClicksStrategyTest extends TestCase
      *
      * @group FilterClickStrategy
      */
-    public function it_can_can_process_tracing_utm_campaign_filter()
+    public function test_it_can_can_process_tracing_utm_campaign_filter()
     {
         $filterQuery = [
             'utm_campaign' => [
@@ -168,7 +168,7 @@ class FilterClicksStrategyTest extends TestCase
      *
      * @group FilterClickStrategy
      */
-    public function it_can_can_process_tracing_utm_source_filter()
+    public function test_it_can_can_process_tracing_utm_source_filter()
     {
         $filterQuery = [
             'utm_source' => [
@@ -185,7 +185,7 @@ class FilterClicksStrategyTest extends TestCase
      *
      * @group FilterClickStrategy
      */
-    public function it_can_can_process_tracing_utm_medium_filter()
+    public function test_it_can_can_process_tracing_utm_medium_filter()
     {
         $filterQuery = [
             'utm_medium' => [
@@ -202,7 +202,7 @@ class FilterClicksStrategyTest extends TestCase
      *
      * @group FilterClickStrategy
      */
-    public function it_can_can_process_tracing_utm_content_filter()
+    public function test_it_can_can_process_tracing_utm_content_filter()
     {
         $filterQuery = [
             'utm_content' => [
@@ -219,7 +219,7 @@ class FilterClicksStrategyTest extends TestCase
      *
      * @group FilterClickStrategy
      */
-    public function it_can_can_process_tracing_utm_term_filter()
+    public function test_it_can_can_process_tracing_utm_term_filter()
     {
         $filterQuery = [
             'utm_term' => [

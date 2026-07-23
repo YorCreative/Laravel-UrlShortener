@@ -24,7 +24,7 @@ class UrlServiceTest extends TestCase
      *
      * @throws UrlRepositoryException
      */
-    public function it_can_find_a_short_url_by_utm_combination()
+    public function test_it_can_find_a_short_url_by_utm_combination()
     {
         // extra url to filter through
         UrlService::shorten('testing.com/something/so/long/i/need/a/short/url'.rand(999, 999999), $domain = 'test.domain')
@@ -74,7 +74,7 @@ class UrlServiceTest extends TestCase
      *
      * @group UrlService
      */
-    public function it_can_can_find_short_url_by_the_hash()
+    public function test_it_can_can_find_short_url_by_the_hash()
     {
         $shortUrl = UrlService::findByHash($this->shortUrl->hashed);
 
@@ -87,7 +87,7 @@ class UrlServiceTest extends TestCase
      *
      * @group UrlService
      */
-    public function it_can_can_find_short_url_by_the_plain_text()
+    public function test_it_can_can_find_short_url_by_the_plain_text()
     {
         $shortUrl = UrlService::findByPlainText($this->plain_text);
 
@@ -100,7 +100,7 @@ class UrlServiceTest extends TestCase
      *
      * @group UrlService
      */
-    public function it_can_can_find_short_url_by_the_identifier()
+    public function test_it_can_can_find_short_url_by_the_identifier()
     {
         $shortUrl = UrlService::findByIdentifier($this->identifier, $this->base);
 
@@ -116,7 +116,7 @@ class UrlServiceTest extends TestCase
      * @throws UrlRepositoryException
      * @throws UrlServiceException
      */
-    public function it_can_successfully_attempt_to_verify_password()
+    public function test_it_can_successfully_attempt_to_verify_password()
     {
         $plain_text = 'something.com/really-long'.rand(5, 9999);
 
@@ -139,7 +139,7 @@ class UrlServiceTest extends TestCase
      * @throws UrlRepositoryException
      * @throws UrlServiceException
      */
-    public function it_can_successfully_attempt_to_verify_password_and_fail()
+    public function test_it_can_successfully_attempt_to_verify_password_and_fail()
     {
         $plain_text = 'something.com/really-long'.rand(5, 9999);
 
@@ -159,7 +159,7 @@ class UrlServiceTest extends TestCase
      *
      * @throws UrlRepositoryException
      */
-    public function it_can_attach_ownership_to_short_url()
+    public function test_it_can_attach_ownership_to_short_url()
     {
         $owner = DemoOwner::factory()->create();
 
@@ -189,7 +189,7 @@ class UrlServiceTest extends TestCase
      *
      * @throws Exception
      */
-    public function it_can_set_an_activation_time_successfully()
+    public function test_it_can_set_an_activation_time_successfully()
     {
         $shortUrl = UrlService::shorten('something', $domain = 'test.domain')
             ->withActivation(Carbon::now()->addMinute()->timestamp)
@@ -198,7 +198,7 @@ class UrlServiceTest extends TestCase
         $this->assertNotNull(UrlService::findByPlainText('something'));
     }
 
-    public function it_can_can_find_by_identifier()
+    public function test_it_can_can_find_by_identifier()
     {
         $shortUrl = UrlService::findByIdentifier($this->identifier);
 
@@ -206,9 +206,9 @@ class UrlServiceTest extends TestCase
         $this->assertTrue($this->plain_text == $shortUrl->plain_text);
     }
 
-    public function it_can_can_find_by_identifier_and_domain()
+    public function test_it_can_can_find_by_identifier_and_domain()
     {
-        $shortUrl = UrlService::findByIdentifier($this->identifier, 'test_domain');
+        $shortUrl = UrlService::findByIdentifier($this->identifier, $this->base);
 
         $this->assertTrue($this->identifier == $shortUrl->identifier);
         $this->assertTrue($this->plain_text == $shortUrl->plain_text);

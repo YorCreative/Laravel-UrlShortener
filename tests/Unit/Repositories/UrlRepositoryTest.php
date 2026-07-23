@@ -19,7 +19,7 @@ class UrlRepositoryTest extends TestCase
      *
      * @group UrlRepository
      */
-    public function it_can_find_ownership_record()
+    public function test_it_can_find_ownership_record()
     {
         $ownerable = ShortUrlOwnership::factory()->create();
 
@@ -37,7 +37,7 @@ class UrlRepositoryTest extends TestCase
      *
      * @group UrlRepository
      */
-    public function it_can_create_ownership_record()
+    public function test_it_can_create_ownership_record()
     {
         $ownerable = [
             'short_url_id' => 1,
@@ -57,7 +57,7 @@ class UrlRepositoryTest extends TestCase
      *
      * @group UrlRepository
      */
-    public function it_can_find_short_url_by_hash()
+    public function test_it_can_find_short_url_by_hash()
     {
         $shortUrl = UrlRepository::findByHash($this->shortUrl->hashed);
         $this->assertTrue($shortUrl->id == $this->shortUrl->id);
@@ -68,7 +68,7 @@ class UrlRepositoryTest extends TestCase
      *
      * @group UrlRepository
      */
-    public function it_can_create_a_short_url()
+    public function test_it_can_create_a_short_url()
     {
         $plain_text = $this->plain_text.rand(9, 3333);
         $identifier = 'xyz';
@@ -92,7 +92,7 @@ class UrlRepositoryTest extends TestCase
      *
      * @group UrlRepository
      */
-    public function it_can_update_a_short_url()
+    public function test_it_can_update_a_short_url()
     {
         $this->assertNull($this->shortUrl->activation);
 
@@ -136,7 +136,7 @@ class UrlRepositoryTest extends TestCase
      *
      * @group UrlRepository
      */
-    public function it_can_bool_that_identifier_exists()
+    public function test_it_can_bool_that_identifier_exists()
     {
         $this->assertFalse(UrlRepository::identifierExists($this->identifier.'333'));
 

@@ -17,7 +17,7 @@ class UtilityServiceTest extends TestCase
      *
      * @throws UtilityServiceException
      */
-    public function it_can_successfully_get_an_instance_of_the_encrypter()
+    public function test_it_can_successfully_get_an_instance_of_the_encrypter()
     {
         $this->assertInstanceOf(Encrypter::class, UtilityService::getEncrypter());
     }
@@ -27,7 +27,7 @@ class UtilityServiceTest extends TestCase
      *
      * @group UtilityService
      */
-    public function it_can_get_the_redirect_code()
+    public function test_it_can_get_the_redirect_code()
     {
         $this->assertEquals(
             307,
@@ -40,7 +40,7 @@ class UtilityServiceTest extends TestCase
      *
      * @group UtilityService
      */
-    public function it_can_get_redirect_headers()
+    public function test_it_can_get_redirect_headers()
     {
         $request = Request::create('something-short.com/not-really');
 
@@ -63,7 +63,7 @@ class UtilityServiceTest extends TestCase
      *
      * @group UrlRepository
      */
-    public function it_can_construct_redirect_headers_with_dynamic_headers()
+    public function test_it_can_construct_redirect_headers_with_dynamic_headers()
     {
         $this->assertEquals([
             'Referer' => 'localhost:1337',
@@ -76,7 +76,7 @@ class UtilityServiceTest extends TestCase
      *
      * @group UrlRepository
      */
-    public function it_can_construct_redirect_headers()
+    public function test_it_can_construct_redirect_headers()
     {
         $this->assertEquals([
             'Referer' => 'localhost:1337',

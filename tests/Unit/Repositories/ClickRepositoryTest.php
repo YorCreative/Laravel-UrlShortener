@@ -17,7 +17,7 @@ class ClickRepositoryTest extends TestCase
      *
      * @group ClickRepository
      */
-    public function it_can_find_a_click_by_its_id()
+    public function test_it_can_find_a_click_by_its_id()
     {
         Config::set('location.testing.enabled', true);
 
@@ -40,7 +40,7 @@ class ClickRepositoryTest extends TestCase
      *
      * @group ClickRepository
      */
-    public function it_can_create_a_click_in_db()
+    public function test_it_can_create_a_click_in_db()
     {
         ClickRepository::createClick(
             $this->shortUrl->id,
@@ -63,7 +63,7 @@ class ClickRepositoryTest extends TestCase
      *
      * @group ClickRepository
      */
-    public function it_can_get_correct_with_default_relations()
+    public function test_it_can_get_correct_with_default_relations()
     {
         $this->assertEquals([
             'location', 'outcome', 'shortUrl.tracing',

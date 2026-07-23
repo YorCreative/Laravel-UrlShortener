@@ -13,7 +13,7 @@ class ShortUrlHelperTest extends TestCase
      *
      * @group Traits
      */
-    public function it_can_validate_ownership_is_array_of_models_filter()
+    public function test_it_can_validate_ownership_is_array_of_models_filter()
     {
         $model = DemoOwner::factory()->create();
 
@@ -31,7 +31,7 @@ class ShortUrlHelperTest extends TestCase
      *
      * @group Traits
      */
-    public function it_can_validate_ownership_is_not_array_of_models_filter()
+    public function test_it_can_validate_ownership_is_not_array_of_models_filter()
     {
         $model = DemoOwner::factory()->create();
 
@@ -50,7 +50,7 @@ class ShortUrlHelperTest extends TestCase
      *
      * @group Traits
      */
-    public function it_can_build_short_url()
+    public function test_it_can_build_short_url()
     {
         $this->assertEquals(
             "localhost.test/v1/$this->identifier",

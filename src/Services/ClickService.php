@@ -56,8 +56,12 @@ class ClickService
         $request_ip = config('location.testing.enabled') ? config('location.testing.ip') : $request_ip;
 
         try {
+            $shortUrl = $domain
+                ? UrlRepository::findByDomainIdentifier($domain, $identifier)
+                : UrlRepository::findByIdentifier($identifier);
+
             return ClickRepository::createClick(
-                UrlRepository::findByDomainIdentifier($domain, $identifier)->id,
+                $shortUrl->id,
                 LocationRepository::findOrCreateLocationRecord(
                     ! config('location.testing.enabled')
                         ? LocationRepository::getLocationFrom($request_ip)
@@ -79,8 +83,12 @@ class ClickService
         $request_ip = config('location.testing.enabled') ? config('location.testing.ip') : $request_ip;
 
         try {
+            $shortUrl = $domain
+                ? UrlRepository::findByDomainIdentifier($domain, $identifier)
+                : UrlRepository::findByIdentifier($identifier);
+
             return ClickRepository::createClick(
-                UrlRepository::findByDomainIdentifier($domain, $identifier)->id,
+                $shortUrl->id,
                 LocationRepository::findOrCreateLocationRecord(
                     LocationRepository::locationUnknown($request_ip)
                 )->id,

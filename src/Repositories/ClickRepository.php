@@ -28,14 +28,14 @@ class ClickRepository
     /**
      * @throws UrlRepositoryException
      */
-    public static function createClick(int $short_url_id, int $location_id, int $outcome_id, array $headers): ShortUrlClick
+    public static function createClick(int $short_url_id, int $location_id, int $outcome_id, array $headers = []): ShortUrlClick
     {
         try {
             return ShortUrlClick::create([
                 'short_url_id' => $short_url_id,
                 'location_id' => $location_id,
                 'outcome_id' => $outcome_id,
-                'headers' => json_encode($headers),
+                'headers' => $headers,
                 'headers_signature' => md5(json_encode($headers)),
             ]);
         } catch (Exception $exception) {

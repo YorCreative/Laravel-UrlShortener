@@ -20,7 +20,7 @@ class ClickServiceTest extends TestCase
      *
      * @group ClickService
      */
-    public function it_can_can_track_a_click()
+    public function test_it_can_can_track_a_click()
     {
         Config::set('location.testing.enabled', true);
 
@@ -57,7 +57,7 @@ class ClickServiceTest extends TestCase
      * @throws Throwable
      * @throws FilterClicksStrategyException
      */
-    public function it_can_get_basic_scoped_clicks_for_short_url()
+    public function test_it_can_get_basic_scoped_clicks_for_short_url()
     {
         Config::set('location.testing.enabled', true);
 

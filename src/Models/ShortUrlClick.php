@@ -47,6 +47,10 @@ class ShortUrlClick extends Model
         'outcome_id',
     ];
 
+    protected $casts = [
+        'headers' => 'array',
+    ];
+
     public function shortUrl(): HasOne
     {
         return $this->hasOne(ShortUrl::class, 'id', 'short_url_id');

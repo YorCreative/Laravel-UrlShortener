@@ -22,7 +22,7 @@ class ShortUrlClickTest extends TestCase
      * @throws UrlRepositoryException
      * @throws Throwable
      */
-    public function it_can_track_and_retrieve_successfully_routed_clicks()
+    public function test_it_can_track_and_retrieve_successfully_routed_clicks()
     {
         // 5 successful routed
         ShortUrlClick::factory()->count(5)->create([
@@ -70,7 +70,7 @@ class ShortUrlClickTest extends TestCase
      * @throws UrlRepositoryException
      * @throws Throwable
      */
-    public function it_can_successfully_routed_clicks_while_filtering_for_utm_source()
+    public function test_it_can_successfully_routed_clicks_while_filtering_for_utm_source()
     {
         // 3 successful routed
         ShortUrlClick::factory()->count(5)->create([

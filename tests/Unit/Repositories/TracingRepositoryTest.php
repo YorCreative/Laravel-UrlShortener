@@ -21,7 +21,7 @@ class TracingRepositoryTest extends TestCase
      *
      * @throws ReflectionException
      */
-    public function it_can_detect_all_utm_parameters()
+    public function test_it_can_detect_all_utm_parameters()
     {
         foreach ($this->getAllowedParameters() as $parameter) {
             $this->assertTrue(
@@ -60,7 +60,7 @@ class TracingRepositoryTest extends TestCase
      *
      * @throws ReflectionException
      */
-    public function it_has_correct_allowed_parameters()
+    public function test_it_has_correct_allowed_parameters()
     {
         foreach ($this->getAllowedParameters() as $parameter) {
             $this->assertTrue(
@@ -81,7 +81,7 @@ class TracingRepositoryTest extends TestCase
      *
      * @group TracingRepository
      */
-    public function it_can_create_a_trace_record()
+    public function test_it_can_create_a_trace_record()
     {
         $utm_query = [
             'short_url_id' => ShortUrl::factory()->create()->id,
