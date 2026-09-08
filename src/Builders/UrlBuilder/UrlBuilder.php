@@ -322,12 +322,16 @@ class UrlBuilder implements UrlBuilderInterface
         $shortUrlCollection = $this->shortUrlCollection;
 
         // Use transaction with deadlock retry (attempts = 3 by default)
-        // This provides better isolation for concurrent URL creation
-        DB::transaction(function () use (&$shortUrlCollection) {
-            $this->getOptions()->each(function ($option) use (&$shortUrlCollection) {
-                $option->resolve($shortUrlCollection);
-            });
-        }, 3); // 3 attempts for deadlock retries
+        // This provides better isolation for concurrent URL creation.
+        // The transaction must be opened on the connection the models write
+        // to, otherwise a configured `database.connection` would leave these
+        // writes outside the transaction entirely.
+        DB::connection(config('urlshortener.database.connection'))
+            ->transaction(function () use (&$shortUrlCollection) {
+                $this->getOptions()->each(function ($option) use (&$shortUrlCollection) {
+                    $option->resolve($shortUrlCollection);
+                });
+            }, 3); // 3 attempts for deadlock retries
 
         // Use domain-aware URL building if multi-domain is enabled
         $domain = $shortUrlCollection->get('domain');

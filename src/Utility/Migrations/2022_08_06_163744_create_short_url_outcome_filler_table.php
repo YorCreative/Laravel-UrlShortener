@@ -22,7 +22,8 @@ return new class extends Migration
      */
     public function up()
     {
-        DB::table('short_url_outcomes')
+        DB::connection($this->getConnection())
+            ->table('short_url_outcomes')
             ->insert([
                 [
                     'id' => 1,
