@@ -4,10 +4,11 @@ namespace YorCreative\UrlShortener\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use YorCreative\UrlShortener\Traits\ShortUrlHelper;
+use YorCreative\UrlShortener\Traits\UsesConfiguredConnection;
 
 class ShortUrlOutcome extends Model
 {
-    use ShortUrlHelper;
+    use ShortUrlHelper, UsesConfiguredConnection;
 
     /**
      * @var bool

@@ -7,11 +7,21 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
+     * The connection the package's tables live on.
+     *
+     * @return string|null
+     */
+    public function getConnection()
+    {
+        return config('urlshortener.database.connection');
+    }
+
+    /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::table('short_urls', function (Blueprint $table) {
+        Schema::connection($this->getConnection())->table('short_urls', function (Blueprint $table) {
             // Add domain column - nullable for backwards compatibility
             $table->string('domain')->nullable()->after('id')->index();
 
@@ -31,7 +41,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('short_urls', function (Blueprint $table) {
+        Schema::connection($this->getConnection())->table('short_urls', function (Blueprint $table) {
             $table->dropUnique('short_urls_domain_identifier_unique');
             $table->dropUnique('short_urls_domain_hashed_unique');
 

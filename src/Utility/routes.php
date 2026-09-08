@@ -10,8 +10,12 @@ $prefixes = app(DomainResolver::class)->getRoutablePrefixes();
 $multiDomainEnabled = config('urlshortener.domains.enabled', false);
 
 // Determine middleware stack
-$middleware = ['web'];
-if ($multiDomainEnabled) {
+$middleware = config('urlshortener.routing.middleware', ['web']);
+$middleware = is_array($middleware) ? array_values($middleware) : [$middleware];
+
+// Domain resolution is required for multi-domain routing, so it is appended
+// regardless of what the consumer configured -- unless they already listed it.
+if ($multiDomainEnabled && ! in_array(ResolveDomain::class, $middleware, true)) {
     $middleware[] = ResolveDomain::class;
 }
 

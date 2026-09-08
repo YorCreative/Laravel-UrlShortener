@@ -8,10 +8,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\Builder;
 use YorCreative\UrlShortener\Builders\ClickQueryBuilder\ClickQueryBuilder;
 use YorCreative\UrlShortener\Traits\PublishableHasFactory;
+use YorCreative\UrlShortener\Traits\UsesConfiguredConnection;
 
 class ShortUrlClick extends Model
 {
-    use PublishableHasFactory, SoftDeletes;
+    use PublishableHasFactory, SoftDeletes, UsesConfiguredConnection;
 
     /**
      * @var bool

@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use YorCreative\UrlShortener\Traits\PublishableHasFactory;
+use YorCreative\UrlShortener\Traits\UsesConfiguredConnection;
 
 class ShortUrlDomain extends Model
 {
-    use PublishableHasFactory, SoftDeletes;
+    use PublishableHasFactory, SoftDeletes, UsesConfiguredConnection;
 
     /**
      * @var string

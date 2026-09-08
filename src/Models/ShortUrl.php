@@ -9,10 +9,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use YorCreative\UrlShortener\Traits\PublishableHasFactory;
+use YorCreative\UrlShortener\Traits\UsesConfiguredConnection;
 
 class ShortUrl extends Model
 {
-    use PublishableHasFactory, SoftDeletes;
+    use PublishableHasFactory, SoftDeletes, UsesConfiguredConnection;
 
     /**
      * @var bool
