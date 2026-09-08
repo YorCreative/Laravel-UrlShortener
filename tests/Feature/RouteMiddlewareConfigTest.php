@@ -157,6 +157,51 @@ class RouteMiddlewareConfigTest extends TestCase
         );
     }
 
+    #[Test]
+    #[Group('Feature')]
+    #[Group('RoutingConfig')]
+    public function it_falls_back_to_web_when_the_configured_middleware_is_null()
+    {
+        // A published config can set the key to null, in which case config()
+        // returns null rather than the default passed alongside it.
+        config([
+            'urlshortener.routing.additional_prefixes' => ['nulled'],
+            'urlshortener.routing.middleware' => null,
+        ]);
+
+        require dirname(__DIR__, 2).'/src/Utility/routes.php';
+
+        $route = $this->identifierRoutes()
+            ->first(fn ($route) => str_starts_with($route->uri(), 'nulled/'));
+
+        $this->assertNotNull($route, 'The route was not registered.');
+        $this->assertSame(['web'], $route->middleware());
+    }
+
+    #[Test]
+    #[Group('Feature')]
+    #[Group('RoutingConfig')]
+    public function it_treats_the_domain_middleware_alias_as_already_present()
+    {
+        config([
+            'urlshortener.domains.enabled' => true,
+            'urlshortener.routing.additional_prefixes' => ['aliased'],
+            'urlshortener.routing.middleware' => ['web', 'urlshortener.domain'],
+        ]);
+
+        require dirname(__DIR__, 2).'/src/Utility/routes.php';
+
+        $route = $this->identifierRoutes()
+            ->first(fn ($route) => str_starts_with($route->uri(), 'aliased/'));
+
+        $this->assertNotNull($route, 'The route was not registered.');
+
+        // The alias resolves to ResolveDomain, so appending the class as well
+        // would run domain resolution twice per request.
+        $this->assertNotContains(ResolveDomain::class, $route->middleware());
+        $this->assertSame(['web', 'urlshortener.domain'], $route->middleware());
+    }
+
     protected function identifierFrom(string $url): string
     {
         $parts = explode('/', rtrim($url, '/'));

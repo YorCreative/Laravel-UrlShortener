@@ -209,6 +209,34 @@ class ModelConnectionTest extends TestCase
         );
     }
 
+    #[Test]
+    #[Group('Unit')]
+    #[Group('DatabaseConnection')]
+    #[DataProvider('modelProvider')]
+    public function an_explicitly_set_connection_outranks_the_configured_one(string $model)
+    {
+        config([
+            'database.connections.replica' => [
+                'driver' => 'sqlite',
+                'database' => ':memory:',
+                'prefix' => '',
+            ],
+            'urlshortener.database.connection' => 'shortener',
+        ]);
+
+        // The configured connection is a default, not an override, so
+        // Model::on() and setConnection() must still work.
+        $this->assertSame(
+            'replica',
+            (new $model)->setConnection('replica')->getConnectionName()
+        );
+
+        $this->assertSame(
+            'replica',
+            $model::on('replica')->getModel()->getConnectionName()
+        );
+    }
+
     protected function useSecondaryConnection(): void
     {
         config([

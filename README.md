@@ -531,8 +531,34 @@ Route::middleware('web')->group(function () {
 ```
 
 The `urlshortener.attempt.protected` route name is required -- the password-protected view
-posts to it. Any prefix you serve must also be listed under `routing.additional_prefixes`
-so that generated URLs match the routes you registered.
+posts to it.
+
+**Match the prefix you serve.** Generated URLs take their prefix from
+`branding.prefix`, not from the routes you register, so serving `go/{identifier}` while
+`branding.prefix` is still `something/pretty/cool` means every link the package hands back
+points somewhere you do not serve. Set the prefix to match:
+
+```php
+// config/urlshortener.php
+'branding' => [
+    'prefix' => 'go',
+],
+```
+
+Alternatively, build individual URLs with `->withPrefix('go')` and list `go` under
+`routing.additional_prefixes`, which is what that setting is for -- it gates `withPrefix()`
+validation, and does not affect the default prefix.
+
+**Keep the domain middleware when using multi-domain.** `ResolveDomain` is what enforces
+`domains.validate_domain`; without it, requests on unconfigured hosts resolve a domain and
+redirect rather than returning a 404. Include it in your own stack:
+
+```php
+// routes/web.php
+Route::middleware(['web', 'urlshortener.domain'])->group(function () {
+    // ... as above
+});
+```
 
 ## Database Connection
 
