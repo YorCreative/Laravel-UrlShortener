@@ -5,6 +5,7 @@ namespace YorCreative\UrlShortener\Actions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\ViewErrorBag;
 use YorCreative\UrlShortener\Events\ShortUrlExpired;
 use YorCreative\UrlShortener\Exceptions\ClickServiceException;
 use YorCreative\UrlShortener\Exceptions\UrlRepositoryException;
@@ -87,6 +88,9 @@ class ShortUrlRedirect extends Controller
             return view('yorcreative.urlshortener.protected', [
                 'identifier' => $this->identifier,
                 'domain' => $this->domain,
+                // ShareErrorsFromSession only runs in the `web` group, and
+                // published copies of the view expect $errors to exist.
+                'errors' => view()->shared('errors') ?? new ViewErrorBag,
             ]);
         }
 

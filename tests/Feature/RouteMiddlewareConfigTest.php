@@ -2,7 +2,10 @@
 
 namespace YorCreative\UrlShortener\Tests\Feature;
 
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\View;
+use Orchestra\Testbench\Attributes\DefineEnvironment;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use YorCreative\UrlShortener\Builders\UrlBuilder\UrlBuilder;
@@ -200,6 +203,72 @@ class RouteMiddlewareConfigTest extends TestCase
         // would run domain resolution twice per request.
         $this->assertNotContains(ResolveDomain::class, $route->middleware());
         $this->assertSame(['web', 'urlshortener.domain'], $route->middleware());
+    }
+
+    #[Test]
+    #[Group('Feature')]
+    #[Group('RoutingConfig')]
+    #[DefineEnvironment('useApiMiddleware')]
+    public function it_renders_the_password_view_under_the_api_middleware_group()
+    {
+        $this->assertPasswordViewRenders();
+    }
+
+    #[Test]
+    #[Group('Feature')]
+    #[Group('RoutingConfig')]
+    #[DefineEnvironment('useThrottleOnlyMiddleware')]
+    public function it_renders_the_password_view_under_throttle_only_middleware()
+    {
+        $this->assertPasswordViewRenders();
+    }
+
+    protected function useApiMiddleware($app): void
+    {
+        $app['config']->set('urlshortener.routing.middleware', 'api');
+    }
+
+    protected function useThrottleOnlyMiddleware($app): void
+    {
+        $app['config']->set('urlshortener.routing.middleware', ['throttle:60,1']);
+    }
+
+    /**
+     * Without `web`, ShareErrorsFromSession never runs, so the password view is
+     * rendered without a shared $errors bag. The middleware is configured before
+     * boot so the routes are registered once, exactly as in an application.
+     */
+    protected function assertPasswordViewRenders(): void
+    {
+        $url = UrlBuilder::shorten('https://sessionless.test/'.rand(999, 999999))
+            ->withPassword('secret123')
+            ->build();
+
+        $identifier = $this->identifierFrom($url);
+
+        $this->publishProtectedView();
+
+        $this->get('/'.trim(config('urlshortener.branding.prefix'), '/').'/'.$identifier)
+            ->assertOk()
+            ->assertSee('Password Protected')
+            ->assertSee($identifier);
+    }
+
+    /**
+     * The redirect action renders `yorcreative.urlshortener.protected`, which
+     * only resolves once the view has been published, so mirror vendor:publish.
+     */
+    protected function publishProtectedView(): void
+    {
+        $location = sys_get_temp_dir().'/urlshortener-views-'.getmypid();
+
+        File::ensureDirectoryExists($location.'/yorcreative/urlshortener');
+        File::copy(
+            dirname(__DIR__, 2).'/src/Utility/Views/protected.blade.php',
+            $location.'/yorcreative/urlshortener/protected.blade.php'
+        );
+
+        View::addLocation($location);
     }
 
     protected function identifierFrom(string $url): string
