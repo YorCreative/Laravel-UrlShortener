@@ -1,0 +1,287 @@
+<?php
+
+namespace YorCreative\UrlShortener\Tests\Feature;
+
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\View;
+use Orchestra\Testbench\Attributes\DefineEnvironment;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
+use YorCreative\UrlShortener\Builders\UrlBuilder\UrlBuilder;
+use YorCreative\UrlShortener\Middleware\ResolveDomain;
+use YorCreative\UrlShortener\Tests\Middleware\MarksRequest;
+use YorCreative\UrlShortener\Tests\TestCase;
+
+class RouteMiddlewareConfigTest extends TestCase
+{
+    #[Test]
+    #[Group('Feature')]
+    #[Group('RoutingConfig')]
+    public function it_defaults_to_the_web_middleware_group()
+    {
+        $this->assertSame(['web'], config('urlshortener.routing.middleware'));
+
+        $this->assertTrue(
+            $this->identifierRoutes()->contains(
+                fn ($route) => in_array('web', $route->middleware(), true)
+            )
+        );
+    }
+
+    #[Test]
+    #[Group('Feature')]
+    #[Group('RoutingConfig')]
+    public function it_applies_configured_middleware_to_package_routes()
+    {
+        config(['urlshortener.routing.middleware' => ['web', 'throttle:60,1']]);
+
+        require dirname(__DIR__, 2).'/src/Utility/routes.php';
+
+        $this->assertTrue(
+            $this->identifierRoutes()->contains(
+                fn ($route) => in_array('throttle:60,1', $route->middleware(), true)
+            )
+        );
+    }
+
+    #[Test]
+    #[Group('Feature')]
+    #[Group('RoutingConfig')]
+    public function it_accepts_a_single_middleware_string()
+    {
+        config(['urlshortener.routing.middleware' => 'api']);
+
+        require dirname(__DIR__, 2).'/src/Utility/routes.php';
+
+        $this->assertTrue(
+            $this->identifierRoutes()->contains(
+                fn ($route) => in_array('api', $route->middleware(), true)
+            )
+        );
+    }
+
+    #[Test]
+    #[Group('Feature')]
+    #[Group('RoutingConfig')]
+    public function it_still_appends_domain_middleware_when_multi_domain_is_enabled()
+    {
+        config([
+            'urlshortener.domains.enabled' => true,
+            'urlshortener.routing.middleware' => ['web', 'throttle:60,1'],
+        ]);
+
+        require dirname(__DIR__, 2).'/src/Utility/routes.php';
+
+        $this->assertTrue(
+            $this->identifierRoutes()->contains(
+                fn ($route) => in_array('throttle:60,1', $route->middleware(), true)
+                    && in_array(ResolveDomain::class, $route->middleware(), true)
+            )
+        );
+    }
+
+    #[Test]
+    #[Group('Feature')]
+    #[Group('RoutingConfig')]
+    public function it_does_not_duplicate_domain_middleware_when_already_configured()
+    {
+        config([
+            'urlshortener.domains.enabled' => true,
+            'urlshortener.routing.middleware' => ['web', ResolveDomain::class],
+        ]);
+
+        require dirname(__DIR__, 2).'/src/Utility/routes.php';
+
+        $route = $this->identifierRoutes()->last();
+
+        $this->assertSame(
+            1,
+            count(array_keys($route->middleware(), ResolveDomain::class, true))
+        );
+    }
+
+    #[Test]
+    #[Group('Feature')]
+    #[Group('RoutingConfig')]
+    public function it_actually_executes_configured_middleware_on_a_request()
+    {
+        MarksRequest::reset();
+
+        // A distinct prefix so this registration is the one that matches; the
+        // provider already registered the default prefix without our middleware.
+        config([
+            'urlshortener.routing.additional_prefixes' => ['guarded'],
+            'urlshortener.routing.middleware' => ['web', MarksRequest::class],
+        ]);
+
+        require dirname(__DIR__, 2).'/src/Utility/routes.php';
+
+        $plainText = 'https://middleware-executes.test/'.rand(999, 999999);
+        $url = UrlBuilder::shorten($plainText)->withPrefix('guarded')->build();
+
+        $this->get('/guarded/'.$this->identifierFrom($url))
+            ->assertRedirect($plainText);
+
+        $this->assertTrue(
+            MarksRequest::$ran,
+            'Configured middleware was attached to the route but never executed.'
+        );
+    }
+
+    #[Test]
+    #[Group('Feature')]
+    #[Group('RoutingConfig')]
+    public function it_applies_configured_middleware_to_prefixless_domain_routes()
+    {
+        config([
+            'urlshortener.domains.enabled' => true,
+            'urlshortener.domains.resolution_strategy' => 'host',
+            'urlshortener.domains.hosts' => ['bare.test' => ['prefix' => null]],
+            'urlshortener.routing.middleware' => ['web', 'throttle:60,1'],
+        ]);
+
+        require dirname(__DIR__, 2).'/src/Utility/routes.php';
+
+        $rootRoutes = collect(Route::getRoutes()->getRoutes())
+            ->filter(fn ($route) => $route->uri() === '{identifier}')
+            ->values();
+
+        $this->assertNotEmpty(
+            $rootRoutes,
+            'No prefixless domain route was registered.'
+        );
+
+        $this->assertTrue(
+            $rootRoutes->contains(
+                fn ($route) => in_array('throttle:60,1', $route->middleware(), true)
+                    && in_array(ResolveDomain::class, $route->middleware(), true)
+            )
+        );
+    }
+
+    #[Test]
+    #[Group('Feature')]
+    #[Group('RoutingConfig')]
+    public function it_falls_back_to_web_when_the_configured_middleware_is_null()
+    {
+        // A published config can set the key to null, in which case config()
+        // returns null rather than the default passed alongside it.
+        config([
+            'urlshortener.routing.additional_prefixes' => ['nulled'],
+            'urlshortener.routing.middleware' => null,
+        ]);
+
+        require dirname(__DIR__, 2).'/src/Utility/routes.php';
+
+        $route = $this->identifierRoutes()
+            ->first(fn ($route) => str_starts_with($route->uri(), 'nulled/'));
+
+        $this->assertNotNull($route, 'The route was not registered.');
+        $this->assertSame(['web'], $route->middleware());
+    }
+
+    #[Test]
+    #[Group('Feature')]
+    #[Group('RoutingConfig')]
+    public function it_treats_the_domain_middleware_alias_as_already_present()
+    {
+        config([
+            'urlshortener.domains.enabled' => true,
+            'urlshortener.routing.additional_prefixes' => ['aliased'],
+            'urlshortener.routing.middleware' => ['web', 'urlshortener.domain'],
+        ]);
+
+        require dirname(__DIR__, 2).'/src/Utility/routes.php';
+
+        $route = $this->identifierRoutes()
+            ->first(fn ($route) => str_starts_with($route->uri(), 'aliased/'));
+
+        $this->assertNotNull($route, 'The route was not registered.');
+
+        // The alias resolves to ResolveDomain, so appending the class as well
+        // would run domain resolution twice per request.
+        $this->assertNotContains(ResolveDomain::class, $route->middleware());
+        $this->assertSame(['web', 'urlshortener.domain'], $route->middleware());
+    }
+
+    #[Test]
+    #[Group('Feature')]
+    #[Group('RoutingConfig')]
+    #[DefineEnvironment('useApiMiddleware')]
+    public function it_renders_the_password_view_under_the_api_middleware_group()
+    {
+        $this->assertPasswordViewRenders();
+    }
+
+    #[Test]
+    #[Group('Feature')]
+    #[Group('RoutingConfig')]
+    #[DefineEnvironment('useThrottleOnlyMiddleware')]
+    public function it_renders_the_password_view_under_throttle_only_middleware()
+    {
+        $this->assertPasswordViewRenders();
+    }
+
+    protected function useApiMiddleware($app): void
+    {
+        $app['config']->set('urlshortener.routing.middleware', 'api');
+    }
+
+    protected function useThrottleOnlyMiddleware($app): void
+    {
+        $app['config']->set('urlshortener.routing.middleware', ['throttle:60,1']);
+    }
+
+    /**
+     * Without `web`, ShareErrorsFromSession never runs, so the password view is
+     * rendered without a shared $errors bag. The middleware is configured before
+     * boot so the routes are registered once, exactly as in an application.
+     */
+    protected function assertPasswordViewRenders(): void
+    {
+        $url = UrlBuilder::shorten('https://sessionless.test/'.rand(999, 999999))
+            ->withPassword('secret123')
+            ->build();
+
+        $identifier = $this->identifierFrom($url);
+
+        $this->publishProtectedView();
+
+        $this->get('/'.trim(config('urlshortener.branding.prefix'), '/').'/'.$identifier)
+            ->assertOk()
+            ->assertSee('Password Protected')
+            ->assertSee($identifier);
+    }
+
+    /**
+     * The redirect action renders `yorcreative.urlshortener.protected`, which
+     * only resolves once the view has been published, so mirror vendor:publish.
+     */
+    protected function publishProtectedView(): void
+    {
+        $location = sys_get_temp_dir().'/urlshortener-views-'.getmypid();
+
+        File::ensureDirectoryExists($location.'/yorcreative/urlshortener');
+        File::copy(
+            dirname(__DIR__, 2).'/src/Utility/Views/protected.blade.php',
+            $location.'/yorcreative/urlshortener/protected.blade.php'
+        );
+
+        View::addLocation($location);
+    }
+
+    protected function identifierFrom(string $url): string
+    {
+        $parts = explode('/', rtrim($url, '/'));
+
+        return end($parts);
+    }
+
+    protected function identifierRoutes()
+    {
+        return collect(Route::getRoutes()->getRoutes())
+            ->filter(fn ($route) => str_ends_with($route->uri(), '{identifier}'))
+            ->values();
+    }
+}

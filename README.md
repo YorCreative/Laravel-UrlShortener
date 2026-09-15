@@ -488,6 +488,93 @@ UrlService::shorten('https://site-b.com')->forDomain('link.co')->build();
 // https://link.co/abc123 -> https://site-b.com
 ```
 
+## Routing
+
+### Middleware
+
+The package's routes run through the `web` middleware group by default. Override this to
+apply your own stack -- rate limiting the redirect endpoint is the common case:
+
+```php
+// config/urlshortener.php
+'routing' => [
+    'middleware' => ['web', 'throttle:60,1'],
+],
+```
+
+A single middleware may be given as a string. When multi-domain support is enabled, the
+domain resolution middleware is appended automatically, so you do not need to list it.
+
+### Disabling the Default Routes
+
+Set `routing.enabled` to `false` to stop the package registering its routes, then wire the
+redirect action into your own route file:
+
+```php
+// config/urlshortener.php
+'routing' => [
+    'enabled' => false,
+],
+```
+
+```php
+// routes/web.php
+use YorCreative\UrlShortener\Actions\AttemptProtected;
+use YorCreative\UrlShortener\Actions\ShortUrlRedirect;
+
+Route::middleware('web')->group(function () {
+    Route::get('go/{identifier}', ShortUrlRedirect::class);
+
+    Route::post('go/protected', AttemptProtected::class)
+        ->name('urlshortener.attempt.protected');
+});
+```
+
+The `urlshortener.attempt.protected` route name is required -- the password-protected view
+posts to it.
+
+**Match the prefix you serve.** Generated URLs take their prefix from
+`branding.prefix`, not from the routes you register, so serving `go/{identifier}` while
+`branding.prefix` is still `something/pretty/cool` means every link the package hands back
+points somewhere you do not serve. Set the prefix to match:
+
+```php
+// config/urlshortener.php
+'branding' => [
+    'prefix' => 'go',
+],
+```
+
+Alternatively, build individual URLs with `->withPrefix('go')` and list `go` under
+`routing.additional_prefixes`, which is what that setting is for -- it gates `withPrefix()`
+validation, and does not affect the default prefix.
+
+**Keep the domain middleware when using multi-domain.** `ResolveDomain` is what enforces
+`domains.validate_domain`; without it, requests on unconfigured hosts resolve a domain and
+redirect rather than returning a 404. Include it in your own stack:
+
+```php
+// routes/web.php
+Route::middleware(['web', 'urlshortener.domain'])->group(function () {
+    // ... as above
+});
+```
+
+## Database Connection
+
+By default the package's models and migrations follow your application's default database
+connection. To isolate them on their own connection, name it in config:
+
+```php
+// config/urlshortener.php
+'database' => [
+    'connection' => env('URL_SHORTENER_DB_CONNECTION'),
+],
+```
+
+The named connection must exist in your application's `config/database.php`. Leaving this
+`null` preserves the default behaviour.
+
 ## Security Features
 
 ### URL Validation
@@ -548,9 +635,11 @@ After exceeding the maximum attempts, users receive a `429 Too Many Requests` re
 | `URL_SHORTENER_RESOLUTION_STRATEGY` | `host` | How to resolve domain from request |
 | `URL_SHORTENER_VALIDATE_DOMAIN` | `true` | Validate requests against configured domains |
 | `URL_SHORTENER_DOMAINS_DATABASE` | `false` | Store domain config in database |
+| `URL_SHORTENER_REGISTER_ROUTES` | `true` | Register the package's redirect routes |
+| `URL_SHORTENER_DB_CONNECTION` | `null` | Database connection for package tables |
 | `URL_SHORTENER_VALIDATE_URLS` | `false` | Enable URL validation (recommended) |
 | `URL_SHORTENER_BLOCK_PRIVATE_IPS` | `true` | Block private/internal IPs |
-| `URL_SHORTENER_RESOLVE_DNS_PRIVATE_IPS` | `true` | Resolve hostnames and block private/reserved IP results |
+| `URL_SHORTENER_RESOLVE_DNS_PRIVATE_IPS` | `false` | Resolve hostnames and block private/reserved IP results |
 | `URL_SHORTENER_BLOCK_METADATA` | `true` | Block cloud metadata endpoints |
 | `URL_SHORTENER_PASSWORD_MAX_ATTEMPTS` | `5` | Max password attempts before rate limit |
 | `URL_SHORTENER_PASSWORD_DECAY_MINUTES` | `1` | Minutes until rate limit resets |

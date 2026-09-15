@@ -38,7 +38,11 @@ class UrlShortenerServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/Utility/Backpack/location.php', 'location');
         $this->mergeConfigFrom(__DIR__.'/Utility/Config/urlshortener.php', 'urlshortener');
         $this->loadMigrationsFrom(__DIR__.'/Utility/Migrations');
-        $this->loadRoutesFrom(__DIR__.'/Utility/routes.php');
+
+        if (config('urlshortener.routing.enabled', true)) {
+            $this->loadRoutesFrom(__DIR__.'/Utility/routes.php');
+        }
+
         $this->loadViewsFrom(__DIR__.'/Utility/Views', 'urlshortener');
         $this->publishes([
             __DIR__.'/Utility/Views' => base_path('resources/views/yorcreative/urlshortener'),

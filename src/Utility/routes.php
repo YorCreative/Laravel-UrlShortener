@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
 use YorCreative\UrlShortener\Actions\AttemptProtected;
 use YorCreative\UrlShortener\Actions\ShortUrlRedirect;
@@ -9,9 +10,20 @@ use YorCreative\UrlShortener\Services\DomainResolver;
 $prefixes = app(DomainResolver::class)->getRoutablePrefixes();
 $multiDomainEnabled = config('urlshortener.domains.enabled', false);
 
-// Determine middleware stack
-$middleware = ['web'];
-if ($multiDomainEnabled) {
+// Determine middleware stack. A published config that sets the key to null
+// still returns null rather than the default, so fall back explicitly.
+$middleware = config('urlshortener.routing.middleware') ?? ['web'];
+$middleware = array_values(array_filter(Arr::wrap($middleware), fn ($m) => $m !== null && $m !== ''));
+
+// Domain resolution is required for multi-domain routing, so it is appended
+// regardless of what the consumer configured -- unless they already listed it,
+// by class name or via the `urlshortener.domain` alias the provider registers.
+$hasDomainMiddleware = ! empty(array_intersect(
+    [ResolveDomain::class, 'urlshortener.domain'],
+    $middleware
+));
+
+if ($multiDomainEnabled && ! $hasDomainMiddleware) {
     $middleware[] = ResolveDomain::class;
 }
 

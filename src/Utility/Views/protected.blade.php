@@ -21,12 +21,12 @@
         <div class="form-floating">
             <input type="password" name="password" class="form-control" id="floatingPassword" placeholder="Password">
             <label for="floatingPassword">Password</label>
-            @if($errors)
+            @isset($errors)
                 @error('password')
                 <div
                     class="alert alert-danger">{{ config('urlshortener.branding.views.protected.content.message') }}</div>
                 @enderror
-            @endif
+            @endisset
         </div>
         <button class="w-100 btn btn-lg btn-primary" type="submit">Continue</button>
     </form>

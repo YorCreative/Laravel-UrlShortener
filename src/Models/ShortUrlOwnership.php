@@ -5,10 +5,11 @@ namespace YorCreative\UrlShortener\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use YorCreative\UrlShortener\Traits\PublishableHasFactory;
+use YorCreative\UrlShortener\Traits\UsesConfiguredConnection;
 
 class ShortUrlOwnership extends Model
 {
-    use PublishableHasFactory;
+    use PublishableHasFactory, UsesConfiguredConnection;
 
     /**
      * @var bool

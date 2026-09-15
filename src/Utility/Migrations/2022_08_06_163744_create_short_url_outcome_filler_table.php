@@ -6,13 +6,24 @@ use Illuminate\Support\Facades\DB;
 return new class extends Migration
 {
     /**
+     * The connection the package's tables live on.
+     *
+     * @return string|null
+     */
+    public function getConnection()
+    {
+        return config('urlshortener.database.connection');
+    }
+
+    /**
      * Run the migrations.
      *
      * @return void
      */
     public function up()
     {
-        DB::table('short_url_outcomes')
+        DB::connection($this->getConnection())
+            ->table('short_url_outcomes')
             ->insert([
                 [
                     'id' => 1,

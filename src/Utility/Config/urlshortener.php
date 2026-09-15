@@ -100,9 +100,34 @@ return [
     |
     */
     'routing' => [
+        // Register the package's redirect routes. Disable this to wire the
+        // redirect action into your own route file; you must then register a
+        // route named `urlshortener.attempt.protected`, which the password
+        // view posts to.
+        'enabled' => env('URL_SHORTENER_REGISTER_ROUTES', true),
+
+        // Middleware applied to the package's routes. Accepts a string or an
+        // array. Add `throttle:60,1` here to rate limit the redirect endpoint.
+        // The domain resolution middleware is appended automatically when
+        // multi-domain support is enabled.
+        'middleware' => ['web'],
+
         'additional_prefixes' => [
             // 'custom',
         ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Database
+    |--------------------------------------------------------------------------
+    |
+    | The connection the package's models and migrations should use. Leave null
+    | to follow the application's default connection.
+    |
+    */
+    'database' => [
+        'connection' => env('URL_SHORTENER_DB_CONNECTION'),
     ],
 
     /*
